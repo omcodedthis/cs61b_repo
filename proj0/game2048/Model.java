@@ -5,7 +5,7 @@ import java.util.Observable;
 
 
 /** The state of a game of 2048.
- *  @author TODO: YOUR NAME HERE
+ *  @author om
  */
 public class Model extends Observable {
     /** Current contents of the board. */
@@ -94,7 +94,7 @@ public class Model extends Observable {
         setChanged();
     }
 
-    /** Tilt the board toward SIDE. Return true iff this changes the board.
+    /** Tilt the board toward SIDE. Return true if this changes the board.
      *
      * 1. If two Tile objects are adjacent in the direction of motion and have
      *    the same value, they are merged into one Tile of twice the original
@@ -137,7 +137,18 @@ public class Model extends Observable {
      *  Empty spaces are stored as null.
      * */
     public static boolean emptySpaceExists(Board b) {
-        // TODO: Fill in this function.
+        int boardSize = b.size();
+
+        for (int i = 0; i < boardSize; i++) {
+            for (int j = 0; j < boardSize; j++) {
+                Tile currentTile = b.tile(i, j);
+
+                if (currentTile == null) {
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
 
@@ -147,7 +158,22 @@ public class Model extends Observable {
      * given a Tile object t, we get its value with t.value().
      */
     public static boolean maxTileExists(Board b) {
-        // TODO: Fill in this function.
+        int boardSize = b.size();
+
+        for (int i = 0; i < boardSize; i++) {
+            for (int j = 0; j <boardSize; j++) {
+                Tile currentTile = b.tile(i, j);
+
+                if (currentTile == null) {
+                    continue;
+                }
+
+                if (currentTile.value() == MAX_PIECE) {
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
 
@@ -158,10 +184,89 @@ public class Model extends Observable {
      * 2. There are two adjacent tiles with the same value.
      */
     public static boolean atLeastOneMoveExists(Board b) {
-        // TODO: Fill in this function.
+       if (emptySpaceExists(b)) {
+           return true;
+       }
+
+       else if (sameAdjacentTiles(b)) {
+           return true;
+       }
+
+       else {
+           return false;
+       }
+    }
+
+    /** Returns true if there are two adjacent tiles with the same value. */
+    public static boolean sameAdjacentTiles(Board b) {
+        int boardSize = b.size();
+
+        for (int i = 0; i < boardSize; i++) {
+            for (int j = 0; j < boardSize; j++) {
+                Tile currentTile = b.tile(i, j);
+
+                if (checkSameTiles(b, currentTile)) {
+                    return true;
+                }
+            }
+        }
+
         return false;
     }
 
+    /** Checks the adjacent tiles for the same value. */
+    public static boolean checkSameTiles(Board b, Tile t) {
+        int boardSize = b.size();
+
+        int tCol = t.col();
+        int tRow = t.row();
+
+        // checks for adjacent tiles within the same column.
+        for (int i = -1; i < 2; i++) {
+            if (validIndex(tCol, i, boardSize)) {
+                int tileValue = t.value();
+
+                int comparingValue = b.tile(tCol + i, tRow).value();
+
+                if (tileValue == comparingValue) {
+                    return true;
+                }
+            }
+        }
+
+        // checks for adjacent tiles within the same row.
+        for (int j = -1; j < 2; j++) {
+            if (validIndex(tRow, j, boardSize)) {
+                int tileValue = t.value();
+
+                int comparingValue = b.tile(tCol, tRow + j).value();
+
+                if (tileValue == comparingValue) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /** Returns true if the index is between 0 <= index < boardSize. */
+    public static boolean validIndex(int tIndex, int k, int boardSize) {
+        int index = tIndex + k;
+
+        if (index == tIndex) {
+            return false;
+        }
+
+        else if (0 <= index && index < boardSize) {
+            return true;
+        }
+
+        else {
+            return false;
+        }
+
+    }
 
     @Override
      /** Returns the model as a string, used for debugging. */
