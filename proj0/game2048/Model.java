@@ -1,5 +1,6 @@
 package game2048;
 
+import javax.swing.border.Border;
 import java.util.Formatter;
 import java.util.Observable;
 
@@ -107,28 +108,125 @@ public class Model extends Observable {
      *    and the trailing tile does not.
      * */
     public boolean tilt(Side side) {
+        board.setViewingPerspective(side);
         boolean changed;
         changed = false;
 
         // TODO: Modify this.board (and perhaps this.score) to account
-        // for the tilt to the Side SIDE. If the board changed, set the
-        // changed local variable to true.
-        int boardSize = board.size();
-        for (int c = 0; c < boardSize; c++) {
-            for (int r = 0; r < boardSize; r++) {
-                Tile t = board.tile(c, r);
-                if (t != null) {
-                    board.move(c, 3, t);
-                    changed = true;
-                }
+        for (int c = 3; c >= 0; c--) {
+            if (changed) {
+                moveColumn(c);
+            }
+            else {
+                changed = moveColumn(c);
             }
         }
+        board.setViewingPerspective(side.NORTH);
 
         checkGameOver();
         if (changed) {
             setChanged();
         }
         return changed;
+    }
+
+    /** Moves the tiles in a given column. Returns true if a move occurs. */
+    public boolean moveColumn(int c) {
+        boolean colChanged;
+
+        colChanged = checkMerge(c);
+
+        return colChanged;
+    }
+
+    /** Checks if a merge of two tiles of the same value can occur. Returns true if a merge occurs. */
+    public boolean checkMerge(int c) {
+        boolean moveOccured = false;
+
+        int totalTiles = findTotalTiles(c);
+
+        if (totalTiles == 0) {
+            return moveOccured;
+        }
+
+        Tile[] tilesInSameCol = new Tile[totalTiles];
+        makeArrayofTiles(tilesInSameCol, totalTiles, c);
+        int totalIndex = totalTiles - 1;
+
+        // if the column only has one tile with a value, it is moved to the edge in the direction of the tilt.
+        if (totalTiles == 1) {
+            Tile onlyOneTile = tilesInSameCol[0];
+            board.move(c, 3, onlyOneTile);
+            moveOccured = true;
+            return moveOccured;
+        }
+
+        // moves the tiles with values, if a successful merge occurs, score is updated.
+        for (int i = totalIndex; i >= 0; i--) {
+            if (i == 0) {
+                break;
+            }
+
+            Tile topTile = tilesInSameCol[i];
+            Tile bottomTile = tilesInSameCol[i - 1];
+
+
+            boolean merge = board.move(topTile.col(), topTile.row(), bottomTile);
+            if (merge) {
+                score += (topTile.value()) * 2;
+            }
+            moveOccured = true;
+        }
+        clearSpacesBetweenTiles(c);
+        return moveOccured;
+    }
+
+    /** Returns the total number of tiles in a given column. */
+    public int findTotalTiles(int c) {
+        int totalTiles = 0;
+
+        for (int k = 0; k < board.size(); k++) {
+            if (board.tile(c, k) == null) {
+                continue;
+            }
+            else {
+                totalTiles += 1;
+            }
+        }
+        return totalTiles;
+    }
+
+    /** Add tiles with values in a given column to an array, tilesInSameCol. */
+    public void makeArrayofTiles(Tile[] tilesInSameCol, int totalTiles, int c) {
+        int totalIndex = totalTiles - 1;
+        int cnt = 0;
+        for (int r = 3; r >= 0; r--) {
+            if (board.tile(c, r) == null) {
+                continue;
+            }
+
+            tilesInSameCol[totalIndex - cnt] = board.tile(c, r);
+            cnt++;
+        }
+    }
+
+    /** Removes the spaces between tiles for a given column. */
+    public void clearSpacesBetweenTiles(int c) {
+        for (int r = 3; r >= 0; r--) {
+            Tile currentTile = board.tile(c, r);
+
+            if (currentTile == null) {
+                continue;
+            }
+
+            else if ((r + 1) >= board.size()) {
+                continue;
+            }
+
+            if ((board.tile(c, r + 1)) == null) {
+                board.move(c, r + 1, currentTile);
+            }
+        }
     }
 
     /** Checks if the game is over and sets the gameOver variable
