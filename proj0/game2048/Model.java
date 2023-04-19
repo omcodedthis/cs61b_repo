@@ -170,10 +170,16 @@ public class Model extends Observable {
             Tile topTile = tilesInSameCol[i];
             Tile bottomTile = tilesInSameCol[i - 1];
 
+            if (topTile.value() == bottomTile.value()) {
+                boolean merge = board.move(c, topTile.row(), bottomTile);
 
-            boolean merge = board.move(topTile.col(), topTile.row(), bottomTile);
-            if (merge) {
-                score += (topTile.value()) * 2;
+                if (merge) {
+                    score += (topTile.value()) * 2;
+                }
+            }
+
+            else {
+                board.move(c, topTile.row() - 1, bottomTile);
             }
             moveOccured = true;
         }
