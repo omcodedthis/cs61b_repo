@@ -109,10 +109,10 @@ public class Model extends Observable {
      * */
     public boolean tilt(Side side) {
         board.setViewingPerspective(side);
+
         boolean changed;
         changed = false;
 
-        // TODO: Modify this.board (and perhaps this.score) to account
         for (int c = 3; c >= 0; c--) {
             if (changed) {
                 moveColumn(c);
@@ -134,17 +134,18 @@ public class Model extends Observable {
     public boolean moveColumn(int c) {
         boolean colChanged;
 
-        colChanged = checkMerge(c);
+        colChanged = checkForMerges(c);
 
         return colChanged;
     }
 
     /** Checks if a merge of two tiles of the same value can occur. Returns true if a merge occurs. */
-    public boolean checkMerge(int c) {
+    public boolean checkForMerges(int c) {
         boolean moveOccured = false;
 
         int totalTiles = findTotalTiles(c);
 
+        // if no tiles with values in a given row, false is returned as no move can occur.
         if (totalTiles == 0) {
             return moveOccured;
         }
@@ -156,34 +157,18 @@ public class Model extends Observable {
         // if the column only has one tile with a value, it is moved to the edge in the direction of the tilt.
         if (totalTiles == 1) {
             Tile onlyOneTile = tilesInSameCol[0];
+
             board.move(c, 3, onlyOneTile);
             moveOccured = true;
+
             return moveOccured;
         }
 
-        // moves the tiles with values, if a successful merge occurs, score is updated.
-        for (int i = totalIndex; i >= 0; i--) {
-            if (i == 0) {
-                break;
-            }
+        // moves the tiles in the tilesInSameCol array.
+        moveOccured = merge(tilesInSameCol, totalIndex, c);
 
-            Tile topTile = tilesInSameCol[i];
-            Tile bottomTile = tilesInSameCol[i - 1];
-
-            if (topTile.value() == bottomTile.value()) {
-                boolean merge = board.move(c, topTile.row(), bottomTile);
-
-                if (merge) {
-                    score += (topTile.value()) * 2;
-                }
-            }
-
-            else {
-                board.move(c, topTile.row() - 1, bottomTile);
-            }
-            moveOccured = true;
-        }
         clearSpacesBetweenTiles(c);
+
         return moveOccured;
     }
 
@@ -216,6 +201,40 @@ public class Model extends Observable {
         }
     }
 
+    /** Merges the tiles in the tilesInSameCol array. Returns true if a move occurs. */
+    public boolean merge(Tile[] tilesInSameCol, int totalIndex, int c) {
+        boolean moveOccured = false;
+
+        for (int i = totalIndex; i >= 0; i--) {
+            if (i == 0) {
+                break;
+            }
+
+            Tile topTile = tilesInSameCol[i];
+            Tile bottomTile = tilesInSameCol[i - 1];
+
+            // if the two tiles have the same value, bottomTile is moved to the same location as the topTile.
+            if (topTile.value() == bottomTile.value()) {
+                boolean tilesMerge = board.move(c, topTile.row(), bottomTile);
+                moveOccured = true;
+
+                if (tilesMerge) {
+                    score += (topTile.value()) * 2;
+                }
+            }
+
+            // else the bottomTile is moved just below the topTile, preventing a merge from occurring.
+            else {
+                int newRow = validIndex(topTile.row());
+                board.move(c, newRow, bottomTile);
+                moveOccured = true;
+            }
+        }
+
+        return moveOccured;
+    }
+
+
     /** Removes the spaces between tiles for a given column. */
     public void clearSpacesBetweenTiles(int c) {
         for (int r = 3; r >= 0; r--) {
@@ -225,14 +244,39 @@ public class Model extends Observable {
                 continue;
             }
 
-            else if ((r + 1) >= board.size()) {
+            int newRow = currentTile.row() + 1;
+
+            if (newRow >= board.size()) {
                 continue;
             }
 
-            if ((board.tile(c, r + 1)) == null) {
-                board.move(c, r + 1, currentTile);
+            while (board.tile(c, newRow) == null) {
+                newRow++;
+
+                if (newRow >= board.size()) {
+                    break;
+                }
+            }
+
+            boolean tilesMerge = board.move(c, newRow - 1, currentTile);
+            if (tilesMerge) {
+                score += currentTile.value() * 2;
             }
         }
+    }
+
+    /** Ensures that the tile's new index is valid. */
+    public int validIndex(int index) {
+        int newIndex = index - 1;
+
+        if (newIndex >= board.size()) {
+            newIndex = board.size() - 1;
+        }
+
+        else if (newIndex < 0) {
+            newIndex = 0;
+        }
+        return newIndex;
     }
 
     /** Checks if the game is over and sets the gameOver variable
