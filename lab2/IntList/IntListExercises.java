@@ -60,6 +60,11 @@ public class IntListExercises {
         return firstDigit == lastDigit;
     }
 
+    /** Adds a boolean parameter & calls squarePrimesActual, which actually squares the primes in the IntList. */
+    public static boolean squarePrimes(IntList lst) {
+        return squarePrimesActual(lst, false);
+    }
+
     /**
      * Part C: (Buggy) mutative method that squares each prime
      * element of the IntList.
@@ -67,7 +72,7 @@ public class IntListExercises {
      * @param lst IntList from Lecture
      * @return True if there was an update to the list
      */
-    public static boolean squarePrimes(IntList lst, boolean changed) {
+    public static boolean squarePrimesActual(IntList lst, boolean changed) {
         // Base Case: we have reached the end of the list
         if (lst == null) {
             return changed;
@@ -78,8 +83,9 @@ public class IntListExercises {
         if (currElemIsPrime) {
             lst.first *= lst.first;
             changed = true;
+
         }
 
-        return squarePrimes(lst.rest, changed);
+        return squarePrimesActual(lst.rest, changed);
     }
 }
