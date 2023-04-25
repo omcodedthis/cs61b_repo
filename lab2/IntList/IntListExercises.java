@@ -1,5 +1,4 @@
 package IntList;
-
 public class IntListExercises {
 
     /**
@@ -14,6 +13,9 @@ public class IntListExercises {
             head.first += c;
             head = head.rest;
         }
+
+        // adds the constant to the final element in the list, preventing an OBOE.
+        head.first += c;
     }
 
     /**
@@ -51,7 +53,7 @@ public class IntListExercises {
      */
     public static boolean firstDigitEqualsLastDigit(int x) {
         int lastDigit = x % 10;
-        while (x > 10) {
+        while (x >= 10) {
             x = x / 10;
         }
         int firstDigit = x % 10;
@@ -65,18 +67,36 @@ public class IntListExercises {
      * @param lst IntList from Lecture
      * @return True if there was an update to the list
      */
-    public static boolean squarePrimes(IntList lst) {
+    public static boolean squarePrimes(IntList lst, boolean changed) {
         // Base Case: we have reached the end of the list
         if (lst == null) {
-            return false;
+            return changed;
         }
 
         boolean currElemIsPrime = Primes.isPrime(lst.first);
 
         if (currElemIsPrime) {
             lst.first *= lst.first;
+            changed = true;
         }
 
-        return currElemIsPrime || squarePrimes(lst.rest);
+        return squarePrimes(lst.rest, changed);
+    }
+
+    /** Returns true if the original list had prime numbers. */
+    public static boolean checkForPrimes(IntList lst) {
+        IntList ptr = lst;
+
+        while (ptr != null) {
+            int currentNumber = (int)Math.sqrt(ptr.first);
+
+            if (Primes.isPrime(currentNumber)) {
+                return true;
+            }
+
+            ptr = ptr.rest;
+        }
+
+        return false;
     }
 }
