@@ -82,21 +82,4 @@ public class IntListExercises {
 
         return squarePrimes(lst.rest, changed);
     }
-
-    /** Returns true if the original list had prime numbers. */
-    public static boolean checkForPrimes(IntList lst) {
-        IntList ptr = lst;
-
-        while (ptr != null) {
-            int currentNumber = (int)Math.sqrt(ptr.first);
-
-            if (Primes.isPrime(currentNumber)) {
-                return true;
-            }
-
-            ptr = ptr.rest;
-        }
-
-        return false;
-    }
 }
