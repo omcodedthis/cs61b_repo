@@ -26,49 +26,6 @@ public class ArrayDeque<T> {
        
     }
 
-    private int checkSentinels(boolean isFirst) {
-        if (isFirst) {
-           return changeFirstSentinel();
-        }
-        else {
-          return changeLastSentinel();
-        }
-    }
-
-    private int changeFirstSentinel() {
-        int newIndex = nextFirst - 1;
-
-        if (newIndex < 0) {
-            newIndex = nextLast + 1;
-            return newIndex;
-        }
-
-        else if (items[newIndex] == null) {
-            return newIndex;
-        }
-
-        else {
-            return nextLast + 1;
-        }
-    }
-
-    private int changeLastSentinel() {
-        int newIndex = nextLast + 1;
-
-        if (newIndex >= items.length) {
-            newIndex = nextFirst - 1;
-            return newIndex;
-        }
-
-        else if (items[newIndex] == null) {
-            return newIndex;
-        }
-
-        else {
-            return nextFirst - 1;
-        }
-    }
-
 
     /** Adds an item of type T to the front of the deque. */
     public void addFirst(T item) {
@@ -76,7 +33,7 @@ public class ArrayDeque<T> {
             resize(size * 2);
         }
         items[nextFirst] = item;
-        nextFirst = checkSentinels(true);
+        nextFirst -= 1;
         size += 1;
     }
 
@@ -86,7 +43,7 @@ public class ArrayDeque<T> {
             resize(size * 2);
         }
         items[nextLast] = item;
-        nextLast = checkSentinels(false);
+        nextLast += 1;
         size += 1;
     }
 
@@ -131,7 +88,7 @@ public class ArrayDeque<T> {
             T first = items[nextFirst + 1];
             items[nextFirst + 1] = null;
 
-            nextFirst = checkSentinels(true);
+            nextFirst += 1;
             size -= 1;
             return first;
         }
@@ -151,7 +108,7 @@ public class ArrayDeque<T> {
             T last = items[nextLast - 1];
             items[nextLast - 1] = null;
 
-            nextLast = checkSentinels(false);
+            nextLast -= 1;
             size -= 1;
             return last;
         }
