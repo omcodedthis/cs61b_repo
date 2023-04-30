@@ -22,7 +22,7 @@ public class ArrayDeque<T> {
     }
 
     /** Finds the appropriate index for nextFirst & nextLast. */
-    public void moveNext(boolean isFirst) {
+    private void moveNext(boolean isFirst) {
         if (isFirst) {
             moveFirst();
         }
@@ -32,10 +32,10 @@ public class ArrayDeque<T> {
     }
 
     /** Finds the appropriate location for nextFirst. */
-    public void moveFirst() {
+    private void moveFirst() {
         int tmp = nextFirst - 1;
         for (int i = tmp; i >= 0; i--) {
-            if (items[tmp] == null) {
+            if ((items[tmp] == null) && (tmp != nextLast)) {
                 nextFirst = tmp;
                 return;
             }
@@ -51,10 +51,10 @@ public class ArrayDeque<T> {
     }
 
     /** Finds the appropriate location for nextLast. */
-    public void moveLast() {
+    private void moveLast() {
         int tmp = nextLast + 1;
         for (int i = tmp; i < items.length; i++) {
-            if (items[tmp] == null) {
+            if ((items[tmp] == null) && (tmp != nextFirst)) {
                 nextLast = tmp;
                 return;
             }
@@ -66,6 +66,21 @@ public class ArrayDeque<T> {
                 nextLast = tmp;
                 return;
             }
+        }
+    }
+
+    /** Returns the valid index for the first & last item in the items array. */
+    private int validIndex(int index) {
+        if (index >= items.length) {
+            return 0;
+        }
+
+        else if (index < 0) {
+            return items.length - 1;
+        }
+
+        else {
+            return index;
         }
     }
 
@@ -113,10 +128,11 @@ public class ArrayDeque<T> {
     /** Removes and returns the item at the front of the deque. If no such item exists, returns null. */
     public T removeFirst() {
         if (size > 0) {
-            T first = items[nextFirst + 1];
-            items[nextFirst + 1] = null;
+            int index = validIndex(nextFirst + 1);
+            T first = items[index];
+            items[index] = null;
 
-            moveNext(true);
+            nextFirst = index;
             size -= 1;
             return first;
         }
@@ -129,10 +145,11 @@ public class ArrayDeque<T> {
     /** Removes and returns the item at the back of the deque. If no such item exists, returns null. */
     public T removeLast() {
         if (size > 0) {
-            T last = items[nextLast - 1];
-            items[nextLast - 1] = null;
+            int index =  validIndex(nextLast - 1);
+            T last = items[index];
+            items[index] = null;
 
-            moveNext(false);
+            nextLast = index;
             size -= 1;
             return last;
         }
