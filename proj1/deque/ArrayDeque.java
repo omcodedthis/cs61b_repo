@@ -21,6 +21,37 @@ public class ArrayDeque<T> {
         size = 1;
     }
 
+    /** Decreases the size of the items array by creating a new array with size of capacity & copying the elements. */
+    private void reduce(int capacity) {
+        T[] newArray =  (T[])new Object[capacity];
+        System.arraycopy(items, validIndex(nextFirst + 1), newArray, 1, size);
+        nextFirst = 0;
+        nextLast = size - 2;
+        items = newArray;
+    }
+
+
+    /** Increases the size of the items array by creating a new array with size of capacity & copying the elements. */
+    private void expand(int capacity) {
+        T[] newArray =  (T[])new Object[capacity];
+        for (int i = 0; i < nextLast; i++) {
+            newArray[i] = items[i];
+        }
+
+        int index = items.length - 1;
+        for (int j = capacity - 1; j > nextFirst; j--) {
+            if (items[index] == null) {
+                nextFirst = j;
+                break;
+            }
+            newArray[j] = items[index];
+            index--;
+        }
+
+
+        items = newArray;
+    }
+
     /** Finds the appropriate index for nextFirst & nextLast. */
     private void moveNext(boolean isFirst) {
         if (isFirst) {
@@ -86,6 +117,9 @@ public class ArrayDeque<T> {
 
     /** Adds an item of type T to the front of the deque. */
     public void addFirst(T item) {
+        if (size == items.length - 3) {
+            expand(size * 2);
+        }
         items[nextFirst] = item;
         moveNext(true);
         size += 1;
@@ -93,6 +127,9 @@ public class ArrayDeque<T> {
 
     /** Adds an item of type T to the back of the deque. */
     public void addLast(T item) {
+        if (size == items.length - 3) {
+            expand(size * 2);
+        }
         items[nextLast] = item;
         moveNext(false);
         size += 1;
@@ -128,6 +165,11 @@ public class ArrayDeque<T> {
     /** Removes and returns the item at the front of the deque. If no such item exists, returns null. */
     public T removeFirst() {
         if (size > 0) {
+            float R = ((float)(size) / (float)(items.length));
+            if ((R < 0.25) && (size > 8)) {
+                reduce(items.length / 2);
+            }
+
             int index = validIndex(nextFirst + 1);
             T first = items[index];
             items[index] = null;
@@ -145,6 +187,10 @@ public class ArrayDeque<T> {
     /** Removes and returns the item at the back of the deque. If no such item exists, returns null. */
     public T removeLast() {
         if (size > 0) {
+            float R = ((float)(size) / (float)(items.length));
+            if ((R < 0.25) && (size > 8)) {
+                reduce(size / 2);
+            }
             int index =  validIndex(nextLast - 1);
             T last = items[index];
             items[index] = null;
