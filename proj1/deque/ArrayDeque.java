@@ -223,10 +223,10 @@ public class ArrayDeque<T> {
      * front, 1 is the next item, and so forth. If no such
      * item exists, returns null.  */
     public T get(int index) {
-        int itemIndex = nextFirst + index;
+        int itemIndex = nextFirst + index + 1;
 
         if (itemIndex >= items.length) {
-            itemIndex = itemIndex - (items.length - 1);
+            itemIndex = itemIndex - (items.length);
             return items[itemIndex];
         }
 

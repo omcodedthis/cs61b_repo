@@ -105,7 +105,7 @@ public class ArrayDequeTest {
         for (int i = 0; i < 10; i++) {
             lld1.addLast(i);
         }
-        assertEquals(0, (int)lld1.get(0));
+        assertEquals(3, (int)lld1.get(3));
         for (double i = 0; i < 10; i++) {
             assertEquals("Should have the same value", i, (double) lld1.removeFirst(), 0.0);
         }
