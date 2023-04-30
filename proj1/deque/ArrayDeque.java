@@ -21,29 +21,65 @@ public class ArrayDeque<T> {
         size = 1;
     }
 
-    /** Resizes the array to the desired capacity. */
-    private void resize(int capacity) {
-       
+    /** Finds the appropriate index for nextFirst & nextLast. */
+    public void moveNext(boolean isFirst) {
+        if (isFirst) {
+            moveFirst();
+        }
+        else {
+            moveLast();
+        }
     }
 
+    /** Finds the appropriate location for nextFirst. */
+    public void moveFirst() {
+        int tmp = nextFirst - 1;
+        for (int i = tmp; i >= 0; i--) {
+            if (items[tmp] == null) {
+                nextFirst = tmp;
+                return;
+            }
+        }
+
+        for (int j = items.length - 1; j > nextLast; j--) {
+            tmp = j;
+            if (items[tmp] == null) {
+                nextFirst = tmp;
+                return;
+            }
+        }
+    }
+
+    /** Finds the appropriate location for nextLast. */
+    public void moveLast() {
+        int tmp = nextLast + 1;
+        for (int i = tmp; i < items.length; i++) {
+            if (items[tmp] == null) {
+                nextLast = tmp;
+                return;
+            }
+        }
+
+        for (int j = 0; j < nextFirst; j++) {
+            tmp = j;
+            if (items[tmp] == null) {
+                nextLast = tmp;
+                return;
+            }
+        }
+    }
 
     /** Adds an item of type T to the front of the deque. */
     public void addFirst(T item) {
-        if (size == (items.length - 2)) {
-            resize(size * 2);
-        }
         items[nextFirst] = item;
-        nextFirst -= 1;
+        moveNext(true);
         size += 1;
     }
 
     /** Adds an item of type T to the back of the deque. */
     public void addLast(T item) {
-        if (size == (items.length - 2)) {
-            resize(size * 2);
-        }
         items[nextLast] = item;
-        nextLast += 1;
+        moveNext(false);
         size += 1;
     }
 
@@ -76,41 +112,33 @@ public class ArrayDeque<T> {
 
     /** Removes and returns the item at the front of the deque. If no such item exists, returns null. */
     public T removeFirst() {
-        if (size == 0) {
-            return null;
-        }
-
-        else {
-            float R = ((float) (size) / (float) (items.length));
-            if (R < 0.25) {
-                resize(items.length / 2);
-            }
+        if (size > 0) {
             T first = items[nextFirst + 1];
             items[nextFirst + 1] = null;
 
-            nextFirst += 1;
+            moveNext(true);
             size -= 1;
             return first;
+        }
+
+        else {
+            return null;
         }
     }
 
     /** Removes and returns the item at the back of the deque. If no such item exists, returns null. */
     public T removeLast() {
-        if (size == 0) {
-            return null;
-        }
-
-        else {
-            float R = ((float) (size) / (float) (items.length));
-            if (R < 0.25) {
-                resize(items.length / 2);
-            }
+        if (size > 0) {
             T last = items[nextLast - 1];
             items[nextLast - 1] = null;
 
-            nextLast -= 1;
+            moveNext(false);
             size -= 1;
             return last;
+        }
+
+        else {
+            return null;
         }
     }
 
