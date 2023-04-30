@@ -156,8 +156,22 @@ public class ArrayDeque<T> {
      * separated by a space. Once all the items have been
      * printed, print out a new line. */
     public void printDeque() {
-        for (int i = 0; i < size; i++) {
+        int sizeCount = size;
+        for (int i = nextFirst + 1; i < items.length; i++) {
+            if (size <= 0) {
+                break;
+            }
+
             System.out.print(items[i] + " ");
+            size--;
+        }
+
+        for (int i = 0; i < nextLast; i++) {
+            if (size <= 0) {
+                break;
+            }
+            System.out.print(items[i] + " ");
+            size--;
         }
         System.out.println();
     }
@@ -209,7 +223,16 @@ public class ArrayDeque<T> {
      * front, 1 is the next item, and so forth. If no such
      * item exists, returns null.  */
     public T get(int index) {
-        return items[index];
+        int itemIndex = nextFirst + index;
+
+        if (itemIndex >= items.length) {
+            itemIndex = itemIndex - (items.length - 1);
+            return items[itemIndex];
+        }
+
+        else {
+            return items[itemIndex];
+        }
     }
 
 }
