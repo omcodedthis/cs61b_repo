@@ -158,20 +158,20 @@ public class ArrayDeque<T> {
     public void printDeque() {
         int sizeCount = size;
         for (int i = nextFirst + 1; i < items.length; i++) {
-            if (size <= 0) {
+            if (sizeCount <= 0) {
                 break;
             }
 
             System.out.print(items[i] + " ");
-            size--;
+            sizeCount--;
         }
 
         for (int i = 0; i < nextLast; i++) {
-            if (size <= 0) {
+            if (sizeCount <= 0) {
                 break;
             }
             System.out.print(items[i] + " ");
-            size--;
+            sizeCount--;
         }
         System.out.println();
     }
