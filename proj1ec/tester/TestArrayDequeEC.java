@@ -11,7 +11,7 @@ public class TestArrayDequeEC {
             ArrayDequeSolution<Integer> solArray = new ArrayDequeSolution<>();
             StudentArrayDeque<Integer> testArray = new StudentArrayDeque<>();
 
-            for (int i = 0; i < 1000; i++) {
+            for (int i = 0; i < 100; i++) {
                 solArray.addLast(i);
                 testArray.addLast(i);
             }
@@ -34,11 +34,15 @@ public class TestArrayDequeEC {
                     solArray.addFirst(33);
                     testArray.addFirst(33);
 
+                    solArray.addFirst(16);
+                    testArray.addFirst(16);
+
                     Integer expected = solArray.get(cnt);
                     Integer actual = testArray.get(cnt);
 
+                    System.out.println("addFirst(44)");
 
-                    assertEquals("\n addFirst(44)\n addFirst(33)\n addFirst(44)", expected, actual);
+                    assertEquals("addFirst(44)", expected, actual);
 
 
                 }
@@ -52,11 +56,15 @@ public class TestArrayDequeEC {
                     solArray.addFirst(33);
                     testArray.addFirst(33);
 
+                    solArray.addFirst(16);
+                    testArray.addFirst(16);
+
                     Integer expected = solArray.get(cnt);
                     Integer actual = testArray.get(cnt);
 
+                    System.out.println("addLast(44)");
 
-                    assertEquals("\n addFirst(44)\n addFirst(33)\n addLast(44)", expected, actual);
+                    assertEquals("addLast(44)", expected, actual);
 
                 }
                 else if (test == 2) {
@@ -68,10 +76,15 @@ public class TestArrayDequeEC {
                     solArray.addFirst(33);
                     testArray.addFirst(33);
 
+                    solArray.addFirst(16);
+                    testArray.addFirst(16);
+
                     Integer expected = solArray.removeFirst();
                     Integer actual = testArray.removeFirst();
 
-                    assertEquals("\n addFirst(44)\n addFirst(33)\n removeFirst()", expected, actual);
+                    System.out.println("removeFirst()");
+
+                    assertEquals("removeFirst()", expected, actual);
                 }
 
                 else if (test == 3) {
@@ -83,10 +96,15 @@ public class TestArrayDequeEC {
                     solArray.addFirst(33);
                     testArray.addFirst(33);
 
+                    solArray.addFirst(16);
+                    testArray.addFirst(16);
+
                     Integer expected = solArray.removeLast();
                     Integer actual = testArray.removeLast();
 
-                    assertEquals("\n addFirst(44)\n addFirst(33)\n removeLast()", expected, actual);
+                    System.out.println("removeLast()");
+
+                    assertEquals("removeLast()", expected, actual);
                 }
             }
     }
