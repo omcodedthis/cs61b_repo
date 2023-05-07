@@ -26,7 +26,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
     /** Decreases the size of the items array by creating a new array with size of capacity & copying the elements. */
     private void reduce(int capacity) {
         T[] newArray =  (T[]) new Object[capacity];
-        System.arraycopy(items, validIndex(nextFirst + 1), newArray, 1, size);
+        System.arraycopy(items, validIndex(nextFirst + 1), newArray, 0, size);
         nextFirst = 0;
         nextLast = size - 2;
         items = newArray;
@@ -35,22 +35,43 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
 
     /** Increases the size of the items array by creating a new array with size of capacity & copying the elements. */
     private void expand(int capacity) {
+        int cnt = 0;
+        boolean add = false;
+        int oboe = 1;
+        int lastAddedIndex = 0;
+
         T[] newArray =  (T[]) new Object[capacity];
-        for (int i = 0; i < nextLast; i++) {
-            newArray[i] = items[i];
-        }
 
-        int index = items.length - 1;
-        for (int j = capacity - 1; j > nextFirst; j--) {
-            if (items[index] == null) {
-                nextFirst = j;
-                break;
+        for (int i = nextFirst + 1; i < items.length; i++) {
+            if (items[i] == null) {
+                continue;
             }
-            newArray[j] = items[index];
-            index--;
+            newArray[cnt] = items[i];
+            lastAddedIndex = cnt;
+            cnt++;
+            add = true;
         }
 
+        if (cnt != size) {
+            for (int j = 0; j < nextLast; j++) {
+                if (cnt == 0 && add) {
+                    break;
+                }
+                if (!add) {
+                    oboe = 0;
+                    lastAddedIndex = 0;
+                }
+                newArray[lastAddedIndex + j + oboe] = items[j];
+                lastAddedIndex = lastAddedIndex + j;
+            }
+        }
 
+        if (add) {
+            lastAddedIndex++;
+        }
+
+        nextFirst = newArray.length - 1;
+        nextLast = lastAddedIndex + 1;
         items = newArray;
     }
 

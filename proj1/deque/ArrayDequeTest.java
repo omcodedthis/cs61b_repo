@@ -49,21 +49,32 @@ public class ArrayDequeTest {
 
     @Test
     /* Tests removing from an empty deque */
-    public void removeEmptyTest() {
+    public void MultipleAdds() {
         ArrayDeque<Integer> lld1 = new ArrayDeque<>();
         lld1.addFirst(3);
 
-        lld1.removeLast();
-        lld1.removeFirst();
-        lld1.removeLast();
-        lld1.removeFirst();
+        lld1.addLast(0);
+        lld1.removeFirst();    
+        lld1.addFirst(2);
+        lld1.removeFirst();   
+        lld1.addFirst(4);
+        lld1.get(0);      
+        lld1.removeLast();     
+        lld1.addLast(7);
+        lld1.get(0);      
+        lld1.addLast(9);
+        lld1.removeFirst();    
+        lld1.removeLast();    
+        lld1.addLast(12);
+        lld1.addFirst(13);
+        lld1.addFirst(14);
+        lld1.removeLast();   
+        lld1.addFirst(16);
+        lld1.addLast(17);
+        lld1.addFirst(18);
+        lld1.addFirst(19);
 
-        int size = lld1.size();
-        String errorMsg = "  Bad size returned when removing from empty deque.\n";
-        errorMsg += "  student size() returned " + size + "\n";
-        errorMsg += "  actual size() returned 0\n";
-
-        assertEquals(errorMsg, 0, size);
+        assertEquals((double) lld1.get(2), 16.0, 0.0);
     }
 
     @Test
@@ -103,8 +114,8 @@ public class ArrayDequeTest {
             lld1.addLast(i);
         }
         assertEquals(3, (int)lld1.get(3));
-        for (double i = 0; i < 10; i++) {
-            assertEquals("Should have the same value", i, (double) lld1.removeFirst(), 0.0);
+        for (double j = 0; j < 10; j++) {
+            assertEquals("Should have the same value", j, (double) lld1.removeFirst(), 0.0);
         }
     }
 }

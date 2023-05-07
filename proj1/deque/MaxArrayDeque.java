@@ -11,7 +11,7 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> {
     }
 
     /** Returns the maximum element in the deque as governed by
-     * the previously given Comparator. If the MaxArrayDeque is
+     * the previously given Comparator. If the lld1 is
      * empty, simply return null. */
     public T max() {
         if (this.size() == 0) {
@@ -31,7 +31,7 @@ public class MaxArrayDeque<T> extends ArrayDeque<T> {
     }
 
     /** Returns the maximum element in the deque as governed by
-     * the parameter Comparator c. If the MaxArrayDeque is empty,
+     * the parameter Comparator c. If the lld1 is empty,
      * simply return null. */
     public T max(Comparator<T> c) {
         if (this.size() == 0) {
