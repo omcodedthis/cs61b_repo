@@ -100,7 +100,7 @@ public class LinkedListDequeTest {
     /* Add large number of elements to deque; check if order is correct. */
     public void bigLLDequeTest() {
 
-        ArrayDeque<Integer> lld1 = new ArrayDeque<Integer>();
+        LinkedListDeque<Integer> lld1 = new LinkedListDeque<>();
         for (int i = 0; i < 1000000; i++) {
             lld1.addLast(i);
         }

@@ -1,6 +1,8 @@
 package deque;
 
-public class LinkedListDeque<T> {
+import java.util.Iterator;
+
+public class LinkedListDeque<T> implements Iterable<T>, Deque<T>{
     /** nested class for a single node. */
     private static class Node<T> {
         T item;
@@ -49,17 +51,6 @@ public class LinkedListDeque<T> {
         sentinel.prev = tmp;
 
         size += 1;
-    }
-
-    /** Returns true if deque is empty, false otherwise. */
-    public boolean isEmpty() {
-        if (size == 0) {
-            return true;
-        }
-
-        else {
-            return false;
-        }
     }
 
     /** Returns the number of items in the deque. */
@@ -146,4 +137,59 @@ public class LinkedListDeque<T> {
 
     }
 
+    /** Returns whether the parameter o is equal to the Deque.
+     *  o is considered equal if it is a Deque and if it contains
+     *  the same contents (as goverened by the generic T’s equals
+     *  method) in the same order. */
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        else if (o instanceof LinkedListDeque otherList) {
+            if (this.size != otherList.size) {
+                return false;
+            }
+
+            for (int i = 0; i < this.size; i++) {
+                T expected = this.get(i);
+                T actual = (T) otherList.get(i);
+                boolean equal = expected.equals(actual);
+
+                if (!equal) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        else {
+            return false;
+        }
+    }
+
+    /** Returns an iterator by instantiating the LinkedListIterator class. */
+    @Override
+    public Iterator<T> iterator() {
+        return new LinkedListDequeIterator();
+    }
+
+    private class LinkedListDequeIterator implements Iterator<T> {
+        private int wizPos;
+        LinkedListDequeIterator() {
+            wizPos = 0;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return wizPos < size;
+        }
+
+        @Override
+        public T next() {
+            T returnItem = get(wizPos);
+            wizPos++;
+            return returnItem;
+        }
+    }
 }
