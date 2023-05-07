@@ -233,10 +233,13 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
         }
 
         ArrayDeque<T> otherList = (ArrayDeque<T>) o;
+        if (this.size != otherList.size()) {
+            return false;
+        }
 
         for (int i = 0; i < this.size; i++) {
             T expected = this.get(i);
-            T actual = (T) otherList.get(i);
+            T actual = otherList.get(i);
             boolean equals = expected.equals(actual);
 
             if (!equals) {
