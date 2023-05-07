@@ -2,7 +2,7 @@ package deque;
 
 import java.util.Iterator;
 
-public class LinkedListDeque<T> implements Iterable<T>, Deque<T>{
+public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
     /** nested class for a single node. */
     private static class Node<T> {
         T item;
@@ -10,25 +10,25 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T>{
         Node next;
 
         Node(T i, Node p, Node n) {
-           item = i;
-           prev = p;
-           next = n;
+            item = i;
+            prev = p;
+            next = n;
         }
     }
 
     /** variables that keep track of the sentinel node & current size of the LinkedListDeque. */
-    public Node<T> sentinel;
+    private Node<T> sentinel;
     private int size;
 
     /** constructor to either just instantiate the LinkedListDeque or instantiate the LinkedListDeque with an item. */
     public LinkedListDeque() {
-        sentinel = new Node<>(null, null,null);
+        sentinel = new Node<>(null, null, null);
         sentinel.prev = sentinel;
         sentinel.next = sentinel;
         size = 0;
     }
 
-    public LinkedListDeque(T x){
+    public LinkedListDeque(T x) {
         sentinel = new Node<>(null, sentinel, sentinel);
         sentinel.next = new Node<>(x, sentinel, sentinel);
         sentinel.prev = sentinel.next;
@@ -83,9 +83,7 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T>{
             size -= 1;
 
             return first.item;
-        }
-
-        else {
+        } else {
             return null;
         }
     }
@@ -101,9 +99,7 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T>{
             size -= 1;
 
             return last.item;
-        }
-
-        else {
+        } else {
             return null;
         }
     }
@@ -144,9 +140,7 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T>{
     public boolean equals(Object o) {
         if (this == o) {
             return true;
-        }
-
-        else if (o instanceof LinkedListDeque otherList) {
+        } else if (o instanceof LinkedListDeque otherList) {
             if (this.size != otherList.size) {
                 return false;
             }
@@ -161,9 +155,7 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T>{
                 }
             }
             return true;
-        }
-
-        else {
+        } else {
             return false;
         }
     }
