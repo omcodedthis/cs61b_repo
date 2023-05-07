@@ -27,8 +27,8 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
     private void reduce(int capacity) {
         T[] newArray =  (T[]) new Object[capacity];
         System.arraycopy(items, validIndex(nextFirst + 1), newArray, 0, size);
-        nextFirst = 0;
-        nextLast = size - 2;
+        nextFirst = newArray.length - 1;
+        nextLast = size;
         items = newArray;
     }
 
@@ -61,17 +61,21 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
                     oboe = 0;
                     lastAddedIndex = 0;
                 }
+                if (j == 2) {
+                    oboe = 0;
+                }
                 newArray[lastAddedIndex + j + oboe] = items[j];
-                lastAddedIndex = lastAddedIndex + j;
+                lastAddedIndex = cnt + j - 1;
             }
         }
 
-        if (add) {
-            lastAddedIndex++;
+        int k = 0;
+        while (newArray[k] != null) {
+            k++;
         }
 
         nextFirst = newArray.length - 1;
-        nextLast = lastAddedIndex + 1;
+        nextLast = k;
         items = newArray;
     }
 
