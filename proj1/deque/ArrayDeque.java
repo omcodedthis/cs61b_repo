@@ -6,9 +6,9 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
     private T[] items;
     private int size;
 
-    private int nextFirst = 4;
+    private int nextFirst = 7;
 
-    private int nextLast = 5;
+    private int nextLast = 0;
 
     /** constructor to either just instantiate the LinkedListDeque or instantiate the LinkedListDeque with an item. */
     public ArrayDeque() {
