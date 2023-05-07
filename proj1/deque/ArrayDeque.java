@@ -220,6 +220,38 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
      * the same contents (as goverened by the generic T’s
      * equals method) in the same order. */
     public boolean equals(Object o) {
+        if (o == null) {
+            return false;
+        }
+
+        if (this == o) {
+            return true;
+        }
+
+        if (this.getClass() != o.getClass()) {
+            return false;
+        }
+
+        ArrayDeque<T> otherList = (ArrayDeque<T>) o;
+
+        for (int i = 0; i < this.size; i++) {
+            T expected = this.get(i);
+            T actual = (T) otherList.get(i);
+            boolean equals = expected.equals(actual);
+
+            if (!equals) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /* An updated approach for the equals method. However,
+    the sp21 autograder does not support "instanceof" as
+    it was a preview feature then. Both approaches have
+    been tested and both work as intended.
+
+    public boolean equals(Object o) {
         if (this == o) {
             return true;
         } else if (o instanceof ArrayDeque otherList) {
@@ -240,7 +272,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
         } else {
             return false;
         }
-    }
+    } */
 
     /** Returns an iterator by instantiating the LinkedListIterator class. */
     @Override
