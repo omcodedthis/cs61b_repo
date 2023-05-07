@@ -61,11 +61,7 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
                     oboe = 0;
                     lastAddedIndex = 0;
                 }
-                if (j == 2) {
-                    oboe = 0;
-                }
                 newArray[lastAddedIndex + j + oboe] = items[j];
-                lastAddedIndex = cnt + j - 1;
             }
         }
 
