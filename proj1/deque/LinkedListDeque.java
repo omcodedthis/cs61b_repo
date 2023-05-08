@@ -16,23 +16,18 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
         }
     }
 
-    /** variables that keep track of the sentinel node & current size of the LinkedListDeque. */
+    /** variables that keep track of the sentinel node
+     * & current size of the LinkedListDeque. */
     private Node<T> sentinel;
     private int size;
 
-    /** constructor to either just instantiate the LinkedListDeque or instantiate the LinkedListDeque with an item. */
+    /** constructor to either just instantiate the
+     * LinkedListDeque or instantiate the LinkedListDeque with an item. */
     public LinkedListDeque() {
         sentinel = new Node<>(null, null, null);
         sentinel.prev = sentinel;
         sentinel.next = sentinel;
         size = 0;
-    }
-
-    public LinkedListDeque(T x) {
-        sentinel = new Node<>(null, sentinel, sentinel);
-        sentinel.next = new Node<>(x, sentinel, sentinel);
-        sentinel.prev = sentinel.next;
-        size = 1;
     }
 
     /** Adds an item of type T to the front of the deque. */
@@ -72,7 +67,8 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
         System.out.println();
     }
 
-    /** Removes and returns the item at the front of the deque. If no such item exists, returns null. */
+    /** Removes and returns the item at the front of
+     * the deque. If no such item exists, returns null. */
     public T removeFirst() {
         if (size > 0) {
             Node<T> first = sentinel.next;
@@ -88,7 +84,8 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
         }
     }
 
-    /** Removes and returns the item at the back of the deque. If no such item exists, returns null. */
+    /** Removes and returns the item at the back of the
+     *  deque. If no such item exists, returns null. */
     public T removeLast() {
         if (size > 0) {
             Node<T> last = sentinel.prev;
@@ -142,17 +139,11 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
             return false;
         }
 
-
-
         if (this == o) {
             return true;
         }
 
-        if (this.getClass() != o.getClass()) {
-            return false;
-        }
-
-        LinkedListDeque<T> otherList = (LinkedListDeque<T>) o;
+        Deque otherList = (Deque) o;
         if (this.size != otherList.size()) {
             return false;
         }

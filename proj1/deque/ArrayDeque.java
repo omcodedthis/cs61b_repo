@@ -10,20 +10,15 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
 
     private int nextLast = 0;
 
-    /** constructor to either just instantiate the LinkedListDeque or instantiate the LinkedListDeque with an item. */
+    /** constructor to either just instantiate the LinkedListDeque
+     * or instantiate the LinkedListDeque with an item. */
     public ArrayDeque() {
         items = (T[]) new Object[8];
         size = 0;
     }
 
-    public ArrayDeque(T x) {
-        items = (T[]) new Object[8];
-        items[nextFirst] = x;
-        nextFirst -= 1;
-        size = 1;
-    }
-
-    /** Decreases the size of the items array by creating a new array with size of capacity & copying the elements. */
+    /** Decreases the size of the items array by creating a new
+     * array with size of capacity & copying the elements. */
     private void reduce(int capacity) {
         T[] newArray =  (T[]) new Object[capacity];
         System.arraycopy(items, validIndex(nextFirst + 1), newArray, 0, size);
@@ -33,7 +28,8 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
     }
 
 
-    /** Increases the size of the items array by creating a new array with size of capacity & copying the elements. */
+    /** Increases the size of the items array by creating a new
+     * array with size of capacity & copying the elements. */
     private void expand(int capacity) {
         int cnt = 0;
         boolean add = false;
@@ -183,7 +179,8 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
         System.out.println();
     }
 
-    /** Removes and returns the item at the front of the deque. If no such item exists, returns null. */
+    /** Removes and returns the item at the front of the
+     *  deque. If no such item exists, returns null. */
     public T removeFirst() {
         if (size > 0) {
             float R = ((float) (size) / (float) (items.length));
@@ -203,7 +200,8 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
         }
     }
 
-    /** Removes and returns the item at the back of the deque. If no such item exists, returns null. */
+    /** Removes and returns the item at the back of the
+     * deque. If no such item exists, returns null. */
     public T removeLast() {
         if (size > 0) {
             float R = ((float) (size) / (float) (items.length));
@@ -249,18 +247,14 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
             return true;
         }
 
-        if (this.getClass() != o.getClass()) {
-            return false;
-        }
-
-        ArrayDeque<T> otherList = (ArrayDeque<T>) o;
+        Deque otherList = (Deque) o;
         if (this.size != otherList.size()) {
             return false;
         }
 
         for (int i = 0; i < this.size; i++) {
             T expected = this.get(i);
-            T actual = otherList.get(i);
+            T actual = (T) otherList.get(i);
             boolean equals = expected.equals(actual);
 
             if (!equals) {

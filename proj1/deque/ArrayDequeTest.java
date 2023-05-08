@@ -49,29 +49,24 @@ public class ArrayDequeTest {
 
     @Test
     /* Tests removing from an empty deque */
-    public void MultipleAdds() {
+    public void equalArrays() {
         ArrayDeque<Integer> lld1 = new ArrayDeque<>();
+        LinkedListDeque<Integer> lld2 = new LinkedListDeque<>();
         lld1.addLast(0);
-        lld1.get(0);
-        lld1.addFirst(2);
-        lld1.get(0);
-        lld1.removeFirst();
-        lld1.get(0);
-        lld1.get(0);
-        lld1.addFirst(7);
-        lld1.addLast(8);
-        lld1.addFirst(9);
-        lld1.addFirst(10);
-        lld1.get(2);
-        lld1.addFirst(12);
-        lld1.get(4);
-        lld1.addFirst(14);
-        lld1.addFirst(15);
-        lld1.removeFirst();
-        lld1.removeFirst();
-        
+        lld2.addLast(0);
 
-        assertEquals((double) lld1.removeLast(), 8.0, 0.0);
+        lld1.addLast(1);
+        lld2.addLast(1);
+
+        lld1.addLast(20);
+        lld2.addLast(20);
+
+        lld1.addLast(30);
+        lld2.addLast(30);
+
+        boolean outcome = lld2.equals(lld1);
+
+        assertTrue(outcome);
     }
 
     @Test
