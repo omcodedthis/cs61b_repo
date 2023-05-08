@@ -1,6 +1,8 @@
 package deque;
 
+import java.util.ArrayDeque;
 import java.util.Iterator;
+import java.util.List;
 
 public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
     /** nested class for a single node. */
@@ -141,6 +143,12 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
 
         if (this == o) {
             return true;
+        }
+
+        Class listClass = o.getClass();
+
+        if (listClass == List.class) {
+            return false;
         }
 
         Deque otherList = (Deque) o;

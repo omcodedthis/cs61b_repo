@@ -64,7 +64,7 @@ public class ArrayDequeTest {
         lld1.addLast(30);
         lld2.addLast(30);
 
-        boolean outcome = lld2.equals(lld1);
+        boolean outcome = lld1.equals(lld2);
 
         assertTrue(outcome);
     }

@@ -1,6 +1,7 @@
 package deque;
 
 import java.util.Iterator;
+import java.util.List;
 
 public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
     private T[] items;
@@ -245,6 +246,12 @@ public class ArrayDeque<T> implements Iterable<T>, Deque<T> {
 
         if (this == o) {
             return true;
+        }
+
+        Class listClass = o.getClass();
+
+        if (listClass == List.class) {
+            return false;
         }
 
         Deque otherList = (Deque) o;
