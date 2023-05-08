@@ -1,8 +1,6 @@
 package deque;
 
-import java.util.ArrayDeque;
 import java.util.Iterator;
-import java.util.List;
 
 public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
     /** nested class for a single node. */
@@ -137,35 +135,34 @@ public class LinkedListDeque<T> implements Iterable<T>, Deque<T> {
      *  the same contents (as goverened by the generic T’s equals
      *  method) in the same order. */
     public boolean equals(Object o) {
-        if (o == null) {
-            return false;
-        }
-
-        if (this == o) {
-            return true;
-        }
-
-        Class listClass = o.getClass();
-
-        if (listClass == List.class) {
-            return false;
-        }
-
-        Deque otherList = (Deque) o;
-        if (this.size != otherList.size()) {
-            return false;
-        }
-
-        for (int i = 0; i < this.size; i++) {
-            T expected = this.get(i);
-            T actual = (T) otherList.get(i);
-            boolean equals = expected.equals(actual);
-
-            if (!equals) {
+        try {
+            if (o == null) {
                 return false;
             }
+
+            if (this == o) {
+                return true;
+            }
+
+            Deque otherList = (Deque) o;
+
+            if (this.size != otherList.size()) {
+                return false;
+            }
+
+            for (int i = 0; i < this.size; i++) {
+                T expected = this.get(i);
+                T actual = (T) otherList.get(i);
+                boolean equals = expected.equals(actual);
+
+                if (!equals) {
+                    return false;
+                }
+            }
+            return true;
+        } catch (ClassCastException e) {
+            return false;
         }
-        return true;
     }
 
     /* An updated approach for the equals method. However,
