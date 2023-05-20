@@ -1,6 +1,7 @@
 package capers;
 
-import java.io.File;
+import java.io.*;
+
 import static capers.Utils.*;
 
 /** A repository for Capers 
@@ -18,8 +19,8 @@ public class CapersRepository {
     static final File CWD = new File(System.getProperty("user.dir"));
 
     /** Main metadata folder. */
-    static final File CAPERS_FOLDER = null; // TODO Hint: look at the `join`
-                                            //      function in Utils
+    static final File CAPERS_FOLDER = Utils.join(CWD,"capers", "story.txt");
+
 
     /**
      * Does required filesystem operations to allow for persistence.
@@ -31,7 +32,12 @@ public class CapersRepository {
      *    - story -- file containing the current story
      */
     public static void setupPersistence() {
-        // TODO
+        try {
+            Dog.DOG_FOLDER.mkdir();
+            CAPERS_FOLDER.createNewFile();
+        } catch (IOException e) {
+            System.out.println("An error occured when setting up the filesystem.");
+        }
     }
 
     /**
@@ -40,7 +46,22 @@ public class CapersRepository {
      * @param text String of the text to be appended to the story
      */
     public static void writeStory(String text) {
-        // TODO
+        try {
+            FileWriter writer = new FileWriter(CAPERS_FOLDER, true);
+            writer.write(text);
+            writer.close();
+
+            FileReader reader = new FileReader(CAPERS_FOLDER);
+            int ch;
+
+            while ((ch = reader.read()) != -1) {
+                System.out.print((char) ch);
+            }
+            reader.close();
+
+        } catch (IOException e) {
+            System.out.println("An error occured when setting up the filesystem.");
+        }
     }
 
     /**
