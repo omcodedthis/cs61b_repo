@@ -39,7 +39,7 @@ public class Dog implements Serializable {
      * @return Dog read from file
      */
     public static Dog fromFile(String name) {
-        File savedDog = Utils.join(DOG_FOLDER + name);
+        File savedDog = Utils.join(DOG_FOLDER, name);
         if (savedDog.exists()) {
             Dog dogContents = readObject(savedDog, Dog.class);
             return dogContents;
@@ -52,6 +52,7 @@ public class Dog implements Serializable {
      */
     public void haveBirthday() {
         age += 1;
+        this.saveDog();
         System.out.println(toString());
         System.out.println("Happy birthday! Woof! Woof!");
     }
