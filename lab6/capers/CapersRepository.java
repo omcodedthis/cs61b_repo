@@ -43,26 +43,25 @@ public class CapersRepository {
      * Appends the first non-command argument in args
      * to a file called `story` in the .capers directory.
      * @param text String of the text to be appended to the story
-     *             try {
-     *             text = text + "\n";
-     *             FileWriter writer = new FileWriter(CAPERS_FOLDER, true);
-     *             writer.write(text);
-     *             writer.close();
-     *
-     *             FileReader reader = new FileReader(CAPERS_FOLDER);
-     *
-     *             int ch;
-     *             while ((ch = reader.read()) != -1) {
-     *                 System.out.print((char) ch);
-     *             }
-     *             reader.close();
-     *
-     *         } catch (IOException e) {
-     *             return;
-     *         }
      */
     public static void writeStory(String text) {
-        System.out.print("hello world");
+        try {
+            text = text + "\n";
+            FileWriter writer = new FileWriter(CAPERS_FOLDER, true);
+            writer.write(text);
+            writer.close();
+
+            FileReader reader = new FileReader(CAPERS_FOLDER);
+
+            int ch;
+            while ((ch = reader.read()) != -1) {
+                System.out.print((char) ch);
+            }
+            reader.close();
+
+        } catch (IOException e) {
+            return;
+        }
     }
 
     /**
