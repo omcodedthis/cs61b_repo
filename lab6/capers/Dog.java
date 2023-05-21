@@ -68,7 +68,7 @@ public class Dog implements Serializable {
 
             writeObject(dogFile, this);
         } catch (IOException e) {
-            System.out.println("An error occured when writing " + this.name + " to a file.");
+            return;
         }
 
     }
