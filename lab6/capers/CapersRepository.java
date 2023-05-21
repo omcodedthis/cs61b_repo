@@ -35,7 +35,7 @@ public class CapersRepository {
             Dog.DOG_FOLDER.mkdir();
             CAPERS_FOLDER.createNewFile();
         } catch (IOException e) {
-            System.out.println("An error occured when setting up the filesystem.");
+            return;
         }
     }
 
@@ -60,7 +60,7 @@ public class CapersRepository {
             reader.close();
 
         } catch (IOException e) {
-            System.out.println("An error occured when setting up the filesystem.");
+            return;
         }
     }
 

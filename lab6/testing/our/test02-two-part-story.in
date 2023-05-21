@@ -1,8 +1,8 @@
 # Two uses of the `story` command
-> java capers.Main story "Hello"
+> story "Hello"
 Hello
 <<<
-> java capers.Main story "World"
+> story "World"
 Hello
 World
 <<<
