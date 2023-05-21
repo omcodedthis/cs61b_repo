@@ -40,7 +40,6 @@ check:
 
 # 'make clean' will clean up stuff you can reconstruct.
 clean:
-	$(RM) *~
 	$(RMAKE) -C $(PACKAGE) clean
 	$(RMAKE) -C testing clean
 

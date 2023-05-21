@@ -1,4 +1,4 @@
 # A single use of the `story` command
-> story "hello world"
+> java capers.Main story "hello world"
 hello world
 <<<
