@@ -4,7 +4,7 @@ package bstmap;
 import java.util.Iterator;
 import java.util.Set;
 
-public class BSTMap<K extends Comparable, V> implements Map61B<K, V>, Iterable<K> {
+public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>, Iterable<K> {
 
     private class BSTNode<K, V> {
         K key;
@@ -28,7 +28,7 @@ public class BSTMap<K extends Comparable, V> implements Map61B<K, V>, Iterable<K
 
     private int size;
 
-    BSTNode root;
+    private BSTNode root;
 
     public BSTMap() {
         size = 0;
@@ -50,8 +50,8 @@ public class BSTMap<K extends Comparable, V> implements Map61B<K, V>, Iterable<K
         return containsKeyActual(ptr, key);
     }
 
-
-    public boolean containsKeyActual(BSTNode ptr, K key) {
+    /* Actually does the work, taking a pointer that initially points to root. */
+    private boolean containsKeyActual(BSTNode ptr, K key) {
         if (ptr == null) {
             return false;
         }
@@ -82,7 +82,7 @@ public class BSTMap<K extends Comparable, V> implements Map61B<K, V>, Iterable<K
         return getActual(ptr, key);
     }
 
-
+    /* Actually does the work, taking a pointer that initially points to root. */
     private V getActual(BSTNode ptr, K key) {
         if (ptr == null) {
             return null;
@@ -124,6 +124,7 @@ public class BSTMap<K extends Comparable, V> implements Map61B<K, V>, Iterable<K
     }
 
 
+    /* Actually does the work, taking a pointer that initially points to root. */
     private BSTNode putActual(BSTNode ptr, K key, V value) {
         if (ptr == null) {
             size++;
@@ -171,4 +172,9 @@ public class BSTMap<K extends Comparable, V> implements Map61B<K, V>, Iterable<K
     public Iterator<K> iterator() {
         throw new UnsupportedOperationException("Not required to be implemented for Lab 7.");
     }
+
+    public void printInOrder() {
+        throw new UnsupportedOperationException("Not required to be implemented for Lab 7.");
+    }
+
 }
