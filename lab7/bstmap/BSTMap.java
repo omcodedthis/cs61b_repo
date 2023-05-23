@@ -60,7 +60,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>, Iterabl
             return true;
         }
 
-        int compareResult = key.compareTo(ptr.key);
+        int compareResult = key.compareTo((K) ptr.key);
 
         if (compareResult < 0) {
             return containsKeyActual(ptr.left, key);
@@ -92,7 +92,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>, Iterabl
             return (V) ptr.value;
         }
 
-        int compareResult = key.compareTo(ptr.key);
+        int compareResult = key.compareTo((K) ptr.key);
 
         if (compareResult < 0) {
             return (V) getActual(ptr.left, key);
@@ -131,7 +131,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>, Iterabl
             return new BSTNode(key, value);
         }
 
-        int compareResult = key.compareTo(ptr.key);
+        int compareResult = key.compareTo((K) ptr.key);
 
         if (compareResult < 0) {
             ptr.left = putActual(ptr.left, key, value);
