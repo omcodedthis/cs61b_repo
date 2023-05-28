@@ -111,7 +111,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
     /** Uses geometric resizing to resize the hash table. */
     private void resize() {
         Collection<Node>[] temp = new Collection[numOfBuckets * resizeFactor];
-        System.arraycopy(buckets,0, temp, 0, numOfBuckets);
+        System.arraycopy(buckets, 0, temp, 0, numOfBuckets);
 
         buckets = temp;
 
@@ -125,7 +125,8 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         return Math.floorMod(hash, numOfBuckets);
     }
 
-    // TODO: Implement the methods of the Map61B Interface below
+
+    /** Clears all the elements in the hash table. */
     public void clear() {
         buckets = new Collection[numOfBuckets];
         numOfElements = 0;
@@ -153,7 +154,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * Returns the value to which the specified key is mapped, or null if this
      * map contains no mapping for the key.
      */
-    public V get(K key){
+    public V get(K key) {
         int index = getIndex(key);
 
         if (!containsKey(key)) {
