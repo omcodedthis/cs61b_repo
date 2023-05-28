@@ -1,15 +1,14 @@
 package gitlet;
 
 import java.io.File;
+import java.io.IOException;
 import static gitlet.Utils.*;
-
-// TODO: any imports you need here
 
 /** Represents a gitlet repository.
  *  TODO: It's a good idea to give a description here of what else this Class
  *  does at a high level.
  *
- *  @author TODO
+ *  @author om
  */
 public class Repository {
     /**
@@ -24,6 +23,24 @@ public class Repository {
     public static final File CWD = new File(System.getProperty("user.dir"));
     /** The .gitlet directory. */
     public static final File GITLET_DIR = join(CWD, ".gitlet");
+    public int noOfCommits;
+
 
     /* TODO: fill in the rest of this class. */
+    public void setUpPersistence() {
+        try {
+            if (GITLET_DIR.exists()) {
+                throw new GitletException("A Gitlet version-control system already exists in the current directory.");
+            }
+
+            GITLET_DIR.mkdir();
+
+            File commitsFile = Utils.join(GITLET_DIR, "commits");
+            commitsFile.createNewFile();
+
+        } catch (IOException e) {
+            throw new GitletException("An IOException error occured when setting up the repository.");
+        }
+    }
+
 }

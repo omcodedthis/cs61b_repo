@@ -1,7 +1,7 @@
 package gitlet;
 
 /** Driver class for Gitlet, a subset of the Git version-control system.
- *  @author TODO
+ *  @author om
  */
 public class Main {
 
@@ -9,11 +9,15 @@ public class Main {
      *  <COMMAND> <OPERAND1> <OPERAND2> ... 
      */
     public static void main(String[] args) {
-        // TODO: what if args is empty?
+        checkNotEmpty(args);
         String firstArg = args[0];
+        
+        Repository.setUpPersistence();
         switch(firstArg) {
             case "init":
                 // TODO: handle the `init` command
+                validateNumArgs(args, 1);
+
                 break;
 
             case "add":
@@ -53,6 +57,24 @@ public class Main {
 
             case "merge":
                 break;
+        }
+    }
+
+    /** Checks that the number of arguments is not zero, throws
+     * an exception if so. */
+    public static void checkNotEmpty(String[] args) {
+        if (args.length <= 0) {
+            throw new GitletException("Invalid number of arguments.");
+        }
+    }
+
+
+    /** Checks the that the number of arguments entered is
+     * valid (2 arguments, git + command), throws an exception
+     * if it is not. */
+    public static void validateNumArgs(String[] args, int n) {
+        if (args.length > n) {
+            throw new GitletException("Invalid number of arguments.");
         }
     }
 }
