@@ -62,7 +62,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * Returns a new node to be placed in a hash table bucket
      *
      * NOTE: This method is not used as the node is created
-     * via the new operator.
+     * via the "new" operator.
      */
     private Node createNode(K key, V value) {
         return null;
@@ -102,7 +102,7 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
      * @param tableSize the size of the table to create
      *
      * NOTE: This method is not used as the backing array of the
-     * hash table is done via the new operator.
+     * hash table is done via the "new" operator.
      */
     private Collection<Node>[] createTable(int tableSize) {
         return null;
