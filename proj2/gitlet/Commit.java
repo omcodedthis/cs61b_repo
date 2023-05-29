@@ -3,6 +3,7 @@ package gitlet;
 // TODO: any imports you need here
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.ArrayList;
 
@@ -14,7 +15,7 @@ import java.util.ArrayList;
  *  myParent: Stores a reference to the previous commit.
  *  @author om
  */
-public class Commit {
+public class Commit implements Serializable {
     /**
      * TODO: add instance variables here.
      *
@@ -33,9 +34,18 @@ public class Commit {
     private ArrayList<File>[] references;
 
     /** The reference to this Commit's immediate parent. */
-    private Commit myParent;
+    public Commit myParent;
 
-    public Commit() {
+    public Commit(boolean isFirst, String msg, ArrayList<File>[] files) {
+        if (isFirst) {
+            dateAndTime = (new Date(0)).toString();
+            message = "initial commit";
+            references = null;
 
+        } else {
+            dateAndTime = (new Date()).toString();
+            message = msg;
+            references = files;
+        }
     }
 }

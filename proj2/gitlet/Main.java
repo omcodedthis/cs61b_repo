@@ -17,15 +17,16 @@ public class Main {
             case "init":
                 // TODO: handle the `init` command
                 validateNumArgs(args, 1);
-
                 break;
 
             case "add":
                 // TODO: handle the `add [filename]` command
+                validateNumArgs(args, 2);
                 break;
 
             // TODO: FILL THE REST IN
             case "commit":
+                validateNumArgs(args, 2);
                 break;
 
             case "rm":
@@ -44,6 +45,7 @@ public class Main {
                 break;
 
             case "checkout":
+                validateNumArgs(args, 4);
                 break;
 
             case "branch":

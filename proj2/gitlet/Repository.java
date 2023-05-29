@@ -23,20 +23,20 @@ public class Repository {
     public static final File CWD = new File(System.getProperty("user.dir"));
     /** The .gitlet directory. */
     public static final File GITLET_DIR = join(CWD, ".gitlet");
-    public int noOfCommits;
+
 
 
     /* TODO: fill in the rest of this class. */
-    public void setUpPersistence() {
+    public static void setUpPersistence() {
         try {
             if (GITLET_DIR.exists()) {
                 throw new GitletException("A Gitlet version-control system already exists in the current directory.");
             }
 
             GITLET_DIR.mkdir();
-
             File commitsFile = Utils.join(GITLET_DIR, "commits");
             commitsFile.createNewFile();
+
 
         } catch (IOException e) {
             throw new GitletException("An IOException error occured when setting up the repository.");
