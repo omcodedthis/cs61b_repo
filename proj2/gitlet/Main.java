@@ -1,5 +1,6 @@
 package gitlet;
 
+import gitlet.*;
 /** Driver class for Gitlet, a subset of the Git version-control system.
  *  @author om
  */
@@ -11,12 +12,12 @@ public class Main {
     public static void main(String[] args) {
         checkNotEmpty(args);
         String firstArg = args[0];
-        
-        Repository.setUpPersistence();
+
         switch(firstArg) {
             case "init":
                 // TODO: handle the `init` command
                 validateNumArgs(args, 1);
+                Repository.setUpPersistence();
                 break;
 
             case "add":

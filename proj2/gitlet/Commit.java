@@ -31,21 +31,28 @@ public class Commit implements Serializable {
     private String message;
 
     /** The references to the file contents for each commit, stored in an ArrayList. */
-    private ArrayList<File>[] references;
+    public ArrayList<File>[] references;
 
     /** The reference to this Commit's immediate parent. */
-    public Commit myParent;
+    public String myParent;
 
-    public Commit(boolean isFirst, String msg, ArrayList<File>[] files) {
-        if (isFirst) {
+
+    /** Constructor for the Commit object. */
+    public Commit(String msg, String parent) {
+        if (parent == null) {
             dateAndTime = (new Date(0)).toString();
             message = "initial commit";
-            references = null;
-
+            myParent = null;
         } else {
             dateAndTime = (new Date()).toString();
             message = msg;
-            references = files;
+            myParent = parent;
         }
+    }
+
+
+    /** Returns the message of the commit as a string. */
+    public String getMessage() {
+        return message;
     }
 }
