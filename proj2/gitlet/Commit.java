@@ -88,7 +88,6 @@ public class Commit implements Serializable {
                 dateHolder[i-24] = dateActual[i];
             }
 
-
             timestamp = new String(formatter);
             date = new String(dateHolder);
             timestamp = timestamp + " " + date + " +0800";

@@ -112,14 +112,14 @@ public class Repository {
     }
 
 
-    /**  Starting at the current head commit, display information about each
+    /** Starting at the current head commit, display information about each
      *  commit backwards along the commit tree until the initial commit. */
     public static void log() {
         String commitHash = getHead();
-        File CommitFilePointer = Utils.join(GITLET_DIR, "Commits", commitHash);
+        File commitFilePointer = Utils.join(GITLET_DIR, "Commits", commitHash);
 
-        while (CommitFilePointer.exists()) {
-            Commit currentCommit = readObject(CommitFilePointer, Commit.class);
+        while (commitFilePointer.exists()) {
+            Commit currentCommit = readObject(commitFilePointer, Commit.class);
 
             printCommitDetails(currentCommit, commitHash);
 
@@ -128,7 +128,88 @@ public class Repository {
             if (commitHash == null) {
                 break;
             }
-            CommitFilePointer = Utils.join(GITLET_DIR, "Commits", commitHash);
+            commitFilePointer = Utils.join(GITLET_DIR, "Commits", commitHash);
+        }
+    }
+
+
+    /** Checks out files depending on what its arguments are with 3 possible
+     * use cases. */
+    public static void checkout(String[] args) {
+        if (args.length == 3) {
+            checkout1(args[2]);
+        } else if (args.length == 4) {
+            checkout2(args[1], args[3]);
+        } else if (args.length == 2) {
+            checkout3(args[1]);
+        }
+    }
+
+
+    /** Takes the version of the file as it exists in the head commit and
+     * puts it in the working directory, overwriting the version of the file
+     * that’s already there if there is one. */
+    private static void checkout1(String filename) {
+        String headCommitHash = getHead();
+        File commitFilePointer = Utils.join(GITLET_DIR, "Commits", headCommitHash);
+
+        if (commitFilePointer.exists()) {
+            Commit currentCommit = readObject(commitFilePointer, Commit.class);
+
+            for (int i = 0; i < currentCommit.references.length; i++) {
+                Reference currentRef = currentCommit.references[i];
+
+                if ((currentRef.filename).equals(filename)) {
+                    File filePointer = Utils.join(CWD, filename);
+                    overwriteFile(filePointer, currentRef);
+                }
+            }
+        }
+    }
+
+
+    /** Takes the version of the file as it exists in the commit with the
+     *  given id, and puts it in the working directory, overwriting the
+     *  version of the file that’s already there if there is one. */
+    private static void checkout2(String commitID, String filename) {
+        File commitFilePointer = Utils.join(GITLET_DIR, "Commits", commitID);
+
+        if (commitFilePointer.exists()) {
+            Commit currentCommit = readObject(commitFilePointer, Commit.class);
+
+            for (int i = 0; i < currentCommit.references.length; i++) {
+                Reference currentRef = currentCommit.references[i];
+
+                if ((currentRef.filename).equals(filename)) {
+                    File filePointer = Utils.join(CWD, filename);
+                    overwriteFile(filePointer, currentRef);
+                }
+            }
+        }
+    }
+
+
+    /** Takes the version of the file as it exists in the commit with the
+     *  given id, and puts it in the working directory, overwriting the
+     *  version of the file that’s already there if there is one. */
+    private static void checkout3(String branch) {
+        File branchFile = Utils.join(GITLET_DIR, "Commits", branch);
+        String commitID = null;
+
+        if (branchFile.exists()) {
+            commitID = readContentsAsString(branchFile);
+        }
+
+        File commitFilePointer = Utils.join(GITLET_DIR, "Commits", commitID);
+
+        if (commitFilePointer.exists()) {
+            Commit currentCommit = readObject(commitFilePointer, Commit.class);
+
+            for (int i = 0; i < currentCommit.references.length; i++) {
+                Reference currentRef = currentCommit.references[i];
+                File filePointer = Utils.join(CWD, currentRef.filename);
+                overwriteFile(filePointer, currentRef);
+            }
         }
     }
 
@@ -236,5 +317,15 @@ public class Repository {
         System.out.println("Date: " + currentCommit.getDateAndTime());
         System.out.println(currentCommit.getMessage());
         System.out.println();
+    }
+
+
+    /** Overwrites the specified file contents if it exists. */
+    private static void overwriteFile(File filePointer, Reference currentRef) {
+        if (filePointer.exists()) {
+            File blob = Utils.join(GITLET_DIR, "Blobs", currentRef.blob);
+            byte[] contents = readContents(blob);
+            writeContents(filePointer, contents);
+        }
     }
 }
