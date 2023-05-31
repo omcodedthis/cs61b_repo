@@ -329,10 +329,19 @@ public class Repository {
 
     /** Overwrites the specified file contents if it exists. */
     private static void overwriteFile(File filePointer, Reference currentRef) {
-        if (filePointer.exists()) {
-            File blob = Utils.join(GITLET_DIR, "Blobs", currentRef.blob);
-            byte[] contents = readContents(blob);
-            writeContents(filePointer, contents);
+        try {
+            if (filePointer.exists()) {
+                File blob = Utils.join(GITLET_DIR, "Blobs", currentRef.blob);
+                byte[] contents = readContents(blob);
+                writeContents(filePointer, contents);
+            } else {
+                filePointer.createNewFile();
+                File blob = Utils.join(GITLET_DIR, "Blobs", currentRef.blob);
+                byte[] contents = readContents(blob);
+                writeContents(filePointer, contents);
+            }
+        } catch (IOException e) {
+            throw new GitletException("An IOException error occured during checkout.");
         }
     }
 }
