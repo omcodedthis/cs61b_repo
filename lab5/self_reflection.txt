@@ -1,0 +1,131 @@
+<<<<<<< HEAD
+You must answer at least 4 questions, but the remaining ones are optional. The main goal of this file is to get you thinking critically about your own work, but we will also use these self reflections at the end of the semester when we do our internal review of the course.
+
+ArrayDeque:
+
+Q: Give an example of at least one idea from the staff solution that would have made your solution better (if any).
+
+A: The public version of CS 61B Data Structures, Spring 2021 did not provide the staff solution.
+
+Q: What's something you felt proud of in your code, if anything?
+
+A: Successfully implementing the resize algorithm.
+
+Q: What's something that was particularly inelegant in your code, if anything?
+
+A: It would have been better to determine the threshold for the need of geometric resizing in a helper function.
+
+Q: What did you learn by talking to your partner about writing ArrayDeque?
+
+A: I did the public version of CS 61B Data Structures, as such, I was not paired with any peers.
+
+Q: What do you wish you would have known before writing ArrayDeque, if anything?
+
+A: It would have been better to think of resizing as two components, expansion & contraction.
+
+Q: If you wrote ArrayDeque again, what would you do differently, if anything?
+
+A: Focus on the resize algorithm as the last thing to implement. Ensure everything else is implemented properly.
+
+-----
+
+LinkedListDeque:
+
+Q: Give an example of at least one idea from the staff solution that would have made your solution better (if any).
+
+A: The public version of CS 61B Data Structures, Spring 2021 did not provide the staff solution.
+
+Q: What's something you felt proud of in your code, if anything?
+
+A: My Linked List implementation is circular.
+
+Q: What's something that was particularly inelegant in your code, if anything?
+
+A: My equals method. The sp21 autograder did not support "instanceof" as it was a preview feature then.However,
+   I still implemented a method with "instanceof" for practice.
+
+Q: What did you learn by talking to your partner about writing LinkedListDeque?
+
+A: I did the public version of CS 61B Data Structures, as such, I was not paired with any peers.
+
+Q: What do you wish you would have known before writing LinkedListDeque, if anything?
+
+A: Draw out the Linked List on paper to help with visualisation.
+
+Q: If you wrote LinkedListDeque again, what would you do differently, if anything?
+
+A: As iterated above, start with drawing out the Linked List & use this a guide.
+
+-----
+
+Meta:
+
+Q: Did you like this design review process? Anything we should do differently next time?
+
+A: This review process was great.
+=======
+You must answer at least 4 questions, but the remaining ones are optional. The main goal of this file is to get you thinking critically about your own work, but we will also use these self reflections at the end of the semester when we do our internal review of the course.
+
+ArrayDeque:
+
+Q: Give an example of at least one idea from the staff solution that would have made your solution better (if any).
+
+A: The public version of CS 61B Data Structures, Spring 2021 did not provide the staff solution.
+
+Q: What's something you felt proud of in your code, if anything?
+
+A: Successfully implementing the resize algorithm.
+
+Q: What's something that was particularly inelegant in your code, if anything?
+
+A: It would have been better to determine the threshold for the need of geometric resizing in a helper function.
+
+Q: What did you learn by talking to your partner about writing ArrayDeque?
+
+A: I did the public version of CS 61B Data Structures, as such, I was not paired with any peers.
+
+Q: What do you wish you would have known before writing ArrayDeque, if anything?
+
+A: It would have been better to think of resizing as two components, expansion & contraction.
+
+Q: If you wrote ArrayDeque again, what would you do differently, if anything?
+
+A: Focus on the resize algorithm as the last thing to implement. Ensure everything else is implemented properly.
+
+-----
+
+LinkedListDeque:
+
+Q: Give an example of at least one idea from the staff solution that would have made your solution better (if any).
+
+A: The public version of CS 61B Data Structures, Spring 2021 did not provide the staff solution.
+
+Q: What's something you felt proud of in your code, if anything?
+
+A: My Linked List implementation is circular.
+
+Q: What's something that was particularly inelegant in your code, if anything?
+
+A: My equals method. The sp21 autograder did not support "instanceof" as it was a preview feature then.However,
+   I still implemented a method with "instanceof" for practice.
+
+Q: What did you learn by talking to your partner about writing LinkedListDeque?
+
+A: I did the public version of CS 61B Data Structures, as such, I was not paired with any peers.
+
+Q: What do you wish you would have known before writing LinkedListDeque, if anything?
+
+A: Draw out the Linked List on paper to help with visualisation.
+
+Q: If you wrote LinkedListDeque again, what would you do differently, if anything?
+
+A: As iterated above, start with drawing out the Linked List & use this a guide.
+
+-----
+
+Meta:
+
+Q: Did you like this design review process? Anything we should do differently next time?
+
+A: This review process was great.
+>>>>>>> b8c558c17e51bd39e16eb8e271dba2afc68f3581
