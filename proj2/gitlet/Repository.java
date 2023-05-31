@@ -162,6 +162,7 @@ public class Repository {
                 if ((currentRef.filename).equals(filename)) {
                     File filePointer = Utils.join(CWD, filename);
                     overwriteFile(filePointer, currentRef);
+                    return;
                 }
             }
         }
@@ -183,6 +184,7 @@ public class Repository {
                 if ((currentRef.filename).equals(filename)) {
                     File filePointer = Utils.join(CWD, filename);
                     overwriteFile(filePointer, currentRef);
+                    return;
                 }
             }
         }
@@ -207,6 +209,11 @@ public class Repository {
 
             for (int i = 0; i < currentCommit.references.length; i++) {
                 Reference currentRef = currentCommit.references[i];
+
+                if (currentRef == null) {
+                    continue;
+                }
+
                 File filePointer = Utils.join(CWD, currentRef.filename);
                 overwriteFile(filePointer, currentRef);
             }
