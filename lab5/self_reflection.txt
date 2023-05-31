@@ -4,27 +4,27 @@ ArrayDeque:
 
 Q: Give an example of at least one idea from the staff solution that would have made your solution better (if any).
 
-A: 
+A: The public version of CS 61B Data Structures, Spring 2021 did not provide the staff solution.
 
 Q: What's something you felt proud of in your code, if anything?
 
-A:
+A: Successfully implementing the resize algorithm.
 
 Q: What's something that was particularly inelegant in your code, if anything?
 
-A:
+A: It would have been better to determine the threshold for the need of geometric resizing in a helper function.
 
 Q: What did you learn by talking to your partner about writing ArrayDeque?
 
-A:
+A: I did the public version of CS 61B Data Structures, as such, I was not paired with any peers.
 
 Q: What do you wish you would have known before writing ArrayDeque, if anything?
 
-A:
+A: It would have been better to think of resizing as two components, expansion & contraction.
 
 Q: If you wrote ArrayDeque again, what would you do differently, if anything?
 
-A:
+A: Focus on the resize algorithm as the last thing to implement. Ensure everything else is implemented properly.
 
 -----
 
@@ -32,27 +32,28 @@ LinkedListDeque:
 
 Q: Give an example of at least one idea from the staff solution that would have made your solution better (if any).
 
-A: 
+A: The public version of CS 61B Data Structures, Spring 2021 did not provide the staff solution.
 
 Q: What's something you felt proud of in your code, if anything?
 
-A:
+A: My Linked List implementation is circular.
 
 Q: What's something that was particularly inelegant in your code, if anything?
 
-A:
+A: My equals method. The sp21 autograder did not support "instanceof" as it was a preview feature then.However,
+   I still implemented a method with "instanceof" for practice.
 
 Q: What did you learn by talking to your partner about writing LinkedListDeque?
 
-A:
+A: I did the public version of CS 61B Data Structures, as such, I was not paired with any peers.
 
 Q: What do you wish you would have known before writing LinkedListDeque, if anything?
 
-A:
+A: Draw out the Linked List on paper to help with visualisation.
 
 Q: If you wrote LinkedListDeque again, what would you do differently, if anything?
 
-A:
+A: As iterated above, start with drawing out the Linked List & use this a guide.
 
 -----
 
@@ -60,4 +61,4 @@ Meta:
 
 Q: Did you like this design review process? Anything we should do differently next time?
 
-A: 
+A: This review process was great.
