@@ -29,12 +29,15 @@ public class Main {
             // TODO: FILL THE REST IN
             case "commit":
                 validateNumArgs(args, 2);
+                Repository.commit(args[1]);
                 break;
 
             case "rm":
                 break;
 
             case "log":
+                validateNumArgs(args, 1);
+                Repository.log();
                 break;
 
             case "global-log":
@@ -68,7 +71,7 @@ public class Main {
      * an exception if so. */
     public static void checkNotEmpty(String[] args) {
         if (args.length <= 0) {
-            throw new GitletException("Invalid number of arguments.");
+            throw new GitletException("Please enter a command.");
         }
     }
 
@@ -78,7 +81,7 @@ public class Main {
      * if it is not. */
     public static void validateNumArgs(String[] args, int n) {
         if (args.length > n) {
-            throw new GitletException("Invalid number of arguments.");
+            throw new GitletException("Incorrect operands.");
         }
     }
 }

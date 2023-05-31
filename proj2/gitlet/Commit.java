@@ -31,7 +31,7 @@ public class Commit implements Serializable {
     private String message;
 
     /** The references to the file contents for each commit, stored in an ArrayList. */
-    public ArrayList<Reference>[] references;
+    public Reference[] references = new Reference[100];
 
     /** The reference to this Commit's immediate parent. */
     public String myParent;
@@ -48,6 +48,12 @@ public class Commit implements Serializable {
             message = msg;
             myParent = parent;
         }
+    }
+
+
+    /** Returns the message of the commit as a string. */
+    public String getDateAndTime() {
+        return dateAndTime;
     }
 
 

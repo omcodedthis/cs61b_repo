@@ -10,11 +10,11 @@ import java.io.Serializable;
  */
 public class Reference implements Serializable {
     public String filename;
-    public Blob blob;
+    public String blob;
 
 
     /** Constructor for the Reference object. */
-    public Reference(String fn, Blob blb) {
+    public Reference(String fn, String blb) {
         filename = fn;
         blob = blb;
     }
