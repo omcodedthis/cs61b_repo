@@ -3,6 +3,7 @@ package gitlet;
 import jdk.jshell.execution.Util;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Arrays;
@@ -52,13 +53,22 @@ public class Repository {
                     overwriteStaged(stageVer, userFile);
                 } else {
                     stageVer.createNewFile();
-                    byte[] contents = readContents(userFile);
+                    String contents = readContentsAsString(userFile);
                     String hash = sha1(contents);
-                    writeContents(stageVer, hash);
+
+                    FileWriter writer = new FileWriter(stageVer);
+                    writer.write(hash);
+                    writer.close();
+
 
                     File blob = Utils.join(blobDirectory, hash);
                     blob.createNewFile();
                     writeContents(blob, serialize(contents));
+
+                    FileWriter writer2 = new FileWriter(blob);
+                    writer2.write(contents);
+                    writer2.close();
+
                 }
             } else {
                 throw new GitletException("No changes added to the commit.");
@@ -270,18 +280,25 @@ public class Repository {
         File blobDirectory = Utils.join(GITLET_DIR, "Blobs");
 
         String stagehash = readContentsAsString(stageVer);
-        byte[] contents = readContents(userFile);
+        String contents = readContentsAsString(userFile);
         String userhash = sha1(contents);
 
         if (stagehash.equals(userhash)) {
             stageVer.delete();
 
         } else {
-            writeContents(stageVer, userhash);
+
+            FileWriter writer = new FileWriter(stageVer);
+            writer.write(userhash);
+            writer.close();
+
 
             File blob = Utils.join(blobDirectory, userhash);
             blob.createNewFile();
-            writeContents(blob, contents);
+
+            FileWriter writer2 = new FileWriter(blob);
+            writer2.write(contents);
+            writer2.close();
         }
     }
 
@@ -332,16 +349,24 @@ public class Repository {
         try {
             if (filePointer.exists()) {
                 File blob = Utils.join(GITLET_DIR, "Blobs", currentRef.blob);
-                byte[] contents = readContents(blob);
-                writeContents(filePointer, contents);
+                String contents = readContentsAsString(blob);
+
+                FileWriter writer = new FileWriter(filePointer);
+                writer.write(contents);
+                writer.close();
             } else {
                 filePointer.createNewFile();
                 File blob = Utils.join(GITLET_DIR, "Blobs", currentRef.blob);
-                byte[] contents = readContents(blob);
-                writeContents(filePointer, contents);
+                String contents = readContentsAsString(blob);
+
+                FileWriter writer = new FileWriter(filePointer);
+                writer.write(contents);
+                writer.close();
             }
         } catch (IOException e) {
             throw new GitletException("An IOException error occured during checkout.");
         }
     }
 }
+
+// fdsiaflsakfdsa
