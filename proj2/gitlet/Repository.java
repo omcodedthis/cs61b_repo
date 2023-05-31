@@ -2,6 +2,9 @@ package gitlet;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Arrays;
+
 import static gitlet.Utils.*;
 
 /** Represents a gitlet repository.
@@ -35,6 +38,27 @@ public class Repository {
     }
 
 
+    /** Adds a copy of the file as it currently exists to the staging area. */
+    public static void add(String fn) {
+        try {
+            File userFile = Utils.join(CWD, fn);
+            if (userFile.exists()) {
+                File stageVer = Utils.join(GITLET_DIR, "Stage", "Add", fn);
+
+                if (stageVer.exists()) {
+                    overwriteStaged(stageVer, userFile);
+                } else {
+                    stageVer.createNewFile();
+                    byte[] contents = readContents(userFile);
+                    String hash = sha1(contents);
+                    writeContents(stageVer, hash);
+                }
+            }
+        } catch (IOException e) {
+            throw new GitletException("An IOException error occured when adding the file.");
+        }
+    }
+
     /** Creates the required folders to store serialized objects for Gitlet.
      * This system will automatically start with one commit: a commit that
      * contains no files and has the commit message initial commit.  */
@@ -42,10 +66,13 @@ public class Repository {
         try {
             GITLET_DIR.mkdir();
 
-            File stageAddFolder = Utils.join(GITLET_DIR, "Stage", "Add");
+            File stageFolder = Utils.join(GITLET_DIR, "Stage");
+            stageFolder.mkdir();
+
+            File stageAddFolder = Utils.join(stageFolder, "Add");
             stageAddFolder.mkdir();
 
-            File stageRemoveFolder = Utils.join(GITLET_DIR, "Stage", "Remove");
+            File stageRemoveFolder = Utils.join(stageFolder, "Remove");
             stageRemoveFolder.mkdir();
 
             File commitsFolder = Utils.join(GITLET_DIR, "Commits");
@@ -70,6 +97,21 @@ public class Repository {
             writeContents(master, shaHash);
         } catch (IOException e) {
             throw new GitletException("An IOException error occured when setting up the repository.");
+        }
+    }
+
+
+    /** A helper method to add(). It deletes the file in the Stage directory
+     * is the same as the file the user wishes to add. If the contents are
+     * not the same, the contents of the staged file is overwritten. */
+    private static void overwriteStaged(File stageVer, File userFile) {
+        String stagehash = readContentsAsString(stageVer);
+        byte[] contents = readContents(userFile);
+        String userhash = sha1(contents);
+        if (stagehash.equals(userhash)) {
+            stageVer.delete();
+        } else {
+            writeContents(stageVer, userhash);
         }
     }
 }

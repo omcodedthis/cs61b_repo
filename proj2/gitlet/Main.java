@@ -23,6 +23,7 @@ public class Main {
             case "add":
                 // TODO: handle the `add [filename]` command
                 validateNumArgs(args, 2);
+                Repository.add(args[1]);
                 break;
 
             // TODO: FILL THE REST IN

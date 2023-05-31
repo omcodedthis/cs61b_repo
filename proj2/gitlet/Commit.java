@@ -31,7 +31,7 @@ public class Commit implements Serializable {
     private String message;
 
     /** The references to the file contents for each commit, stored in an ArrayList. */
-    public ArrayList<File>[] references;
+    public ArrayList<Reference>[] references;
 
     /** The reference to this Commit's immediate parent. */
     public String myParent;
