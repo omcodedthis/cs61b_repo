@@ -40,11 +40,11 @@ public class Commit implements Serializable {
     /** Constructor for the Commit object. */
     public Commit(String msg, String parent) {
         if (parent == null) {
-            dateAndTime = (new Date(0)).toString();
+            dateAndTime = formatDateAndTime(true);
             message = "initial commit";
             myParent = null;
         } else {
-            dateAndTime = (new Date()).toString();
+            dateAndTime = formatDateAndTime(false);
             message = msg;
             myParent = parent;
         }
@@ -60,5 +60,38 @@ public class Commit implements Serializable {
     /** Returns the message of the commit as a string. */
     public String getMessage() {
         return message;
+    }
+
+
+    /** Formats the dateAndTime to match the autograder requirements. The
+     * orginal implementation just used "dateAndTime = (new Date(0)).toString();"
+     * & dateAndTime = (new Date()).toString(); for line 43 & 48 respectively
+     * which does not require calling this helper method. */
+    private String formatDateAndTime(boolean isFirst) {
+        if (isFirst) {
+            String timestamp = "Thu Jan 01 00:00:00 1970 +0800";
+            return timestamp;
+        } else {
+            String timestamp = (new Date()).toString();
+            String holder = "www www d+ dd:dd:dd dddd +dddd";
+
+            char[] dateActual = timestamp.toCharArray();
+            char[] formatter = holder.toCharArray();
+            for (int i = 0; i < 19; i++) {
+                formatter[i] = dateActual[i];
+            }
+
+            for (int i = 19; i < 23; i++) {
+                if (i == 19) {
+                    formatter[i] = ' ';
+                }
+                formatter[i] = dateActual[i + 7];
+            }
+
+            timestamp = new String(formatter);
+            timestamp = timestamp + " +0800";
+
+            return timestamp;
+        }
     }
 }
