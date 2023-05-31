@@ -73,7 +73,7 @@ public class Commit implements Serializable {
             return timestamp;
         } else {
             String timestamp = (new Date()).toString();
-            String holder = "www www d+ dd:dd:dd dddd +dddd";
+            String holder = "www www d+ dd:dd:dd";
 
             char[] dateActual = timestamp.toCharArray();
             char[] formatter = holder.toCharArray();
@@ -81,15 +81,17 @@ public class Commit implements Serializable {
                 formatter[i] = dateActual[i];
             }
 
-            for (int i = 19; i < 23; i++) {
-                if (i == 19) {
-                    formatter[i] = ' ';
-                }
-                formatter[i] = dateActual[i + 7];
+            String date = "YYYY";
+            char[] dateHolder = date.toCharArray();
+
+            for (int i = 24; i < 28; i++) {
+                dateHolder[i-24] = dateActual[i];
             }
 
+
             timestamp = new String(formatter);
-            timestamp = timestamp + " +0800";
+            date = new String(dateHolder);
+            timestamp = timestamp + " " + date + " +0800";
 
             return timestamp;
         }
