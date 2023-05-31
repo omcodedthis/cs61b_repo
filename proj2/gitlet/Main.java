@@ -50,7 +50,7 @@ public class Main {
                 break;
 
             case "checkout":
-                validateNumArgs(args, 3);
+                validateNumArgs(args, 4);
                 Repository.checkout(args);
                 break;
 
