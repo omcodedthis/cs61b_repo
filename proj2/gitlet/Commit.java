@@ -1,11 +1,7 @@
 package gitlet;
 
-// TODO: any imports you need here
-
-import java.io.File;
 import java.io.Serializable;
 import java.util.Date;
-import java.util.ArrayList;
 
 /** Represents a gitlet commit object.
  *  Commit is class that has 5 instance variables.
@@ -16,14 +12,6 @@ import java.util.ArrayList;
  *  @author om
  */
 public class Commit implements Serializable {
-    /**
-     * TODO: add instance variables here.
-     *
-     * List all instance variables of the Commit class here with a useful
-     * comment above them describing what that variable represents and how that
-     * variable is used. We've provided one example for `message`.
-     */
-
     /** The Date & Time of this Commit. */
     private String dateAndTime;
 

@@ -50,13 +50,10 @@ public class Repository {
                     stageVer.createNewFile();
                     String contents = readContentsAsString(userFile);
                     String hash = sha1(contents);
-
                     writeToFile(stageVer, hash);
-
 
                     File blob = Utils.join(blobDirectory, hash);
                     blob.createNewFile();
-                    writeContents(blob, serialize(contents));
 
                     writeToFile(blob, contents);
 
