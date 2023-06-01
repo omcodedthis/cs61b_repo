@@ -1,13 +1,8 @@
 package gitlet;
 
-import jdk.jshell.execution.Util;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.util.Arrays;
-
 import static gitlet.Utils.*;
 
 /** Represents a gitlet repository.
@@ -56,18 +51,14 @@ public class Repository {
                     String contents = readContentsAsString(userFile);
                     String hash = sha1(contents);
 
-                    FileWriter writer = new FileWriter(stageVer);
-                    writer.write(hash);
-                    writer.close();
+                    writeToFile(stageVer, hash);
 
 
                     File blob = Utils.join(blobDirectory, hash);
                     blob.createNewFile();
                     writeContents(blob, serialize(contents));
 
-                    FileWriter writer2 = new FileWriter(blob);
-                    writer2.write(contents);
-                    writer2.close();
+                    writeToFile(blob, contents);
 
                 }
             } else {
@@ -223,7 +214,6 @@ public class Repository {
                 if (currentRef == null) {
                     continue;
                 }
-
                 File filePointer = Utils.join(CWD, currentRef.filename);
                 overwriteFile(filePointer, currentRef);
             }
@@ -287,18 +277,12 @@ public class Repository {
             stageVer.delete();
 
         } else {
-
-            FileWriter writer = new FileWriter(stageVer);
-            writer.write(userhash);
-            writer.close();
-
+            writeToFile(stageVer, userhash);
 
             File blob = Utils.join(blobDirectory, userhash);
             blob.createNewFile();
 
-            FileWriter writer2 = new FileWriter(blob);
-            writer2.write(contents);
-            writer2.close();
+            writeToFile(blob, contents);
         }
     }
 
@@ -351,22 +335,32 @@ public class Repository {
                 File blob = Utils.join(GITLET_DIR, "Blobs", currentRef.blob);
                 String contents = readContentsAsString(blob);
 
-                FileWriter writer = new FileWriter(filePointer);
-                writer.write(contents);
-                writer.close();
+                writeToFile(filePointer, contents);
             } else {
                 filePointer.createNewFile();
                 File blob = Utils.join(GITLET_DIR, "Blobs", currentRef.blob);
                 String contents = readContentsAsString(blob);
 
-                FileWriter writer = new FileWriter(filePointer);
-                writer.write(contents);
-                writer.close();
+                writeToFile(filePointer, contents);
             }
         } catch (IOException e) {
             throw new GitletException("An IOException error occured during checkout.");
         }
     }
-}
 
-// fdsiaflsakfdsa
+
+    /** The writeContents()/writeObject() provided by CS61B staff in Utils
+     *  did not work as intended as it adds random characters to files
+     *  when writing content to a file (possibly because it was deprecated).
+     *  Hence, this a working helper method I came up with which has the same
+     *  functionality but avoids adding these random characters to the file. */
+    private static void writeToFile(File filePointer, String contents) {
+        try {
+            FileWriter writer = new FileWriter(filePointer);
+            writer.write(contents);
+            writer.close();
+        } catch (IOException e) {
+            throw new GitletException("An IOException error occured when writing content to files.");
+        }
+    }
+}
