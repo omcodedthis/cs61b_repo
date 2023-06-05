@@ -161,6 +161,21 @@ public class Repository {
     }
 
 
+    /** Like log, except displays information about all commits ever made. */
+    public static void glblog() {
+        File commitsFolder = Utils.join(GITLET_DIR, "Commits");
+        File[] commitsDirectory = commitsFolder.listFiles();
+
+        for (int i = 0; i < commitsDirectory.length; i++) {
+            String currentFileName = commitsDirectory[i].getName();
+
+            if (isSHA1(currentFileName)) {
+                Commit currentCommit = readObject(commitsDirectory[i], Commit.class);
+                printCommitDetails(currentCommit, currentFileName);
+            }
+        }
+    }
+
     /** Checks out files depending on what its arguments are with 3 possible
      * use cases. */
     public static void checkout(String[] args) {
@@ -173,6 +188,8 @@ public class Repository {
         }
     }
 
+
+    /* HELPER METHODS */
 
     /** Takes the version of the file as it exists in the head commit and
      * puts it in the working directory, overwriting the version of the file
@@ -400,6 +417,10 @@ public class Repository {
     }
 
 
+    /** Returns true if the given string is a valid SHA-1 hash. */
+    private static boolean isSHA1(String hash) {
+        return hash.matches("^[a-fA-F0-9]{40}$");
+    }
     /** The writeContents()/writeObject() provided by CS61B staff in Utils
      *  did not work as intended as it adds random characters to files
      *  when writing content to a file (possibly because it was deprecated).

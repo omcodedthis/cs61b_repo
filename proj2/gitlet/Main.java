@@ -15,7 +15,6 @@ public class Main {
 
         switch(firstArg) {
             case "init":
-                // TODO: handle the `init` command
                 validateNumArgs(args, 1);
                 Repository.setUpPersistence();
                 break;
@@ -43,6 +42,8 @@ public class Main {
                 break;
 
             case "global-log":
+                validateNumArgs(args, 1);
+                Repository.glblog();
                 break;
 
             case "find":
