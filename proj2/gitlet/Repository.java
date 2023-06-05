@@ -110,6 +110,36 @@ public class Repository {
     }
 
 
+    /**  Unstages the file if it is currently staged for addition. If the file
+     *  is tracked in the current commit, it is staged for removal and removed
+     *  from the working directory if the user has not already done so. */
+    public static void remove(String filename) {
+        File toBeRemovedStaged = Utils.join(GITLET_DIR, "Stage", "Add", filename);
+
+        if (toBeRemovedStaged.exists()) {
+            toBeRemovedStaged.delete();
+        }
+
+        String commitHash = getHead();
+        File commitFilePointer = Utils.join(GITLET_DIR, "Commits", commitHash);
+        if (commitFilePointer.exists()) {
+            Commit currentCommit = readObject(commitFilePointer, Commit.class);
+
+            for (Reference x: currentCommit.references) {
+                if (x == null) {
+                    break;
+                }
+
+                if (filename.equals(x.filename)) {
+                    stageForRemoval(filename, x.blob);
+                    return;
+                }
+            }
+        }
+        throw new GitletException("No reason to remove the file.");
+    }
+
+
     /** Starting at the current head commit, display information about each
      *  commit backwards along the commit tree until the initial commit. */
     public static void log() {
@@ -189,9 +219,11 @@ public class Repository {
     }
 
 
-    /** Takes the version of the file as it exists in the commit with the
-     *  given id, and puts it in the working directory, overwriting the
-     *  version of the file that’s already there if there is one. */
+    /** Takes all files in the commit at the head of the given branch, and
+     * puts them in the working directory, overwriting the versions of the
+     * files that are already there if they exist. Also, at the end of this
+     * command, the given branch will now be considered the current
+     * branch (HEAD). */
     private static void checkout3(String branch) {
         File branchFile = Utils.join(GITLET_DIR, "Commits", branch);
         String commitID = null;
@@ -214,6 +246,9 @@ public class Repository {
                 File filePointer = Utils.join(CWD, currentRef.filename);
                 overwriteFile(filePointer, currentRef);
             }
+
+            File head = Utils.join(GITLET_DIR, "Commits", "HEAD");
+            writeContents(head, commitID);
         }
     }
 
@@ -342,6 +377,25 @@ public class Repository {
             }
         } catch (IOException e) {
             throw new GitletException("An IOException error occured during checkout.");
+        }
+    }
+
+
+    /** File is staged for removal & removed from the working directory. */
+    private static void stageForRemoval(String filename, String blobID) {
+        try {
+            File stageRmDirectory = Utils.join(GITLET_DIR, "Stage", "Remove");
+
+            File stageForRm = Utils.join(stageRmDirectory, filename);
+            stageForRm.createNewFile();
+            writeToFile(stageForRm, blobID);
+
+            File userFile = Utils.join(CWD, filename);
+            if (userFile.exists()) {
+                userFile.delete();
+            }
+        } catch (IOException e) {
+            throw new GitletException("An IOException error occured when staging the file for removal.");
         }
     }
 

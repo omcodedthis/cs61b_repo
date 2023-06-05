@@ -33,6 +33,8 @@ public class Main {
                 break;
 
             case "rm":
+                validateNumArgs(args, 2);
+                Repository.remove(args[1]);
                 break;
 
             case "log":
