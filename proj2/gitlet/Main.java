@@ -47,6 +47,8 @@ public class Main {
                 break;
 
             case "find":
+                validateNumArgs(args, 2);
+                Repository.find(args[1]);
                 break;
 
             case "status":

@@ -176,6 +176,33 @@ public class Repository {
         }
     }
 
+
+    /** Prints out the ids of all commits that have the given commit message,
+     * one per line. */
+    public static void find(String commitMessage) {
+        File commitsFolder = Utils.join(GITLET_DIR, "Commits");
+        File[] commitsDirectory = commitsFolder.listFiles();
+        boolean found = false;
+
+        for (int i = 0; i < commitsDirectory.length; i++) {
+            String currentFileName = commitsDirectory[i].getName();
+
+            if (isSHA1(currentFileName)) {
+                Commit currentCommit = readObject(commitsDirectory[i], Commit.class);
+                boolean outcome = checkCommitMessage(currentFileName, currentCommit, commitMessage);
+
+                if (outcome) {
+                    found = true;
+                }
+            }
+        }
+
+        if (!found) {
+            throw new GitletException("Found no commit with that message.");
+        }
+    }
+
+
     /** Checks out files depending on what its arguments are with 3 possible
      * use cases. */
     public static void checkout(String[] args) {
@@ -421,6 +448,22 @@ public class Repository {
     private static boolean isSHA1(String hash) {
         return hash.matches("^[a-fA-F0-9]{40}$");
     }
+
+
+    /** Prints the Commit ID if commitMessage is the same as the currentCommit's
+     * message. */
+    private static boolean checkCommitMessage(String currentFileName, Commit currentCommit, String commitMessage) {
+        String cMsg = currentCommit.getMessage();
+
+        if (cMsg.equals(commitMessage)) {
+            System.out.println(currentFileName);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
     /** The writeContents()/writeObject() provided by CS61B staff in Utils
      *  did not work as intended as it adds random characters to files
      *  when writing content to a file (possibly because it was deprecated).
