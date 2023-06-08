@@ -52,6 +52,8 @@ public class Main {
                 break;
 
             case "status":
+                validateNumArgs(args, 1);
+                Repository.status();
                 break;
 
             case "checkout":
@@ -60,15 +62,25 @@ public class Main {
                 break;
 
             case "branch":
+                validateNumArgs(args, 2);
+                Repository.branch(args[1]);
                 break;
 
             case "rm-branch":
+                validateNumArgs(args, 2);
+                Repository.removeBranch(args[1]);
                 break;
 
             case "reset":
+                validateNumArgs(args, 2);
+                Repository.reset(args[1]);
                 break;
 
             case "merge":
+                break;
+
+            default:
+                Utils.message("No command with that name exists.");
                 break;
         }
     }
@@ -77,7 +89,7 @@ public class Main {
      * an exception if so. */
     public static void checkNotEmpty(String[] args) {
         if (args.length <= 0) {
-            throw new GitletException("Please enter a command.");
+            Utils.message("Please enter a command.");
         }
     }
 
@@ -87,7 +99,7 @@ public class Main {
      * if it is not. */
     public static void validateNumArgs(String[] args, int n) {
         if (args.length > n) {
-            throw new GitletException("Incorrect operands.");
+            Utils.message("Incorrect operands.");
         }
     }
 }
