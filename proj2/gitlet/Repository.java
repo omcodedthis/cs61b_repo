@@ -111,6 +111,7 @@ public class Repository {
                 for (int j = 0; j < totalFiles; j++) {
                     rmDirectory[j].delete();
                 }
+                clearDeleted();
             } else {
                 throw new GitletException("The directory for tracked files(add) returned null.");
             }
@@ -432,6 +433,19 @@ public class Repository {
     }
 
 
+    /** Clears the ArrayList stored in Deleted_Files. */
+    private static void clearDeleted() {
+        File deletedFiles = Utils.join(GITLET_DIR, "Stage", "Deleted_Files");
+
+        // prevents an "[unchecked] unchecked conversion" warning from occuring during compilation.
+        @SuppressWarnings("unchecked")
+        ArrayList<String> deleted = readObject(deletedFiles, ArrayList.class);
+
+        deleted.clear();
+        writeObject(deletedFiles, deleted);
+    }
+
+
     /** Reads & adds the name of the deleted file to DELETED_FILES. */
     private static void addToDeleted(String filename) {
         File deletedFiles = Utils.join(GITLET_DIR, "Stage", "Deleted_Files");
@@ -443,6 +457,7 @@ public class Repository {
         deleted.add(filename);
         writeObject(deletedFiles, deleted);
     }
+
 
     /** Takes the version of the file as it exists in the head commit and
      * puts it in the working directory, overwriting the version of the file
@@ -548,7 +563,7 @@ public class Repository {
             if (currentRef == null) {
                 continue;
             }
-            
+
             File filePointer = Utils.join(CWD, currentRef.filename);
             overwriteFile(filePointer, currentRef);
         }
