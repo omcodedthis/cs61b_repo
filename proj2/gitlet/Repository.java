@@ -79,7 +79,7 @@ public class Repository {
             File stageRmFolder = Utils.join(GITLET_DIR, "Stage", "Remove");
             File[] rmDirectory = stageRmFolder.listFiles();
 
-            if (msg == null) {
+            if ((msg == null) || (msg.equals(""))) {
                 message("Please enter a commit message.");
                 return;
             }
@@ -109,7 +109,6 @@ public class Repository {
             if (rmDirectory != null) {
                 int totalFiles = rmDirectory.length;
                 for (int j = 0; j < totalFiles; j++) {
-                    addToDeleted(rmDirectory[j].getName());
                     rmDirectory[j].delete();
                 }
             } else {
@@ -458,6 +457,10 @@ public class Repository {
             for (int i = 0; i < currentCommit.references.length; i++) {
                 Reference currentRef = currentCommit.references[i];
 
+                if (currentRef == null) {
+                    break;
+                }
+
                 if ((currentRef.filename).equals(filename)) {
                     File filePointer = Utils.join(CWD, filename);
                     overwriteFile(filePointer, currentRef);
@@ -480,6 +483,10 @@ public class Repository {
 
             for (int i = 0; i < currentCommit.references.length; i++) {
                 Reference currentRef = currentCommit.references[i];
+
+                if (currentRef == null) {
+                    break;
+                }
 
                 if ((currentRef.filename).equals(filename)) {
                     File filePointer = Utils.join(CWD, filename);
@@ -541,6 +548,7 @@ public class Repository {
             if (currentRef == null) {
                 continue;
             }
+            
             File filePointer = Utils.join(CWD, currentRef.filename);
             overwriteFile(filePointer, currentRef);
         }
@@ -571,6 +579,8 @@ public class Repository {
             writeToFile(stageForRm, blobID);
 
             File userFile = Utils.join(CWD, filename);
+
+            addToDeleted(filename);
             if (userFile.exists()) {
                 userFile.delete();
             }
