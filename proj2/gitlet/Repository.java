@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import static gitlet.Utils.*;
 
@@ -296,94 +295,7 @@ public class Repository {
 
 
 
-    /* HELPER METHODS */
-
-
-    /** Creates the required folders to store serialized objects for Gitlet.
-     * This system will automatically start with one commit: a commit that
-     * contains no files and has the commit message initial commit.  */
-    private static void createFolders() {
-        try {
-            GITLET_DIR.mkdir();
-
-            File stageFolder = Utils.join(GITLET_DIR, "Stage");
-            stageFolder.mkdir();
-
-            File stageAddFolder = Utils.join(stageFolder, "Add");
-            stageAddFolder.mkdir();
-
-            File stageRemoveFolder = Utils.join(stageFolder, "Remove");
-            stageRemoveFolder.mkdir();
-
-            File commitsFolder = Utils.join(GITLET_DIR, "Commits");
-            commitsFolder.mkdir();
-
-            File blobsFolder = Utils.join(GITLET_DIR, "Blobs");
-            blobsFolder.mkdir();
-
-            Commit firstCommit = new Commit(null, null);
-            byte[] serializedCommit = serialize(firstCommit);
-            String shaHash = sha1(serializedCommit);
-            File first = Utils.join(commitsFolder, shaHash);
-            first.createNewFile();
-            writeContents(first, serializedCommit);
-
-            File head = Utils.join(commitsFolder, "HEAD");
-            head.createNewFile();
-            writeToFile(head, "master");
-
-            File master = Utils.join(commitsFolder, "master");
-            master.createNewFile();
-            writeContents(master, shaHash);
-
-            ArrayList<String> deleted = new ArrayList<>();
-            File deletedFiles = Utils.join(GITLET_DIR, "Stage", "Deleted_Files");
-            deletedFiles.createNewFile();
-            writeObject(deletedFiles, deleted);
-        } catch (IOException e) {
-            throw new GitletException("An IOException error occured when setting up the repository.");
-        }
-    }
-
-
-    /** A helper method to add(). It deletes the file in the Stage directory
-     * is the same as the file the user wishes to add. If the contents are
-     * not the same, the contents of the staged file is overwritten. */
-    private static void overwriteStaged(File stageVer, File userFile) throws IOException {
-        File blobDirectory = Utils.join(GITLET_DIR, "Blobs");
-
-        String stagehash = readContentsAsString(stageVer);
-        String contents = readContentsAsString(userFile);
-        String userhash = sha1(contents);
-
-        if (stagehash.equals(userhash)) {
-            stageVer.delete();
-
-        } else {
-            writeToFile(stageVer, userhash);
-
-            File blob = Utils.join(blobDirectory, userhash);
-            blob.createNewFile();
-
-            writeToFile(blob, contents);
-        }
-    }
-
-
-    /** Returns the SHA-1 hash of the HEAD commit. */
-    private static String getHead() {
-        File head = Utils.join(GITLET_DIR, "Commits", "HEAD");
-        if (head.exists()) {
-            String headBranch = readContentsAsString(head);
-            
-            File headBranchFile = Utils.join(GITLET_DIR, "Commits", headBranch);
-            String headHash = readContentsAsString(headBranchFile);
-            
-            return headHash;
-        } else {
-            throw new GitletException("The HEAD file is missing.");
-        }
-    }
+    /* HELPER METHODS (In Alphabetical Order) */
 
 
     /** Writes the Commit object to a file and updates HEAD & master. */
@@ -396,53 +308,9 @@ public class Repository {
         File addCommit = Utils.join(commits, hash);
         addCommit.createNewFile();
         writeContents(addCommit, serialized);
-        
+
         File master = Utils.join(GITLET_DIR, "Commits", "master");
         writeContents(master, hash);
-    }
-
-
-    /** Reads the details from a Commit object & prints it to the terminal. */
-    private static void printCommitDetails(Commit currentCommit, String commitHash) {
-        System.out.println("===");
-        System.out.println("commit " + commitHash);
-        System.out.println("Date: " + currentCommit.getDateAndTime());
-        System.out.println(currentCommit.getMessage());
-        System.out.println();
-    }
-
-
-    /** Overwrites the specified file contents if it exists. */
-    private static void overwriteFile(File filePointer, Reference currentRef) {
-        try {
-            if (filePointer.exists()) {
-                File blob = Utils.join(GITLET_DIR, "Blobs", currentRef.blob);
-                String contents = readContentsAsString(blob);
-
-                writeToFile(filePointer, contents);
-            } else {
-                filePointer.createNewFile();
-                File blob = Utils.join(GITLET_DIR, "Blobs", currentRef.blob);
-                String contents = readContentsAsString(blob);
-
-                writeToFile(filePointer, contents);
-            }
-        } catch (IOException e) {
-            throw new GitletException("An IOException error occured during checkout.");
-        }
-    }
-
-
-    /** Clears the ArrayList stored in Deleted_Files. */
-    private static void clearDeleted() {
-        File deletedFiles = Utils.join(GITLET_DIR, "Stage", "Deleted_Files");
-
-        // prevents an "[unchecked] unchecked conversion" warning from occuring during compilation.
-        @SuppressWarnings("unchecked")
-        ArrayList<String> deleted = readObject(deletedFiles, ArrayList.class);
-
-        deleted.clear();
-        writeObject(deletedFiles, deleted);
     }
 
 
@@ -456,6 +324,37 @@ public class Repository {
 
         deleted.add(filename);
         writeObject(deletedFiles, deleted);
+    }
+
+
+    /** Checks that the specified branch exists & removes the branch if as long
+     * as it is not the HEAD. */
+    private static void checkAndRemoveBranch(String branchName) {
+        File head = Utils.join(GITLET_DIR, "Commits", "HEAD");
+        String headBranch = readContentsAsString(head);
+
+        if (headBranch.equals(branchName)) {
+            message("Cannot remove the current branch.");
+        } else {
+            writeToFile(head, "master");
+
+            File branch = Utils.join(GITLET_DIR, "Commits", branchName);
+            branch.delete();
+        }
+    }
+
+
+    /** Prints the Commit ID if commitMessage is the same as the currentCommit's
+     * message. */
+    private static boolean checkCommitMessage(String currentFileName, Commit currentCommit, String commitMessage) {
+        String cMsg = currentCommit.getMessage();
+
+        if (cMsg.equals(commitMessage)) {
+            System.out.println(currentFileName);
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
@@ -570,6 +469,66 @@ public class Repository {
     }
 
 
+    /** Clears the ArrayList stored in Deleted_Files. */
+    private static void clearDeleted() {
+        File deletedFiles = Utils.join(GITLET_DIR, "Stage", "Deleted_Files");
+
+        // prevents an "[unchecked] unchecked conversion" warning from occuring during compilation.
+        @SuppressWarnings("unchecked")
+        ArrayList<String> deleted = readObject(deletedFiles, ArrayList.class);
+
+        deleted.clear();
+        writeObject(deletedFiles, deleted);
+    }
+
+
+    /** Creates the required folders to store serialized objects for Gitlet.
+     * This system will automatically start with one commit: a commit that
+     * contains no files and has the commit message initial commit.  */
+    private static void createFolders() {
+        try {
+            GITLET_DIR.mkdir();
+
+            File stageFolder = Utils.join(GITLET_DIR, "Stage");
+            stageFolder.mkdir();
+
+            File stageAddFolder = Utils.join(stageFolder, "Add");
+            stageAddFolder.mkdir();
+
+            File stageRemoveFolder = Utils.join(stageFolder, "Remove");
+            stageRemoveFolder.mkdir();
+
+            File commitsFolder = Utils.join(GITLET_DIR, "Commits");
+            commitsFolder.mkdir();
+
+            File blobsFolder = Utils.join(GITLET_DIR, "Blobs");
+            blobsFolder.mkdir();
+
+            Commit firstCommit = new Commit(null, null);
+            byte[] serializedCommit = serialize(firstCommit);
+            String shaHash = sha1(serializedCommit);
+            File first = Utils.join(commitsFolder, shaHash);
+            first.createNewFile();
+            writeContents(first, serializedCommit);
+
+            File head = Utils.join(commitsFolder, "HEAD");
+            head.createNewFile();
+            writeToFile(head, "master");
+
+            File master = Utils.join(commitsFolder, "master");
+            master.createNewFile();
+            writeContents(master, shaHash);
+
+            ArrayList<String> deleted = new ArrayList<>();
+            File deletedFiles = Utils.join(GITLET_DIR, "Stage", "Deleted_Files");
+            deletedFiles.createNewFile();
+            writeObject(deletedFiles, deleted);
+        } catch (IOException e) {
+            throw new GitletException("An IOException error occured when setting up the repository.");
+        }
+    }
+
+
     /** Returns true if the branch is the current branch. */
     private static boolean currentBranch(String branch) {
         File head = Utils.join(GITLET_DIR, "Commits", "HEAD");
@@ -584,23 +543,18 @@ public class Repository {
     }
 
 
-    /** File is staged for removal & removed from the working directory. */
-    private static void stageForRemoval(String filename, String blobID) {
-        try {
-            File stageRmDirectory = Utils.join(GITLET_DIR, "Stage", "Remove");
+    /** Returns the SHA-1 hash of the HEAD commit. */
+    private static String getHead() {
+        File head = Utils.join(GITLET_DIR, "Commits", "HEAD");
+        if (head.exists()) {
+            String headBranch = readContentsAsString(head);
 
-            File stageForRm = Utils.join(stageRmDirectory, filename);
-            stageForRm.createNewFile();
-            writeToFile(stageForRm, blobID);
+            File headBranchFile = Utils.join(GITLET_DIR, "Commits", headBranch);
+            String headHash = readContentsAsString(headBranchFile);
 
-            File userFile = Utils.join(CWD, filename);
-
-            addToDeleted(filename);
-            if (userFile.exists()) {
-                userFile.delete();
-            }
-        } catch (IOException e) {
-            throw new GitletException("An IOException error occured when staging the file for removal.");
+            return headHash;
+        } else {
+            throw new GitletException("The HEAD file is missing.");
         }
     }
 
@@ -611,34 +565,58 @@ public class Repository {
     }
 
 
-    /** Prints the Commit ID if commitMessage is the same as the currentCommit's
-     * message. */
-    private static boolean checkCommitMessage(String currentFileName, Commit currentCommit, String commitMessage) {
-        String cMsg = currentCommit.getMessage();
+    /** Overwrites the specified file contents if it exists. */
+    private static void overwriteFile(File filePointer, Reference currentRef) {
+        try {
+            if (filePointer.exists()) {
+                File blob = Utils.join(GITLET_DIR, "Blobs", currentRef.blob);
+                String contents = readContentsAsString(blob);
 
-        if (cMsg.equals(commitMessage)) {
-            System.out.println(currentFileName);
-            return true;
-        } else {
-            return false;
+                writeToFile(filePointer, contents);
+            } else {
+                filePointer.createNewFile();
+                File blob = Utils.join(GITLET_DIR, "Blobs", currentRef.blob);
+                String contents = readContentsAsString(blob);
+
+                writeToFile(filePointer, contents);
+            }
+        } catch (IOException e) {
+            throw new GitletException("An IOException error occured during checkout.");
         }
     }
 
 
-    /** Checks that the specified branch exists & removes the branch if as long
-     * as it is not the HEAD. */
-    private static void checkAndRemoveBranch(String branchName) {
-        File head = Utils.join(GITLET_DIR, "Commits", "HEAD");
-        String headBranch = readContentsAsString(head);
+    /** A helper method to add(). It deletes the file in the Stage directory
+     * is the same as the file the user wishes to add. If the contents are
+     * not the same, the contents of the staged file is overwritten. */
+    private static void overwriteStaged(File stageVer, File userFile) throws IOException {
+        File blobDirectory = Utils.join(GITLET_DIR, "Blobs");
 
-        if (headBranch.equals(branchName)) {
-            message("Cannot remove the current branch.");
+        String stagehash = readContentsAsString(stageVer);
+        String contents = readContentsAsString(userFile);
+        String userhash = sha1(contents);
+
+        if (stagehash.equals(userhash)) {
+            stageVer.delete();
+
         } else {
-            writeToFile(head, "master");
+            writeToFile(stageVer, userhash);
 
-            File branch = Utils.join(GITLET_DIR, "Commits", branchName);
-            branch.delete();
+            File blob = Utils.join(blobDirectory, userhash);
+            blob.createNewFile();
+
+            writeToFile(blob, contents);
         }
+    }
+
+
+    /** Reads the details from a Commit object & prints it to the terminal. */
+    private static void printCommitDetails(Commit currentCommit, String commitHash) {
+        System.out.println("===");
+        System.out.println("commit " + commitHash);
+        System.out.println("Date: " + currentCommit.getDateAndTime());
+        System.out.println(currentCommit.getMessage());
+        System.out.println();
     }
 
 
@@ -660,6 +638,24 @@ public class Repository {
             if ((!isSHA1(filename)) && (!(filename).equals(currentBranch)) && (!(filename).equals("HEAD"))) {
                 System.out.println(filename);
             }
+        }
+
+        System.out.println();
+    }
+
+
+    /** Prints the Removed Files. */
+    private static void printRemoved() {
+        System.out.println("=== Removed Files ===");
+
+        File deletedFiles = Utils.join(GITLET_DIR, "Stage", "Deleted_Files");
+
+        // prevents an "[unchecked] unchecked conversion" warning from occuring during compilation.
+        @SuppressWarnings("unchecked")
+        ArrayList<String> deleted = readObject(deletedFiles, ArrayList.class);
+
+        for (String x: deleted) {
+            System.out.println(x);
         }
 
         System.out.println();
@@ -695,21 +691,24 @@ public class Repository {
     }
 
 
-    /** Prints the Removed Files. */
-    private static void printRemoved() {
-        System.out.println("=== Removed Files ===");
+    /** File is staged for removal & removed from the working directory. */
+    private static void stageForRemoval(String filename, String blobID) {
+        try {
+            File stageRmDirectory = Utils.join(GITLET_DIR, "Stage", "Remove");
 
-        File deletedFiles = Utils.join(GITLET_DIR, "Stage", "Deleted_Files");
+            File stageForRm = Utils.join(stageRmDirectory, filename);
+            stageForRm.createNewFile();
+            writeToFile(stageForRm, blobID);
 
-        // prevents an "[unchecked] unchecked conversion" warning from occuring during compilation.
-        @SuppressWarnings("unchecked")
-        ArrayList<String> deleted = readObject(deletedFiles, ArrayList.class);
+            File userFile = Utils.join(CWD, filename);
 
-        for (String x: deleted) {
-            System.out.println(x);
+            addToDeleted(filename);
+            if (userFile.exists()) {
+                userFile.delete();
+            }
+        } catch (IOException e) {
+            throw new GitletException("An IOException error occured when staging the file for removal.");
         }
-
-        System.out.println();
     }
 
 
