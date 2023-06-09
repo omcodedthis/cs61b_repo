@@ -669,21 +669,11 @@ public class Repository {
 
         File stageAddFolder = Utils.join(GITLET_DIR, "Stage", "Add");
         File[] addDirectory = stageAddFolder.listFiles();
-        File stageRmFolder = Utils.join(GITLET_DIR, "Stage", "Remove");
-        File[] rmDirectory = stageRmFolder.listFiles();
 
         if (addDirectory != null) {
             int totalFiles = addDirectory.length;
             for (int i = 0; i < totalFiles; i++) {
                 String filename = addDirectory[i].getName();
-                System.out.println(filename);
-            }
-        }
-
-        if (rmDirectory != null) {
-            int totalFiles = rmDirectory.length;
-            for (int j = 0; j < totalFiles; j++) {
-                String filename = rmDirectory[j].getName();
                 System.out.println(filename);
             }
         }
