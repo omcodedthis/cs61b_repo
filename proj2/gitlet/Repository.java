@@ -318,9 +318,9 @@ public class Repository {
     }
 
 
-    /** Reads & adds the name of the deleted file to DELETED_FILES. */
+    /** Reads & adds the name of the deleted file to deleted_files. */
     private static void addToDeleted(String filename) {
-        File deletedFiles = Utils.join(GITLET_DIR, "Stage", "Deleted_Files");
+        File deletedFiles = Utils.join(GITLET_DIR, "Stage", "deleted_files");
 
         // prevents an "[unchecked] unchecked conversion" warning from occurring during compilation.
         @SuppressWarnings("unchecked")
@@ -477,9 +477,9 @@ public class Repository {
     }
 
 
-    /** Clears the ArrayList stored in Deleted_Files. */
+    /** Clears the ArrayList stored in deleted_files. */
     private static void clearDeleted() {
-        File deletedFiles = Utils.join(GITLET_DIR, "Stage", "Deleted_Files");
+        File deletedFiles = Utils.join(GITLET_DIR, "Stage", "deleted_files");
 
         // prevents an "[unchecked] unchecked conversion" warning from occurring during compilation.
         @SuppressWarnings("unchecked")
@@ -512,6 +512,9 @@ public class Repository {
             File blobsFolder = Utils.join(GITLET_DIR, "Blobs");
             blobsFolder.mkdir();
 
+            File trackedFolder = Utils.join(GITLET_DIR, "Tracked");
+            trackedFolder.mkdir();
+
             Commit firstCommit = new Commit(null, null);
             byte[] serializedCommit = serialize(firstCommit);
             String shaHash = sha1(serializedCommit);
@@ -528,12 +531,12 @@ public class Repository {
             writeContents(master, shaHash);
 
             ArrayList<String> deleted = new ArrayList<>();
-            File deletedFiles = Utils.join(GITLET_DIR, "Stage", "Deleted_Files");
+            File deletedFiles = Utils.join(stageFolder, "deleted_files");
             deletedFiles.createNewFile();
             writeObject(deletedFiles, deleted);
 
             ArrayList<String> tracked = new ArrayList<>();
-            File trackedFiles = Utils.join(GITLET_DIR, "Tracked", "Tracked_Files");
+            File trackedFiles = Utils.join(trackedFolder, "tracked_files");
             trackedFiles.createNewFile();
             writeObject(trackedFiles, tracked);
         } catch (IOException e) {
@@ -578,9 +581,9 @@ public class Repository {
     }
 
 
-    /** Adds the files to Tracked_Files. */
+    /** Adds the files to tracked_files. */
     private static boolean isTracked(String filename) {
-        File trackedFiles = Utils.join(GITLET_DIR, "Tracked", "Tracked_Files");
+        File trackedFiles = Utils.join(GITLET_DIR, "Tracked", "tracked_files");
 
         // prevents an "[unchecked] unchecked conversion" warning from occurring during compilation.
         @SuppressWarnings("unchecked")
@@ -678,7 +681,7 @@ public class Repository {
     private static void printRemoved() {
         System.out.println("=== Removed Files ===");
 
-        File deletedFiles = Utils.join(GITLET_DIR, "Stage", "Deleted_Files");
+        File deletedFiles = Utils.join(GITLET_DIR, "Stage", "deleted_files");
 
         // prevents an "[unchecked] unchecked conversion" warning from occurring during compilation.
         @SuppressWarnings("unchecked")
@@ -732,9 +735,9 @@ public class Repository {
     }
 
 
-    /** Adds the files to Tracked_Files. */
+    /** Adds the files to tracked_files. */
     private static void trackThis(String filename) {
-        File trackedFiles = Utils.join(GITLET_DIR, "Tracked", "Tracked_Files");
+        File trackedFiles = Utils.join(GITLET_DIR, "Tracked", "tracked_files");
 
         // prevents an "[unchecked] unchecked conversion" warning from occurring during compilation.
         @SuppressWarnings("unchecked")
@@ -746,9 +749,9 @@ public class Repository {
     }
 
 
-    /** Untracks the given file from Tracked_Files. */
+    /** Untracks the given file from tracked_files. */
     private static void untrackThis(String filename) {
-        File trackedFiles = Utils.join(GITLET_DIR, "Tracked", "Tracked_Files");
+        File trackedFiles = Utils.join(GITLET_DIR, "Tracked", "tracked_files");
 
         // prevents an "[unchecked] unchecked conversion" warning from occurring during compilation.
         @SuppressWarnings("unchecked")
