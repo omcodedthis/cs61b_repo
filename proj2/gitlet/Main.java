@@ -1,7 +1,5 @@
 package gitlet;
 
-import gitlet.*;
-
 import java.io.File;
 
 import static gitlet.Utils.join;
@@ -113,7 +111,7 @@ public class Main {
 
 
     /** Checks the that the number of arguments entered is
-     * valid (2 arguments, git + command), throws an exception
+     * valid (n arguments, git + command), throws an exception
      * if it is not. */
     public static void validateNumArgs(String[] args, int n) {
         if (args.length > n) {
