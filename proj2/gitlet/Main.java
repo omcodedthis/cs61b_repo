@@ -105,7 +105,7 @@ public class Main {
     public static void checkNotEmpty(String[] args) {
         if (args.length <= 0) {
             Utils.message("Please enter a command.");
-            System.exit(1);
+            System.exit(0);
         }
     }
 
@@ -116,7 +116,7 @@ public class Main {
     public static void validateNumArgs(String[] args, int n) {
         if (args.length > n) {
             Utils.message("Incorrect operands.");
-            System.exit(1);
+            System.exit(0);
         }
     }
 
@@ -129,7 +129,7 @@ public class Main {
             return;
         } else {
             message("Not in an initialized Gitlet directory.");
-            System.exit(1);
+            System.exit(0);
         }
     }
 }
