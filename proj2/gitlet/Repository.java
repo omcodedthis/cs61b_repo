@@ -44,7 +44,6 @@ public class Repository {
             if (userFile.exists()) {
                 File stageVer = Utils.join(GITLET_DIR, "Stage", "Add", fn);
                 File blobDirectory = Utils.join(GITLET_DIR, "Blobs");
-                trackThis(fn);
 
                 if (stageVer.exists()) {
                     overwriteStaged(stageVer, userFile);
@@ -110,8 +109,6 @@ public class Repository {
             if (rmDirectory != null) {
                 int totalFiles = rmDirectory.length;
                 for (int j = 0; j < totalFiles; j++) {
-                    untrackThis(rmDirectory[j].getName());
-
                     rmDirectory[j].delete();
                 }
                 clearDeleted();
@@ -318,9 +315,9 @@ public class Repository {
     }
 
 
-    /** Reads & adds the name of the deleted file to deleted_files. */
+    /** Reads & adds the name of the deleted file to DELETED_FILES. */
     private static void addToDeleted(String filename) {
-        File deletedFiles = Utils.join(GITLET_DIR, "Stage", "deleted_files");
+        File deletedFiles = Utils.join(GITLET_DIR, "Stage", "Deleted_Files");
 
         // prevents an "[unchecked] unchecked conversion" warning from occurring during compilation.
         @SuppressWarnings("unchecked")
@@ -467,19 +464,15 @@ public class Repository {
                 continue;
             }
 
-            if (isTracked(currentRef.filename)) {
-                message("There is an untracked file in the way; delete it, or add and commit it first.");
-            }
-
             File filePointer = Utils.join(CWD, currentRef.filename);
             overwriteFile(filePointer, currentRef);
         }
     }
 
 
-    /** Clears the ArrayList stored in deleted_files. */
+    /** Clears the ArrayList stored in Deleted_Files. */
     private static void clearDeleted() {
-        File deletedFiles = Utils.join(GITLET_DIR, "Stage", "deleted_files");
+        File deletedFiles = Utils.join(GITLET_DIR, "Stage", "Deleted_Files");
 
         // prevents an "[unchecked] unchecked conversion" warning from occurring during compilation.
         @SuppressWarnings("unchecked")
@@ -512,9 +505,6 @@ public class Repository {
             File blobsFolder = Utils.join(GITLET_DIR, "Blobs");
             blobsFolder.mkdir();
 
-            File trackedFolder = Utils.join(GITLET_DIR, "Tracked");
-            trackedFolder.mkdir();
-
             Commit firstCommit = new Commit(null, null);
             byte[] serializedCommit = serialize(firstCommit);
             String shaHash = sha1(serializedCommit);
@@ -531,14 +521,9 @@ public class Repository {
             writeContents(master, shaHash);
 
             ArrayList<String> deleted = new ArrayList<>();
-            File deletedFiles = Utils.join(stageFolder, "deleted_files");
+            File deletedFiles = Utils.join(GITLET_DIR, "Stage", "Deleted_Files");
             deletedFiles.createNewFile();
             writeObject(deletedFiles, deleted);
-
-            ArrayList<String> tracked = new ArrayList<>();
-            File trackedFiles = Utils.join(trackedFolder, "tracked_files");
-            trackedFiles.createNewFile();
-            writeObject(trackedFiles, tracked);
         } catch (IOException e) {
             throw new GitletException("An IOException error occured when setting up the repository.");
         }
@@ -580,23 +565,6 @@ public class Repository {
         return hash.matches("^[a-fA-F0-9]{40}$");
     }
 
-
-    /** Adds the files to tracked_files. */
-    private static boolean isTracked(String filename) {
-        File trackedFiles = Utils.join(GITLET_DIR, "Tracked", "tracked_files");
-
-        // prevents an "[unchecked] unchecked conversion" warning from occurring during compilation.
-        @SuppressWarnings("unchecked")
-        ArrayList<String> tracked = readObject(trackedFiles, ArrayList.class);
-
-        for(String x: tracked) {
-            if (x.equals(filename)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
 
     /** Overwrites the specified file contents if it exists. */
     private static void overwriteFile(File filePointer, Reference currentRef) {
@@ -681,7 +649,7 @@ public class Repository {
     private static void printRemoved() {
         System.out.println("=== Removed Files ===");
 
-        File deletedFiles = Utils.join(GITLET_DIR, "Stage", "deleted_files");
+        File deletedFiles = Utils.join(GITLET_DIR, "Stage", "Deleted_Files");
 
         // prevents an "[unchecked] unchecked conversion" warning from occurring during compilation.
         @SuppressWarnings("unchecked")
@@ -701,11 +669,21 @@ public class Repository {
 
         File stageAddFolder = Utils.join(GITLET_DIR, "Stage", "Add");
         File[] addDirectory = stageAddFolder.listFiles();
+        File stageRmFolder = Utils.join(GITLET_DIR, "Stage", "Remove");
+        File[] rmDirectory = stageRmFolder.listFiles();
 
         if (addDirectory != null) {
             int totalFiles = addDirectory.length;
             for (int i = 0; i < totalFiles; i++) {
                 String filename = addDirectory[i].getName();
+                System.out.println(filename);
+            }
+        }
+
+        if (rmDirectory != null) {
+            int totalFiles = rmDirectory.length;
+            for (int j = 0; j < totalFiles; j++) {
+                String filename = rmDirectory[j].getName();
                 System.out.println(filename);
             }
         }
@@ -734,33 +712,6 @@ public class Repository {
         }
     }
 
-
-    /** Adds the files to tracked_files. */
-    private static void trackThis(String filename) {
-        File trackedFiles = Utils.join(GITLET_DIR, "Tracked", "tracked_files");
-
-        // prevents an "[unchecked] unchecked conversion" warning from occurring during compilation.
-        @SuppressWarnings("unchecked")
-        ArrayList<String> tracked = readObject(trackedFiles, ArrayList.class);
-
-        tracked.add(filename);
-
-        writeObject(trackedFiles, tracked);
-    }
-
-
-    /** Untracks the given file from tracked_files. */
-    private static void untrackThis(String filename) {
-        File trackedFiles = Utils.join(GITLET_DIR, "Tracked", "tracked_files");
-
-        // prevents an "[unchecked] unchecked conversion" warning from occurring during compilation.
-        @SuppressWarnings("unchecked")
-        ArrayList<String> tracked = readObject(trackedFiles, ArrayList.class);
-
-        tracked.remove(filename);
-
-        writeObject(trackedFiles, tracked);
-    }
 
     /** The writeContents()/writeObject() provided by CS61B staff in Utils
      *  did not work as intended as it adds random characters to files
