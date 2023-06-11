@@ -239,7 +239,7 @@ public class Repository {
             }
             message("Incorrect operands.");
             System.exit(0);
-            
+
         } else if (args.length == 4) {
             if (args[2].equals("--")) {
                 checkout2(args[1], args[3]);
@@ -397,34 +397,33 @@ public class Repository {
      * given id, and puts it in the working directory, overwriting the
      * version of the file that’s already there if there is one. */
     private static void checkout2(String commitID, String filename) {
-            Commit currentCommit = findCommit(commitID);
-            boolean found = false;
+        Commit currentCommit = findCommit(commitID);
+        boolean found = false;
 
+        if (currentCommit != null) {
+            for (int i = 0; i < currentCommit.references.length; i++) {
+                Reference currentRef = currentCommit.references[i];
 
-            if (currentCommit != null) {
-                for (int i = 0; i < currentCommit.references.length; i++) {
-                    Reference currentRef = currentCommit.references[i];
-
-                    if (currentRef == null) {
-                        break;
-                    }
-
-                    if ((currentRef.filename).equals(filename)) {
-                        File filePointer = Utils.join(CWD, filename);
-                        overwriteFile(filePointer, currentRef);
-                        found = true;
-                        return;
-                    }
+                if (currentRef == null) {
+                    break;
                 }
 
-                if (!found) {
-                    message("File does not exist in that commit.");
+                if ((currentRef.filename).equals(filename)) {
+                    File filePointer = Utils.join(CWD, filename);
+                    overwriteFile(filePointer, currentRef);
+                    found = true;
                     return;
                 }
-
-            } else {
-                message("No commit with that id exists.");
             }
+
+            if (!found) {
+                message("File does not exist in that commit.");
+                return;
+            }
+
+        } else {
+            message("No commit with that id exists.");
+        }
     }
 
 
@@ -543,7 +542,6 @@ public class Repository {
         String headBranch = readContentsAsString(head);
 
         if (headBranch.equals(branch)) {
-            message("No need to checkout the current branch.");
             return true;
         } else {
             return false;
