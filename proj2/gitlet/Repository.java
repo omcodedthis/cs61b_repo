@@ -627,9 +627,9 @@ public class Repository {
                     }
                 }
             }
-        } else {
-            return false;
         }
+        
+        return false;
     }
 
 
