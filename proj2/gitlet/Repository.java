@@ -233,9 +233,21 @@ public class Repository {
      * of index 1 is "--" as per the spec. */
     public static void checkout(String[] args) {
         if (args.length == 3) {
-            checkout1(args[2]);
+            if (args[1].equals("--")) {
+                checkout1(args[2]);
+                return;
+            }
+            message("Incorrect operands.");
+            System.exit(0);
+            
         } else if (args.length == 4) {
-            checkout2(args[1], args[3]);
+            if (args[2].equals("--")) {
+                checkout2(args[1], args[3]);
+                return;
+            }
+            message("Incorrect operands.");
+            System.exit(0);
+
         } else if (args.length == 2) {
             checkout3(args[1]);
         }
