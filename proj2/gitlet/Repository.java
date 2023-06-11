@@ -440,7 +440,7 @@ public class Repository {
             return;
         }
 
-        if (currentBranch(branch)) {
+        if (isCurrentBranch(branch)) {
             message("No need to checkout the current branch.");
             return;
         }
@@ -537,15 +537,11 @@ public class Repository {
 
 
     /** Returns true if the branch is the current branch. */
-    private static boolean currentBranch(String branch) {
+    private static boolean isCurrentBranch(String branch) {
         File head = Utils.join(GITLET_DIR, "Commits", "HEAD");
         String headBranch = readContentsAsString(head);
 
-        if (headBranch.equals(branch)) {
-            return true;
-        } else {
-            return false;
-        }
+        return headBranch.equals(branch);
     }
 
 

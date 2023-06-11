@@ -24,13 +24,11 @@ public class Main {
                 break;
 
             case "add":
-                // TODO: handle the `add [filename]` command
                 validateNumArgs(args, 2);
                 gitletExists();
                 Repository.add(args[1]);
                 break;
-
-            // TODO: FILL THE REST IN
+                
             case "commit":
                 validateNumArgs(args, 2);
                 gitletExists();
