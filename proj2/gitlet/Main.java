@@ -92,6 +92,8 @@ public class Main {
                 break;
 
             case "merge":
+                validateNumArgs(args, 2);
+                gitletExists();
                 break;
 
             default:

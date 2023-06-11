@@ -123,7 +123,7 @@ public class Repository {
     }
 
 
-    /**  Unstages the file if it is currently staged for addition. If the file
+    /** Unstages the file if it is currently staged for addition. If the file
      *  is tracked in the current commit, it is staged for removal and removed
      *  from the working directory if the user has not already done so. */
     public static void remove(String filename) {
@@ -284,10 +284,9 @@ public class Repository {
      * tracked files that are not present in that commit. Also moves the
      * current branch’s head to that commit node. */
     public static void reset(String commitID) {
-        File commitFilePointer = Utils.join(GITLET_DIR, "Commits", commitID);
+        Commit currentCommit = findCommit(commitID);
 
-        if (commitFilePointer.exists()) {
-            Commit currentCommit = readObject(commitFilePointer, Commit.class);
+        if (currentCommit != null) {
             checkoutCommit(currentCommit);
         } else {
             message("No commit with that id exists.");
@@ -390,12 +389,10 @@ public class Repository {
      *  given id, and puts it in the working directory, overwriting the
      *  version of the file that’s already there if there is one. */
     private static void checkout2(String commitID, String filename) {
-        File commitFilePointer = Utils.join(GITLET_DIR, "Commits", commitID);
+        Commit currentCommit = findCommit(commitID);
         boolean found = false;
 
-        if (commitFilePointer.exists()) {
-            Commit currentCommit = readObject(commitFilePointer, Commit.class);
-
+        if (currentCommit != null) {
             for (int i = 0; i < currentCommit.references.length; i++) {
                 Reference currentRef = currentCommit.references[i];
 
@@ -541,6 +538,26 @@ public class Repository {
         } else {
             return false;
         }
+    }
+
+
+    /** Finds & returns the Commit that matches all the characters in the
+     *  given Commit ID. Returns null if the given Commit ID cannot be
+     *  found. */
+    private static Commit findCommit(String commitID) {
+        File commitsFolder = Utils.join(GITLET_DIR, "Commits");
+        File[] commits = commitsFolder.listFiles();
+
+        for (File x: commits) {
+            String currentCommitID = x.getName();
+
+            if (currentCommitID.contains(commitID)) {
+                File commitFile =  Utils.join(commitsFolder, currentCommitID);
+                Commit currentCommit = readObject(commitFile, Commit.class);
+                return currentCommit;
+            }
+        }
+        return null;
     }
 
 
