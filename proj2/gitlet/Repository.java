@@ -621,7 +621,7 @@ public class Repository {
                     Commit currentCommit = findCommit(x.getName());
 
                     for (Reference y: currentCommit.references) {
-                        if ((y.filename).equals(userFile.getName()) && ((y.blob).equals(hash)) {
+                        if ((y.filename).equals(userFile.getName()) && ((y.blob).equals(hash))) {
                             return true;
                         }
                     }
