@@ -40,12 +40,6 @@ public class Repository {
                 File stageVer = Utils.join(GITLET_DIR, "Stage", "Add", filename);
                 File blobDirectory = Utils.join(GITLET_DIR, "Blobs");
 
-                if(isTrackedAndEqual(userFile)) {
-                    return;
-                }
-
-                trackThis(filename);
-
                 if (stageVer.exists()) {
                     overwriteStaged(stageVer, userFile);
                 } else {
@@ -110,8 +104,6 @@ public class Repository {
             if (rmDirectory != null) {
                 int totalFiles = rmDirectory.length;
                 for (int j = 0; j < totalFiles; j++) {
-                    untrackThis(rmDirectory[j].getName());
-
                     rmDirectory[j].delete();
                 }
                 clearDeleted();
@@ -538,11 +530,6 @@ public class Repository {
             File deletedFiles = Utils.join(GITLET_DIR, "Stage", "deleted_files");
             deletedFiles.createNewFile();
             writeObject(deletedFiles, deleted);
-
-            ArrayList<String> tracked = new ArrayList<>();
-            File trackedFiles = Utils.join(GITLET_DIR, "Stage", "tracked_files");
-            trackedFiles.createNewFile();
-            writeObject(trackedFiles, tracked);
         } catch (IOException e) {
             throw new GitletException("An IOException error occured when setting up the repository.");
         }
@@ -597,39 +584,6 @@ public class Repository {
     /** Returns true if the given string is a valid SHA-1 hash. */
     private static boolean isSHA1(String hash) {
         return hash.matches("^[a-fA-F0-9]{40}$");
-    }
-
-
-    /** Returns true if the given file is being tracked. */
-    private static boolean isTrackedAndEqual(File userFile) {
-        File trackedFiles = Utils.join(GITLET_DIR, "Tracked", "tracked_files");
-
-        // prevents an "[unchecked] unchecked conversion" warning from occurring during compilation.
-        @SuppressWarnings("unchecked")
-        ArrayList<String> tracked = readObject(trackedFiles, ArrayList.class);
-
-        if (tracked.contains(userFile)) {
-            String hash = sha1(readContentsAsString(userFile));
-
-            File commitsDirectory = Utils.join(GITLET_DIR, "Commits");
-            File[] commitsDirList = commitsDirectory.listFiles();
-
-            for (File x: commitsDirList) {
-                String filename = x.getName();
-
-                if (isSHA1(filename)) {
-                    Commit currentCommit = findCommit(x.getName());
-
-                    for (Reference y: currentCommit.references) {
-                        if ((y.filename).equals(userFile.getName()) && ((y.blob).equals(hash))) {
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        
-        return false;
     }
 
 
@@ -770,37 +724,6 @@ public class Repository {
     }
 
 
-    /** Adds the files to Tracked_Files. */
-    private static void trackThis(String filename) {
-        File trackedFiles = Utils.join(GITLET_DIR, "Tracked", "tracked_files");
-
-        // prevents an "[unchecked] unchecked conversion" warning from occurring during compilation.
-        @SuppressWarnings("unchecked")
-        ArrayList<String> tracked = readObject(trackedFiles, ArrayList.class);
-
-        if (!(tracked.contains(filename))) {
-            tracked.add(filename);
-            writeObject(trackedFiles, tracked);
-        } else {
-            return;
-        }
-    }
-
-
-    /** Untracks the given file from Tracked_Files. */
-    private static void untrackThis(String filename) {
-        File trackedFiles = Utils.join(GITLET_DIR, "Tracked", "tracked_files");
-
-        // prevents an "[unchecked] unchecked conversion" warning from occurring during compilation.
-        @SuppressWarnings("unchecked")
-        ArrayList<String> tracked = readObject(trackedFiles, ArrayList.class);
-
-        tracked.remove(filename);
-
-        writeObject(trackedFiles, tracked);
-    }
-
-    
     /** The writeContents()/writeObject() provided by CS61B staff in Utils
      * did not work as intended as it adds random characters to files
      * when writing content to a file (possibly because it was deprecated).
