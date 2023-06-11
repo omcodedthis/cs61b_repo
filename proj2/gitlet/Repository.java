@@ -4,31 +4,26 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-
 import static gitlet.Utils.*;
 
-/** Represents a gitlet repository.
- *  TODO: It's a good idea to give a description here of what else this Class
- *  does at a high level.
+/** Represents a gitlet repository, handling every command called by Main.
+ *  The descriptions for each method is explained in greater depth below
+ *  (above the respective method singatures).
+ *
+ *  It has 2 instance variables.
+ *
+ *  CWD: The user's current working directory.
+ *  GITLET_DIR: The directory of the .gitlet file.
  *
  *  @author om
  */
 public class Repository {
-    /**
-     * TODO: add instance variables here.
-     *
-     * List all instance variables of the Repository class here with a useful
-     * comment above them describing what that variable represents and how that
-     * variable is used. We've provided two examples for you.
-     */
-
     /** The current working directory. */
     public static final File CWD = new File(System.getProperty("user.dir"));
     /** The .gitlet directory. */
     public static final File GITLET_DIR = join(CWD, ".gitlet");
 
 
-    /* TODO: fill in the rest of this class. */
     public static void setUpPersistence() {
         if (GITLET_DIR.exists()) {
             message("A Gitlet version-control system already exists in the current directory.");
@@ -98,7 +93,8 @@ public class Repository {
                     String blob = readContentsAsString(addDirectory[i]);
 
                     Reference reference = new Reference(filename, blob);
-                    newCommit.references[i] = reference;
+                    Reference[] commitRefArray = newCommit.getReferences();
+                    commitRefArray[i] = reference;
 
                     addDirectory[i].delete();
                 }
@@ -138,7 +134,7 @@ public class Repository {
         if (commitFilePointer.exists()) {
             Commit currentCommit = readObject(commitFilePointer, Commit.class);
 
-            for (Reference x: currentCommit.references) {
+            for (Reference x: currentCommit.getReferences()) {
                 if (x == null) {
                     break;
                 }
@@ -164,7 +160,7 @@ public class Repository {
 
             printCommitDetails(currentCommit, commitHash);
 
-            commitHash = currentCommit.myParent;
+            commitHash = currentCommit.getMyParent();
 
             if (commitHash == null) {
                 break;
@@ -217,8 +213,8 @@ public class Repository {
 
 
     /** Displays what branches currently exist, and marks the current branch
-     *  with a '*'. Also displays what files have been staged for addition or
-     *  removal. */
+     * with a '*'. Also displays what files have been staged for addition or
+     * removal. */
     public static void status() {
         printBranches();
 
@@ -234,12 +230,23 @@ public class Repository {
 
 
     /** Checks out files depending on what its arguments are with 3 possible
-     * use cases. */
+     * use cases. Also ensures that for checkout1 & checkout2, the argument
+     * of index 1 is "--" as per the spec. */
     public static void checkout(String[] args) {
         if (args.length == 3) {
-            checkout1(args[2]);
+            if (args[1].equals("--")) {
+                checkout1(args[2]);
+            }
+            message("Incorrect operands.");
+            System.exit(0);
+
         } else if (args.length == 4) {
-            checkout2(args[1], args[3]);
+            if (args[1].equals("--")) {
+                checkout2(args[1], args[3]);
+            }
+            message("Incorrect operands.");
+            System.exit(0);
+
         } else if (args.length == 2) {
             checkout3(args[1]);
         }
@@ -247,7 +254,7 @@ public class Repository {
 
 
     /** Creates a new branch with the given name, and points it at the current
-     *  head commit. */
+     * head commit. */
     public static void branch(String branchName) {
         try {
             File commitsFolder = Utils.join(GITLET_DIR, "Commits");
@@ -267,7 +274,7 @@ public class Repository {
 
 
     /** Deletes the branch with the given name. This only means to delete
-     *  the pointer associated with the branch. */
+     * the pointer associated with the branch. */
     public static void removeBranch(String branchName) {
         File commitsFolder = Utils.join(GITLET_DIR, "Commits");
         File branch = Utils.join(commitsFolder, branchName);
@@ -368,8 +375,10 @@ public class Repository {
         if (commitFilePointer.exists()) {
             Commit currentCommit = readObject(commitFilePointer, Commit.class);
 
-            for (int i = 0; i < currentCommit.references.length; i++) {
-                Reference currentRef = currentCommit.references[i];
+            Reference[] commitRefArray = currentCommit.getReferences();
+
+            for (int i = 0; i < commitRefArray.length; i++) {
+                Reference currentRef = commitRefArray[i];
 
                 if (currentRef == null) {
                     break;
@@ -386,15 +395,17 @@ public class Repository {
 
 
     /** Takes the version of the file as it exists in the commit with the
-     *  given id, and puts it in the working directory, overwriting the
-     *  version of the file that’s already there if there is one. */
+     * given id, and puts it in the working directory, overwriting the
+     * version of the file that’s already there if there is one. */
     private static void checkout2(String commitID, String filename) {
         Commit currentCommit = findCommit(commitID);
         boolean found = false;
 
+        Reference[] commitRefArray = currentCommit.getReferences();
+
         if (currentCommit != null) {
-            for (int i = 0; i < currentCommit.references.length; i++) {
-                Reference currentRef = currentCommit.references[i];
+            for (int i = 0; i < commitRefArray.length; i++) {
+                Reference currentRef = commitRefArray[i];
 
                 if (currentRef == null) {
                     break;
@@ -454,8 +465,10 @@ public class Repository {
     /** Checks out the commit as per the 3rd Checkout scenario (branch) as given
      * in the spec. */
     private static void checkoutCommit(Commit currentCommit) {
-        for (int i = 0; i < currentCommit.references.length; i++) {
-            Reference currentRef = currentCommit.references[i];
+        Reference[] commitRefArray = currentCommit.getReferences();
+
+        for (int i = 0; i < commitRefArray.length; i++) {
+            Reference currentRef = commitRefArray[i];
 
             if (currentRef == null) {
                 continue;
@@ -542,8 +555,8 @@ public class Repository {
 
 
     /** Finds & returns the Commit that matches all the characters in the
-     *  given Commit ID. Returns null if the given Commit ID cannot be
-     *  found. */
+     * given Commit ID. Returns null if the given Commit ID cannot be
+     * found. */
     private static Commit findCommit(String commitID) {
         File commitsFolder = Utils.join(GITLET_DIR, "Commits");
         File[] commits = commitsFolder.listFiles();
@@ -721,10 +734,10 @@ public class Repository {
 
 
     /** The writeContents()/writeObject() provided by CS61B staff in Utils
-     *  did not work as intended as it adds random characters to files
-     *  when writing content to a file (possibly because it was deprecated).
-     *  Hence, this a working helper method I came up with which has the same
-     *  functionality but avoids adding these random characters to the file. */
+     * did not work as intended as it adds random characters to files
+     * when writing content to a file (possibly because it was deprecated).
+     * Hence, this a working helper method I came up with which has the same
+     * functionality but avoids adding these random characters to the file. */
     private static void writeToFile(File filePointer, String contents) {
         try {
             FileWriter writer = new FileWriter(filePointer);
