@@ -236,6 +236,7 @@ public class Repository {
         if (args.length == 3) {
             if (args[1].equals("--")) {
                 checkout1(args[2]);
+                return;
             }
             message("Incorrect operands.");
             System.exit(0);
@@ -243,6 +244,7 @@ public class Repository {
         } else if (args.length == 4) {
             if (args[1].equals("--")) {
                 checkout2(args[1], args[3]);
+                return;
             }
             message("Incorrect operands.");
             System.exit(0);
