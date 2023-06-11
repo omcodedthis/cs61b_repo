@@ -18,16 +18,4 @@ public class Reference implements Serializable {
         filename = fn;
         blob = blb;
     }
-
-
-    /** Returns the filename of the Reference as a string. */
-    public String getfilename() {
-        return filename;
-    }
-
-
-    /** Returns the blob of the Reference as a string. */
-    public String getblob() {
-        return blob;
-    }
 }
