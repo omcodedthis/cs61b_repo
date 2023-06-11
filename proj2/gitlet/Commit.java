@@ -40,7 +40,7 @@ public class Commit implements Serializable {
     }
 
 
-    /** Returns the message of the commit as a string. */
+    /** Returns the DateAndTime of the commit as a string. */
     public String getDateAndTime() {
         return dateAndTime;
     }

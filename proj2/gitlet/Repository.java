@@ -139,8 +139,8 @@ public class Repository {
                     break;
                 }
 
-                if (filename.equals(x.filename)) {
-                    stageForRemoval(filename, x.blob);
+                if (filename.equals(x.getfilename())) {
+                    stageForRemoval(filename, x.getblob());
                     return;
                 }
             }
@@ -386,7 +386,7 @@ public class Repository {
                     break;
                 }
 
-                if ((currentRef.filename).equals(filename)) {
+                if ((currentRef.getblob()).equals(filename)) {
                     File filePointer = Utils.join(CWD, filename);
                     overwriteFile(filePointer, currentRef);
                     return;
@@ -413,7 +413,7 @@ public class Repository {
                     break;
                 }
 
-                if ((currentRef.filename).equals(filename)) {
+                if ((currentRef.getfilename()).equals(filename)) {
                     File filePointer = Utils.join(CWD, filename);
                     overwriteFile(filePointer, currentRef);
                     found = true;
@@ -476,7 +476,7 @@ public class Repository {
                 continue;
             }
 
-            File filePointer = Utils.join(CWD, currentRef.filename);
+            File filePointer = Utils.join(CWD, currentRef.getfilename());
             overwriteFile(filePointer, currentRef);
         }
     }
@@ -602,13 +602,13 @@ public class Repository {
     private static void overwriteFile(File filePointer, Reference currentRef) {
         try {
             if (filePointer.exists()) {
-                File blob = Utils.join(GITLET_DIR, "Blobs", currentRef.blob);
+                File blob = Utils.join(GITLET_DIR, "Blobs", currentRef.getblob());
                 String contents = readContentsAsString(blob);
 
                 writeToFile(filePointer, contents);
             } else {
                 filePointer.createNewFile();
-                File blob = Utils.join(GITLET_DIR, "Blobs", currentRef.blob);
+                File blob = Utils.join(GITLET_DIR, "Blobs", currentRef.getblob());
                 String contents = readContentsAsString(blob);
 
                 writeToFile(filePointer, contents);
