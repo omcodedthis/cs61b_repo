@@ -9,8 +9,8 @@ import java.io.Serializable;
  *  @author om
  */
 public class Reference implements Serializable {
-    private String filename;
-    private String blob;
+    public String filename;
+    public String blob;
 
 
     /** Constructor for the Reference object. */
