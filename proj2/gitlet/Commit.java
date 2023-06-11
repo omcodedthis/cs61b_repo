@@ -20,10 +20,10 @@ public class Commit implements Serializable {
     private String message;
 
     /** The references to the file contents for each commit, stored in an ArrayList. */
-    private Reference[] references = new Reference[100];
+    protected Reference[] references = new Reference[100];
 
     /** The reference to this Commit's immediate parent. */
-    private String myParent;
+    protected String myParent;
 
 
     /** Constructor for the Commit object. */
@@ -49,19 +49,6 @@ public class Commit implements Serializable {
     /** Returns the message of the commit as a string. */
     public String getMessage() {
         return message;
-    }
-
-
-
-    /** Returns the references array of the commit. */
-    public Reference[] getReferences() {
-        return references;
-    }
-
-
-    /** Returns the Parent Commit ID of the commit as a string. */
-    public String getMyParent() {
-        return myParent;
     }
 
 

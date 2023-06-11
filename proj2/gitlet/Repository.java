@@ -93,8 +93,7 @@ public class Repository {
                     String blob = readContentsAsString(addDirectory[i]);
 
                     Reference reference = new Reference(filename, blob);
-                    Reference[] commitRefArray = newCommit.getReferences();
-                    commitRefArray[i] = reference;
+                    newCommit.references[i] = reference;
 
                     addDirectory[i].delete();
                 }
@@ -134,7 +133,7 @@ public class Repository {
         if (commitFilePointer.exists()) {
             Commit currentCommit = readObject(commitFilePointer, Commit.class);
 
-            for (Reference x: currentCommit.getReferences()) {
+            for (Reference x: currentCommit.references) {
                 if (x == null) {
                     break;
                 }
@@ -160,7 +159,7 @@ public class Repository {
 
             printCommitDetails(currentCommit, commitHash);
 
-            commitHash = currentCommit.getMyParent();
+            commitHash = currentCommit.myParent;
 
             if (commitHash == null) {
                 break;
@@ -365,10 +364,8 @@ public class Repository {
         if (commitFilePointer.exists()) {
             Commit currentCommit = readObject(commitFilePointer, Commit.class);
 
-            Reference[] commitRefArray = currentCommit.getReferences();
-
-            for (int i = 0; i < commitRefArray.length; i++) {
-                Reference currentRef = commitRefArray[i];
+            for (int i = 0; i <  currentCommit.references.length; i++) {
+                Reference currentRef = currentCommit.references[i];
 
                 if (currentRef == null) {
                     break;
@@ -388,35 +385,34 @@ public class Repository {
      * given id, and puts it in the working directory, overwriting the
      * version of the file that’s already there if there is one. */
     private static void checkout2(String commitID, String filename) {
-        Commit currentCommit = findCommit(commitID);
-        boolean found = false;
+            Commit currentCommit = findCommit(commitID);
+            boolean found = false;
 
-        Reference[] commitRefArray = currentCommit.getReferences();
 
-        if (currentCommit != null) {
-            for (int i = 0; i < commitRefArray.length; i++) {
-                Reference currentRef = commitRefArray[i];
+            if (currentCommit != null) {
+                for (int i = 0; i < currentCommit.references.length; i++) {
+                    Reference currentRef = currentCommit.references[i];
 
-                if (currentRef == null) {
-                    break;
+                    if (currentRef == null) {
+                        break;
+                    }
+
+                    if ((currentRef.filename).equals(filename)) {
+                        File filePointer = Utils.join(CWD, filename);
+                        overwriteFile(filePointer, currentRef);
+                        found = true;
+                        return;
+                    }
                 }
 
-                if ((currentRef.filename).equals(filename)) {
-                    File filePointer = Utils.join(CWD, filename);
-                    overwriteFile(filePointer, currentRef);
-                    found = true;
+                if (!found) {
+                    message("File does not exist in that commit.");
                     return;
                 }
-            }
 
-            if (!found) {
-                message("File does not exist in that commit.");
-                return;
+            } else {
+                message("No commit with that id exists.");
             }
-
-        } else {
-            message("No commit with that id exists.");
-        }
     }
 
 
@@ -455,10 +451,9 @@ public class Repository {
     /** Checks out the commit as per the 3rd Checkout scenario (branch) as given
      * in the spec. */
     private static void checkoutCommit(Commit currentCommit) {
-        Reference[] commitRefArray = currentCommit.getReferences();
 
-        for (int i = 0; i < commitRefArray.length; i++) {
-            Reference currentRef = commitRefArray[i];
+        for (int i = 0; i < currentCommit.references.length; i++) {
+            Reference currentRef = currentCommit.references[i];
 
             if (currentRef == null) {
                 continue;
