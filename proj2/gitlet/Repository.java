@@ -312,7 +312,7 @@ public class Repository {
             return;
         }
 
-        
+
     }
 
 
@@ -605,40 +605,50 @@ public class Repository {
 
     /** Finds the split point of the current & given branch. */
     private static Commit findSplitPoint(String branchName) {
+        // first case
         String headHash = getHead();
         File headCommitFile = Utils.join(GITLET_DIR, "Commits", headHash);
 
         File branchFile = Utils.join(GITLET_DIR, "Commits", branchName);
-        File branchCommitFile = Utils.join(GITLET_DIR, "Commits", readContentsAsString(branchFile));
+        String branchHash = readContentsAsString(branchFile);
+        File branchCommitFile = Utils.join(GITLET_DIR, "Commits", branchHash);
+
+        ArrayList<String> headCommits = new ArrayList<>();
 
         while(headCommitFile.exists()) {
-            Commit headCommit = readObject(headCommitFile, Commit.class);
-            Commit branchCommit = readObject(branchCommitFile, Commit.class);
+            headCommits.add(headCommitFile.getName());
 
-            if (headCommit.equals(branchCommit)) {
-                return headCommit;
-            }
+            Commit headCommit = readObject(headCommitFile, Commit.class);
 
             headCommitFile = Utils.join(GITLET_DIR, "Commits", headCommit.myParent);
+        }
+
+        while(branchCommitFile.exists()) {
+            Commit branchCommit = readObject(branchCommitFile, Commit.class);
+
+            if (headCommits.contains(branchCommitFile.getName())) {
+                return branchCommit;
+            }
+
             branchCommitFile = Utils.join(GITLET_DIR, "Commits", branchCommit.myParent);
         }
 
+        // second case
+        headCommitFile = Utils.join(GITLET_DIR, "Commits", headHash);
 
-        branchFile = Utils.join(GITLET_DIR, "Commits", branchName);
-        branchCommitFile = Utils.join(GITLET_DIR, "Commits", readContentsAsString(branchFile));
+        while(headCommitFile.exists()) {
+            headHash = headCommitFile.getName();
 
-        while(branchCommitFile.exists()) {
-            String branchHash = branchCommitFile.getName();
-
-            if (branchHash.equals(headHash)) {
+            if (headHash.equals(branchHash)) {
                 message("Given branch is an ancestor of the current branch.");
                 return null;
             }
 
-            Commit branchCommit = readObject(branchCommitFile, Commit.class);
-            branchCommitFile = Utils.join(GITLET_DIR, "Commits", branchCommit.myParent);
+            Commit headCommit = readObject(headCommitFile, Commit.class);
+            headCommitFile = Utils.join(GITLET_DIR, "Commits", headCommit.myParent);
         }
 
+        // third & final case
         checkout3(branchName);
         message("Current branch fast-forwarded.");
         return null;
