@@ -92,6 +92,7 @@ public class Main {
             case "merge":
                 validateNumArgs(args, 2);
                 gitletExists();
+                Repository.merge(args[1]);
                 break;
 
             default:

@@ -1,5 +1,6 @@
 package gitlet;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -8,7 +9,7 @@ import static gitlet.Utils.*;
 
 /** Represents a gitlet repository, handling every command called by Main.
  *  The descriptions for each method is explained in greater depth below
- *  (above the respective method singatures).
+ *  (above the respective method signatures).
  *
  *  It has 2 instance variables.
  *
@@ -302,6 +303,18 @@ public class Repository {
     }
 
 
+    /** Merges files from the given branch into the current branch. */
+    public static void merge(String branchName) {
+        checkForFailureCases(branchName);
+        Commit splitPoint = findSplitPoint(branchName);
+
+        if (splitPoint == null) {
+            return;
+        }
+
+        
+    }
+
 
     /* HELPER METHODS (In Alphabetical Order) */
 
@@ -365,6 +378,39 @@ public class Repository {
         }
     }
 
+
+    /** Checks that the given branch is a valid branch & no files have been
+     * staged. */
+    private static void checkForFailureCases(String branchName) {
+        File commitsFolder = Utils.join(GITLET_DIR, "Commits");
+        File branch = Utils.join(commitsFolder, branchName);
+
+        if (branch.exists()) {
+            File stageAddFolder = Utils.join(GITLET_DIR, "Stage", "Add");
+            File[] addDirectory = stageAddFolder.listFiles();
+            File stageRmFolder = Utils.join(GITLET_DIR, "Stage", "Remove");
+            File[] rmDirectory = stageRmFolder.listFiles();
+
+
+            if ((addDirectory.length > 0) && (rmDirectory.length > 0)) {
+                message("You have uncommitted changes.");
+                System.exit(0);
+            } else {
+                File head = Utils.join(commitsFolder, "HEAD");
+                String currentBranch = readContentsAsString(head);
+
+                if (currentBranch.equals(branchName)) {
+                    message("Cannot merge a branch with itself.");
+                    System.exit(0);
+                }
+            }
+        } else {
+            message("A branch with that name does not exist.");
+            System.exit(0);
+        }
+
+
+    }
 
     /** Takes the version of the file as it exists in the head commit and
      * puts it in the working directory, overwriting the version of the file
@@ -555,6 +601,48 @@ public class Repository {
         return null;
     }
 
+
+
+    /** Finds the split point of the current & given branch. */
+    private static Commit findSplitPoint(String branchName) {
+        String headHash = getHead();
+        File headCommitFile = Utils.join(GITLET_DIR, "Commits", headHash);
+
+        File branchFile = Utils.join(GITLET_DIR, "Commits", branchName);
+        File branchCommitFile = Utils.join(GITLET_DIR, "Commits", readContentsAsString(branchFile));
+
+        while(headCommitFile.exists()) {
+            Commit headCommit = readObject(headCommitFile, Commit.class);
+            Commit branchCommit = readObject(branchCommitFile, Commit.class);
+
+            if (headCommit.equals(branchCommit)) {
+                return headCommit;
+            }
+
+            headCommitFile = Utils.join(GITLET_DIR, "Commits", headCommit.myParent);
+            branchCommitFile = Utils.join(GITLET_DIR, "Commits", branchCommit.myParent);
+        }
+
+
+        branchFile = Utils.join(GITLET_DIR, "Commits", branchName);
+        branchCommitFile = Utils.join(GITLET_DIR, "Commits", readContentsAsString(branchFile));
+
+        while(branchCommitFile.exists()) {
+            String branchHash = branchCommitFile.getName();
+
+            if (branchHash.equals(headHash)) {
+                message("Given branch is an ancestor of the current branch.");
+                return null;
+            }
+
+            Commit branchCommit = readObject(branchCommitFile, Commit.class);
+            branchCommitFile = Utils.join(GITLET_DIR, "Commits", branchCommit.myParent);
+        }
+
+        checkout3(branchName);
+        message("Current branch fast-forwarded.");
+        return null;
+    }
 
     /** Returns the SHA-1 hash of the HEAD commit. */
     private static String getHead() {
