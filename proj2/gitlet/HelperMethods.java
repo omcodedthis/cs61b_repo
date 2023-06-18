@@ -443,6 +443,10 @@ public class HelperMethods {
                 }
             }
 
+            if (commit.myParent == null) {
+                break;
+            }
+
             commitFile = Utils.join(GITLET_DIR, "Commits", commit.myParent);
         }
         return currentBranchFiles;
@@ -471,6 +475,10 @@ public class HelperMethods {
                 if (!givenBranchFiles.containsKey(x.filename)) {
                     givenBranchFiles.put(x.filename, x.blob);
                 }
+            }
+
+            if (commit.myParent == null) {
+                break;
             }
 
             commitFile = Utils.join(GITLET_DIR, "Commits", commit.myParent);
