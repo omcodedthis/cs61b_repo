@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import static gitlet.Utils.*;
@@ -398,10 +399,14 @@ public class HelperMethods {
     /** Merges the files between the current and given branches, following
      * the rules of merging from the spec. */
     protected static void mergeFiles(Commit splitPoint, String branchName) {
-        TreeMap<String, String> currentBranchFiles = getCurrentBranchFiles(splitPoint);
-        TreeMap<String, String> givenBranchFiles = getGivenBranchFiles(splitPoint, branchName);
+        try {
+            TreeMap<String, String> currentBranchFiles = getCurrentBranchFiles(splitPoint);
+            TreeMap<String, String> givenBranchFiles = getGivenBranchFiles(splitPoint, branchName);
 
-
+            compareAndMerge(branchName, splitPoint, currentBranchFiles, givenBranchFiles);
+        } catch (IOException e) {
+            throw new GitletException("An IOException occured when merging " + branchName + '.');
+        }
     }
 
 
@@ -462,6 +467,99 @@ public class HelperMethods {
             commitFile = Utils.join(GITLET_DIR, "Commits", commit.myParent);
         }
         return givenBranchFiles;
+    }
+
+    /** Compares the current branch files & given branch files, following
+     * the seven steps given in the spec. */
+    protected static void compareAndMerge(String branchName, Commit splitPoint, TreeMap currentBranchFiles, TreeMap givenBranchFiles) throws IOException {
+        ArrayList<String> filesCompared = new ArrayList<>();
+        Set<String> currentBranchKeys = currentBranchFiles.keySet();
+        Set<String> givenBranchKeys = givenBranchFiles.keySet();
+        int NoOfConflicts= 0;
+
+        // handles case 1, 2, 3, 4 & 8
+        for (String key: currentBranchKeys) {
+            filesCompared.add(key);
+
+            if (givenBranchFiles.containsKey(key)) {
+                String currentBlob = (String) currentBranchFiles.get(key);
+                String givenBlob = (String) givenBranchFiles.get(key);
+
+                if (currentBlob.equals(givenBlob)) {
+                    continue;
+                } else {
+                    File currentBlobFile = Utils.join(GITLET_DIR, "Blobs", currentBlob);
+                    String currentContents = readContentsAsString(currentBlobFile);
+                    File givenBlobFile = Utils.join(GITLET_DIR, "Blobs", givenBlob);
+                    String givenContents = readContentsAsString(givenBlobFile);
+
+                    String conflictContents = "<<<<<<< HEAD\n" + (currentContents + "\n") + "=======\n" + (givenContents + "\n") + ">>>>>>>";
+                    NoOfConflicts++;
+
+                    File userFile = Utils.join(CWD, key);
+                    if (userFile.exists()) {
+                        writeToFile(userFile, conflictContents);
+                        continue;
+                    } else {
+                        userFile.createNewFile();
+                        writeToFile(userFile, conflictContents);
+                    }
+                }
+            } else {
+                String currentBlob = (String) currentBranchFiles.get(key);
+                File currentBlobFile = Utils.join(GITLET_DIR, "Blobs", currentBlob);
+                String currentContents = readContentsAsString(currentBlobFile);
+
+                File userFile = Utils.join(CWD, key);
+                if (userFile.exists()) {
+                    writeToFile(userFile, currentContents);
+                    continue;
+                } else {
+                    userFile.createNewFile();
+                    writeToFile(userFile, currentContents);
+                }
+            }
+        }
+
+        // handles case 5
+        for (String key: givenBranchKeys) {
+            if (!filesCompared.contains(key)) {
+
+                if ((!currentBranchFiles.containsKey(key)) && (!splitPoint.hasFile(key))) {
+                    checkout1(key);
+                    continue;
+                }
+
+                String givenBlob = (String) givenBranchFiles.get(key);
+                File givenBlobFile = Utils.join(GITLET_DIR, "Blobs", givenBlob);
+                String currentContents = readContentsAsString(givenBlobFile);
+
+                File userFile = Utils.join(CWD, key);
+                if (userFile.exists()) {
+                    writeToFile(userFile, currentContents);
+                    continue;
+                } else {
+                    userFile.createNewFile();
+                    writeToFile(userFile, currentContents);
+                }
+            }
+
+            // handles case 6 & 7
+            for (int i = 0; i < splitPoint.references.length; i++) {
+                String filename = splitPoint.references[i].filename;
+                if (currentBranchFiles.containsKey(filename) && (!givenBranchFiles.containsKey(filename))) {
+                    Repository.remove(filename);
+                }
+            }
+
+        }
+
+        File head = Utils.join(GITLET_DIR, "Commits", "HEAD");
+
+        Repository.commit("Merged " + branchName + " into" + readContentsAsString(head) + '.');
+        if (NoOfConflicts > 0) {
+            message("Encountered a merge conflict.");
+        }
     }
 
 
