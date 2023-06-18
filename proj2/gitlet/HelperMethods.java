@@ -331,6 +331,10 @@ public class HelperMethods {
 
             Commit headCommit = readObject(headCommitFile, Commit.class);
 
+            if (headCommit.myParent == null) {
+                break;
+            }
+
             headCommitFile = Utils.join(GITLET_DIR, "Commits", headCommit.myParent);
         }
 
@@ -339,6 +343,10 @@ public class HelperMethods {
 
             if (headCommits.contains(branchCommitFile.getName())) {
                 return branchCommit;
+            }
+
+            if (branchCommit.myParent == null) {
+                break;
             }
 
             branchCommitFile = Utils.join(GITLET_DIR, "Commits", branchCommit.myParent);
@@ -356,6 +364,7 @@ public class HelperMethods {
             }
 
             Commit headCommit = readObject(headCommitFile, Commit.class);
+
             headCommitFile = Utils.join(GITLET_DIR, "Commits", headCommit.myParent);
         }
 
