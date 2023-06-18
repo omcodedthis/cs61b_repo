@@ -486,6 +486,7 @@ public class HelperMethods {
         return givenBranchFiles;
     }
 
+
     /** Compares the current branch files & given branch files, following
      * the seven steps given in the spec. */
     protected static void compareAndMerge(String branchName, Commit splitPoint, TreeMap currentBranchFiles, TreeMap givenBranchFiles) throws IOException {
@@ -563,11 +564,11 @@ public class HelperMethods {
 
             // handles case 6 & 7
             for (int i = 0; i < splitPoint.references.length; i++) {
-                String filename = splitPoint.references[i].filename;
-
-                if (filename == null) {
+                if (splitPoint.references[i].filename == null) {
                     break;
                 }
+
+                String filename = splitPoint.references[i].filename;
 
                 if (currentBranchFiles.containsKey(filename) && (!givenBranchFiles.containsKey(filename))) {
                     Repository.remove(filename);
