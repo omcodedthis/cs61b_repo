@@ -514,6 +514,8 @@ public class HelperMethods {
                     String conflictContents = "<<<<<<< HEAD\n" + (currentContents + "\n") + "=======\n" + (givenContents + "\n") + ">>>>>>>";
                     NoOfConflicts++;
 
+                    Repository.add(key);
+
                     File userFile = Utils.join(CWD, key);
                     if (userFile.exists()) {
                         writeToFile(userFile, conflictContents);
@@ -527,6 +529,8 @@ public class HelperMethods {
                 String currentBlob = (String) currentBranchFiles.get(key);
                 File currentBlobFile = Utils.join(GITLET_DIR, "Blobs", currentBlob);
                 String currentContents = readContentsAsString(currentBlobFile);
+
+                Repository.add(key);
 
                 File userFile = Utils.join(CWD, key);
                 if (userFile.exists()) {
@@ -551,6 +555,8 @@ public class HelperMethods {
                 String givenBlob = (String) givenBranchFiles.get(key);
                 File givenBlobFile = Utils.join(GITLET_DIR, "Blobs", givenBlob);
                 String currentContents = readContentsAsString(givenBlobFile);
+
+                Repository.add(key);
 
                 File userFile = Utils.join(CWD, key);
                 if (userFile.exists()) {
