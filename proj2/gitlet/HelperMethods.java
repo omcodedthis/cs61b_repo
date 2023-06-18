@@ -564,6 +564,11 @@ public class HelperMethods {
             // handles case 6 & 7
             for (int i = 0; i < splitPoint.references.length; i++) {
                 String filename = splitPoint.references[i].filename;
+
+                if (filename == null) {
+                    break;
+                }
+
                 if (currentBranchFiles.containsKey(filename) && (!givenBranchFiles.containsKey(filename))) {
                     Repository.remove(filename);
                 }
