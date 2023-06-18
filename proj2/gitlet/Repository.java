@@ -131,7 +131,7 @@ public class Repository {
 
         String commitHash = getHead();
         File commitFilePointer = Utils.join(GITLET_DIR, "Commits", commitHash);
-        if (commitFilePointer.exists()) {
+        while (commitFilePointer.exists()) {
             Commit currentCommit = readObject(commitFilePointer, Commit.class);
 
             for (Reference x: currentCommit.references) {
@@ -144,6 +144,12 @@ public class Repository {
                     return;
                 }
             }
+
+            if (currentCommit.myParent == null) {
+                break;
+            }
+
+            commitFilePointer = Utils.join(GITLET_DIR, "Commits", currentCommit.myParent);
         }
         message("No reason to remove the file.");
     }
