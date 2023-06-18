@@ -564,7 +564,7 @@ public class HelperMethods {
 
             // handles case 6 & 7
             for (int i = 0; i < splitPoint.references.length; i++) {
-                if (splitPoint.references[i].filename == null) {
+                if (splitPoint.references[i] == null) {
                     break;
                 }
 
