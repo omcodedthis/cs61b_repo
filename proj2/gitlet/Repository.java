@@ -23,6 +23,8 @@ public class Repository {
     public static final File GITLET_DIR = join(CWD, ".gitlet");
 
 
+    /** Checks that a Gitlet version-control system does not exist & sets
+     * up the required file system. */
     public static void setUpPersistence() {
         if (GITLET_DIR.exists()) {
             message("A Gitlet version-control system already exists in the current directory.");

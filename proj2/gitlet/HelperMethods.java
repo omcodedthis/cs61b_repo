@@ -4,10 +4,13 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.TreeMap;
+
 import static gitlet.Utils.*;
 
 /** Contains all the relevant helper methods for Repository.java,
- * The helper methods are in Alphabetical Order. The descriptions
+ * The helper methods are in alphabetical order. The descriptions
  * for each method is explained in greater depth below (above the
  * respective method signatures).
  *
@@ -20,8 +23,9 @@ import static gitlet.Utils.*;
  */
 
 public class HelperMethods {
-    /* HELPER METHODS (In Alphabetical Order) */
+    /** The current working directory. */
     private static final File CWD = new File(System.getProperty("user.dir"));
+    /** The .gitlet directory. */
     private static final File GITLET_DIR = join(CWD, ".gitlet");
 
 
@@ -394,13 +398,70 @@ public class HelperMethods {
     /** Merges the files between the current and given branches, following
      * the rules of merging from the spec. */
     protected static void mergeFiles(Commit splitPoint, String branchName) {
+        TreeMap<String, String> currentBranchFiles = getCurrentBranchFiles(splitPoint);
+        TreeMap<String, String> givenBranchFiles = getGivenBranchFiles(splitPoint, branchName);
+
+
+    }
+
+
+    /** Returns a TreeMap of all the files & their latest References from
+     * the head to the split point of the current branch. */
+    protected static TreeMap<String, String> getCurrentBranchFiles(Commit splitPoint) {
         String headHash = getHead();
-        File headCommitFile = Utils.join(GITLET_DIR, "Commits", headHash);
+        File commitFile = Utils.join(GITLET_DIR, "Commits", headHash);
+        TreeMap<String, String> currentBranchFiles = new TreeMap<>();
 
-        File branchFile = Utils.join(GITLET_DIR, "Commits", branchName);
-        String branchHash = readContentsAsString(branchFile);
-        File branchCommitFile = Utils.join(GITLET_DIR, "Commits", branchHash);
+        while (commitFile.exists()) {
+            Commit commit = readObject(commitFile, Commit.class);
 
+            if (commit.equals(splitPoint)) {
+                break;
+            }
+
+            for (Reference x: commit.references) {
+                if (x == null) {
+                    break;
+                }
+
+                if (!currentBranchFiles.containsKey(x.filename)) {
+                    currentBranchFiles.put(x.filename, x.blob);
+                }
+            }
+
+            commitFile = Utils.join(GITLET_DIR, "Commits", commit.myParent);
+        }
+        return currentBranchFiles;
+    }
+
+
+    /** Returns a TreeMap of all the files & their latest References from
+     * the head to the split point of the current branch. */
+    protected static TreeMap<String, String> getGivenBranchFiles(Commit splitPoint, String branchName) {
+        File branch = Utils.join(GITLET_DIR, "Commits", branchName);
+        File commitFile = Utils.join(GITLET_DIR, "Commits", readContentsAsString(branch));
+        TreeMap<String, String> givenBranchFiles = new TreeMap<>();
+
+        while (commitFile.exists()) {
+            Commit commit = readObject(commitFile, Commit.class);
+
+            if (commit.equals(splitPoint)) {
+                break;
+            }
+
+            for (Reference x: commit.references) {
+                if (x == null) {
+                    break;
+                }
+
+                if (!givenBranchFiles.containsKey(x.filename)) {
+                    givenBranchFiles.put(x.filename, x.blob);
+                }
+            }
+
+            commitFile = Utils.join(GITLET_DIR, "Commits", commit.myParent);
+        }
+        return givenBranchFiles;
     }
 
 
