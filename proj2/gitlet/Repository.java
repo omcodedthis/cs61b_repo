@@ -151,7 +151,6 @@ public class Repository {
 
             commitFilePointer = Utils.join(GITLET_DIR, "Commits", currentCommit.myParent);
         }
-        message("No reason to remove the file.");
     }
 
 
