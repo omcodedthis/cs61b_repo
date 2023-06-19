@@ -115,6 +115,7 @@ public class Repository {
                 for (int j = 0; j < totalFiles; j++) {
                     rmDirectory[j].delete();
                 }
+
                 clearDeleted();
             } else {
                 throw new GitletException("The directory for tracked files(add) returned null.");
@@ -160,7 +161,7 @@ public class Repository {
 
             commitFilePointer = Utils.join(GITLET_DIR, "Commits", currentCommit.myParent);
         }
-        message("No reason to remove file.");
+        error("No reason to remove the file.");
     }
 
 
