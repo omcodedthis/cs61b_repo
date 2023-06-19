@@ -298,6 +298,7 @@ public class Repository {
      * tracked files that are not present in that commit. Also moves the
      * current branch’s head to that commit node. */
     public static void reset(String commitID) {
+        checkForResetFailures(commitID);
         Commit currentCommit = findCommit(commitID);
 
         if (currentCommit != null) {

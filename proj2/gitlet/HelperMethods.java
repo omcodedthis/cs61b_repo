@@ -178,6 +178,17 @@ public class HelperMethods {
     }
 
 
+    /***/
+    protected static void checkForResetFailures(String commitID) {
+        String head = getHead();
+
+        if (commitID.equals(head)) {
+            message("There is an untracked file in the way; delete it, or add and commit it first.");
+            System.exit(0);
+        }
+    }
+
+
     /** Takes the version of the file as it exists in the head commit and
      * puts it in the working directory, overwriting the version of the file
      * that’s already there if there is one. */
