@@ -380,7 +380,7 @@ public class HelperMethods {
                     String givenContents = readContentsAsString(givenBlobFile);
 
                     String conflictContents = "<<<<<<< HEAD\n" + currentContents
-                        + "=======\n" + givenContents + ">>>>>>>\n";
+                            + "=======\n" + givenContents + ">>>>>>>\n";
 
                     noOfConflicts++;
 
@@ -410,8 +410,8 @@ public class HelperMethods {
         }
 
         // handles the remaining non-conflict cases (B Cases)
-        mergeBCases(splitPoint, filesCompared, currentBranchFiles,
-        givenBranchFiles, givenBranchKeys);
+        mergeBCases(splitPoint, filesCompared,
+            currentBranchFiles, givenBranchFiles, givenBranchKeys);
 
         File head = Utils.join(GITLET_DIR, "Commits", "HEAD");
 
@@ -557,7 +557,7 @@ public class HelperMethods {
     /** Returns a TreeMap of all the files & their latest References from
      * the head to the split point of the current branch. */
     protected static TreeMap<String, String> getGivenBranchFiles(Commit splitPoint,
-        String branchName) {
+            String branchName) {
         File branch = Utils.join(GITLET_DIR, "Commits", branchName);
         File commitFile = Utils.join(GITLET_DIR, "Commits", readContentsAsString(branch));
         TreeMap<String, String> givenBranchFiles = new TreeMap<>();
@@ -605,8 +605,9 @@ public class HelperMethods {
 
 
     /** Handles cases 5, 6 & 7 according to the spec. */
-    protected static void mergeBCases(Commit splitPoint, List<String> filesCompared,
-        TreeMap currentBranchFiles, TreeMap givenBranchFiles, Set<String> givenBranchKeys)
+    protected static void mergeBCases(Commit splitPoint,
+        List<String> filesCompared, TreeMap currentBranchFiles,
+        TreeMap givenBranchFiles, Set<String> givenBranchKeys)
         throws IOException {
         // handles case 5
         for (String key: givenBranchKeys) {
@@ -730,7 +731,7 @@ public class HelperMethods {
             String filename = x.getName();
 
             if ((!isSHA1(filename)) && (!(filename).equals(currentBranch))
-                && (!(filename).equals("HEAD"))) {
+                    && (!(filename).equals("HEAD"))) {
                 System.out.println(filename);
             }
         }

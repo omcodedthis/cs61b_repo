@@ -17,7 +17,7 @@ public class Main {
         checkNotEmpty(args);
         String firstArg = args[0];
 
-        switch(firstArg) {
+        switch (firstArg) {
             case "init":
                 validateNumArgs(args, 1);
                 Repository.setUpPersistence();
