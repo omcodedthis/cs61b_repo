@@ -45,7 +45,7 @@ public class Repository {
                     removedFromDeleted(filename);
                     return;
                 }
-                
+
                 File stageVer = Utils.join(GITLET_DIR, "Stage", "Add", filename);
                 File blobDirectory = Utils.join(GITLET_DIR, "Blobs");
 

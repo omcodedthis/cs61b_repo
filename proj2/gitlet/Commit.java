@@ -89,6 +89,10 @@ public class Commit implements Serializable {
     /** Returns true if the given file is tracked in the commit. */
     protected boolean hasFile(String filename) {
         for (int i = 0; i < references.length; i++) {
+            if (references[i] == null) {
+                break;
+            }
+
             if ((references[i].filename).equals(filename)) {
                 return true;
             } else {
