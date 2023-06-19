@@ -39,7 +39,7 @@ public class Repository {
             File userFile = Utils.join(CWD, filename);
 
             if (userFile.exists()) {
-                checkIfTracked(userFile);
+                // checkIfTracked(userFile);
 
                 File stageRm = Utils.join(GITLET_DIR, "Stage", "Remove", filename);
                 if (stageRm.exists()) {

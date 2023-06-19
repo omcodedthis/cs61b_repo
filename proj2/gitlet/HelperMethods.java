@@ -563,7 +563,10 @@ public class HelperMethods {
 
                     File userFile = Utils.join(CWD, key);
                     if (userFile.exists()) {
-                        Repository.add(key);
+                        File stageAdd = Utils.join(GITLET_DIR, "Add");
+                        File stagedFile = Utils.join(stageAdd, userFile.getName());
+                        stagedFile.createNewFile();
+
                         writeToFile(userFile, conflictContents);
                         continue;
                     } else {
@@ -577,7 +580,10 @@ public class HelperMethods {
 
                 File userFile = Utils.join(CWD, key);
                 if (userFile.exists()) {
-                    Repository.add(key);
+                    File stageAdd = Utils.join(GITLET_DIR, "Add");
+                    File stagedFile = Utils.join(stageAdd, userFile.getName());
+                    stagedFile.createNewFile();
+
                     writeToFile(userFile, currentContents);
                     continue;
                 } else {
@@ -601,7 +607,10 @@ public class HelperMethods {
 
                 File userFile = Utils.join(CWD, key);
                 if (userFile.exists()) {
-                    Repository.add(key);
+                    File stageAdd = Utils.join(GITLET_DIR, "Add");
+                    File stagedFile = Utils.join(stageAdd, userFile.getName());
+                    stagedFile.createNewFile();
+
                     writeToFile(userFile, currentContents);
                     continue;
                 } else {
