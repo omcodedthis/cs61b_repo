@@ -507,7 +507,7 @@ public class HelperMethods {
         ArrayList<String> filesCompared = new ArrayList<>();
         Set<String> currentBranchKeys = currentBranchFiles.keySet();
         Set<String> givenBranchKeys = givenBranchFiles.keySet();
-        int NoOfConflicts= 0;
+        int noOfConflicts= 0;
 
         // handles case 1, 2, 3, 4 & 8
         for (String key: currentBranchKeys) {
@@ -526,7 +526,7 @@ public class HelperMethods {
                     String givenContents = readContentsAsString(givenBlobFile);
 
                     String conflictContents = "<<<<<<< HEAD\n" + (currentContents + "\n") + "=======\n" + (givenContents + "\n") + ">>>>>>>";
-                    NoOfConflicts++;
+                    noOfConflicts++;
 
                     Repository.add(key);
 
@@ -601,7 +601,7 @@ public class HelperMethods {
         File head = Utils.join(GITLET_DIR, "Commits", "HEAD");
 
         Repository.commit("Merged " + branchName + " into" + readContentsAsString(head) + '.');
-        if (NoOfConflicts > 0) {
+        if (noOfConflicts > 0) {
             message("Encountered a merge conflict.");
         }
     }
