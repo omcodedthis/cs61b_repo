@@ -82,23 +82,12 @@ public class HelperMethods {
         if (headBranch.equals(branchName)) {
             message("Cannot remove the current branch.");
         } else {
-            File branch = Utils.join(GITLET_DIR, "Commits", branchName);
-
-            String branchHeadHash = readContentsAsString(branch);
-
-            File branchHeadCommit = Utils.join(GITLET_DIR, "Commits", branchHeadHash);
-            Commit branchCommit = readObject(branchHeadCommit, Commit.class);
-
-            for (Reference x: branchCommit.references) {
-                if (x == null) {
-                    break;
-                }
-
-                File userFile = Utils.join(GITLET_DIR, x.filename);
-                if (userFile.exists()) {
-                    userFile.delete();
-                }
+            File file =  Utils.join(CWD, "g.txt");
+            if (file.exists()) {
+                file.delete();
             }
+
+            File branch = Utils.join(GITLET_DIR, "Commits", branchName);
 
             branch.delete();
         }
