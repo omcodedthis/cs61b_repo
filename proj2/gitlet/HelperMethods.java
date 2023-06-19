@@ -245,9 +245,8 @@ public class HelperMethods {
         for (String x: files) {
             if (x.contains(".txt")) {
 
-                if ((!addDirectory.contains(x)) && (!rmDirectory.contains(x))) {
-                    message("There is an untracked file in the way; delete it, or add and commit it first.");
-                    System.exit(0);
+                if ((addDirectory.contains(x)) && (rmDirectory.contains(x))) {
+                    return;
                 }
 
                 File[] commitsDirectory = commitsFolder.listFiles();
