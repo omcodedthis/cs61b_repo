@@ -238,7 +238,7 @@ public class HelperMethods {
             Reference currentRef = currentCommit.references[i];
 
             if (currentRef == null) {
-                continue;
+                break;
             }
 
             File filePointer = Utils.join(CWD, currentRef.filename);
@@ -505,8 +505,13 @@ public class HelperMethods {
      * the seven steps given in the spec. */
     protected static void compareAndMerge(String branchName, Commit splitPoint, TreeMap currentBranchFiles, TreeMap givenBranchFiles) throws IOException {
         ArrayList<String> filesCompared = new ArrayList<>();
+
+        // prevents an "[unchecked] unchecked conversion" warning from occurring during compilation.
+        @SuppressWarnings("unchecked")
         Set<String> currentBranchKeys = currentBranchFiles.keySet();
+        @SuppressWarnings("unchecked")
         Set<String> givenBranchKeys = givenBranchFiles.keySet();
+
         int noOfConflicts= 0;
 
         // handles case 1, 2, 3, 4 & 8
@@ -609,21 +614,13 @@ public class HelperMethods {
 
     /** Overwrites the specified file contents if it exists. */
     protected static void overwriteFile(File filePointer, Reference currentRef) {
-        try {
-            if (filePointer.exists()) {
-                File blob = Utils.join(GITLET_DIR, "Blobs", currentRef.blob);
-                String contents = readContentsAsString(blob);
+        if (filePointer.exists()) {
+            File blob = Utils.join(GITLET_DIR, "Blobs", currentRef.blob);
+            String contents = readContentsAsString(blob);
 
-                writeToFile(filePointer, contents);
-            } else {
-                filePointer.createNewFile();
-                File blob = Utils.join(GITLET_DIR, "Blobs", currentRef.blob);
-                String contents = readContentsAsString(blob);
-
-                writeToFile(filePointer, contents);
-            }
-        } catch (IOException e) {
-            throw new GitletException("An IOException error occured during checkout.");
+            writeToFile(filePointer, contents);
+        } else {
+            return;
         }
     }
 
