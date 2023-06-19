@@ -60,6 +60,19 @@ public class HelperMethods {
     }
 
 
+    /***/
+    protected static void removedFromDeleted(String filename) {
+        File deletedFiles = Utils.join(GITLET_DIR, "Stage", "deleted_files");
+
+        // prevents an "[unchecked] unchecked conversion" warning from occurring during compilation.
+        @SuppressWarnings("unchecked")
+        ArrayList<String> deleted = readObject(deletedFiles, ArrayList.class);
+
+        deleted.remove(filename);
+        writeObject(deletedFiles, deleted);
+    }
+
+
     /** Checks that the specified branch exists & removes the branch if as long
      * as it is not the HEAD. */
     protected static void checkAndRemoveBranch(String branchName) {

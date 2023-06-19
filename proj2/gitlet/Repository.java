@@ -37,7 +37,15 @@ public class Repository {
     public static void add(String filename) {
         try {
             File userFile = Utils.join(CWD, filename);
+
             if (userFile.exists()) {
+                File stageRm = Utils.join(GITLET_DIR, "Stage", "Remove", filename);
+                if (stageRm.exists()) {
+                    stageRm.delete();
+                    removedFromDeleted(filename);
+                    return;
+                }
+                
                 File stageVer = Utils.join(GITLET_DIR, "Stage", "Add", filename);
                 File blobDirectory = Utils.join(GITLET_DIR, "Blobs");
 
