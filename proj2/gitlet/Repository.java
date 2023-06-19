@@ -161,7 +161,8 @@ public class Repository {
 
             commitFilePointer = Utils.join(GITLET_DIR, "Commits", currentCommit.myParent);
         }
-        throw new GitletException("No reason to remove the file.");
+        message("No reason to remove the file.");
+        System.exit(0);
     }
 
 
@@ -309,6 +310,7 @@ public class Repository {
      * tracked files that are not present in that commit. Also moves the
      * current branch’s head to that commit node. */
     public static void reset(String commitID) {
+        checkForUntracked();
         Commit currentCommit = findCommit(commitID);
 
         if (currentCommit != null) {
@@ -321,6 +323,7 @@ public class Repository {
 
     /** Merges files from the given branch into the current branch. */
     public static void merge(String branchName) {
+        checkForUntracked();
         checkForFailureCases(branchName);
         Commit splitPoint = findSplitPoint(branchName);
 
