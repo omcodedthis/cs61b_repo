@@ -518,11 +518,8 @@ public class HelperMethods {
                     File userFile = Utils.join(CWD, key);
                     if (userFile.exists()) {
                         writeToFile(userFile, conflictContents);
-                        continue;
-                    } else {
-                        userFile.createNewFile();
-                        writeToFile(userFile, conflictContents);
                     }
+                    continue;
                 }
             } else {
                 String currentBlob = (String) currentBranchFiles.get(key);
@@ -534,11 +531,8 @@ public class HelperMethods {
                 File userFile = Utils.join(CWD, key);
                 if (userFile.exists()) {
                     writeToFile(userFile, currentContents);
-                    continue;
-                } else {
-                    userFile.createNewFile();
-                    writeToFile(userFile, currentContents);
                 }
+                continue;
             }
         }
 
@@ -560,11 +554,8 @@ public class HelperMethods {
                 File userFile = Utils.join(CWD, key);
                 if (userFile.exists()) {
                     writeToFile(userFile, currentContents);
-                    continue;
-                } else {
-                    userFile.createNewFile();
-                    writeToFile(userFile, currentContents);
                 }
+                continue;
             }
 
             // handles case 6 & 7
@@ -576,6 +567,10 @@ public class HelperMethods {
                 String filename = splitPoint.references[i].filename;
 
                 if (currentBranchFiles.containsKey(filename) && (!givenBranchFiles.containsKey(filename))) {
+                    Repository.remove(filename);
+                }
+
+                if (givenBranchFiles.containsKey(filename) && (!currentBranchFiles.containsKey(filename))) {
                     Repository.remove(filename);
                 }
             }
