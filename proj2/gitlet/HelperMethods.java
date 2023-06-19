@@ -105,7 +105,8 @@ public class HelperMethods {
 
     /** Prints the Commit ID if commitMessage is the same as the currentCommit's
      * message. */
-    protected static boolean checkCommitMessage(String currentFileName, Commit currentCommit, String commitMessage) {
+    protected static boolean checkCommitMessage(String currentFileName, Commit currentCommit,
+    String commitMessage) {
         String cMsg = currentCommit.getMessage();
 
         if (cMsg.equals(commitMessage)) {
@@ -341,14 +342,16 @@ public class HelperMethods {
             deletedFiles.createNewFile();
             writeObject(deletedFiles, deleted);
         } catch (IOException e) {
-            throw new GitletException("An IOException error occured when setting up the repository.");
+            throw new GitletException("An IOException error occured when " +
+            "setting up the repository.");
         }
     }
 
 
     /** Compares the current branch files & given branch files, following
      * the seven steps given in the spec. */
-    protected static void compareAndMerge(String branchName, Commit splitPoint, TreeMap currentBranchFiles, TreeMap givenBranchFiles) throws IOException {
+    protected static void compareAndMerge(String branchName, Commit splitPoint,
+    TreeMap currentBranchFiles, TreeMap givenBranchFiles) throws IOException {
         ArrayList<String> filesCompared = new ArrayList<>();
 
         // prevents an "[unchecked] unchecked conversion" warning from occurring during compilation.
@@ -357,7 +360,7 @@ public class HelperMethods {
         @SuppressWarnings("unchecked")
         Set<String> givenBranchKeys = givenBranchFiles.keySet();
 
-        int noOfConflicts= 0;
+        int noOfConflicts = 0;
 
         // handles case 1, 2, 3, 4 & 8
         for (String key: currentBranchKeys) {
@@ -375,7 +378,9 @@ public class HelperMethods {
                     File givenBlobFile = Utils.join(GITLET_DIR, "Blobs", givenBlob);
                     String givenContents = readContentsAsString(givenBlobFile);
 
-                    String conflictContents = "<<<<<<< HEAD\n" + currentContents + "=======\n" + givenContents + ">>>>>>>\n";
+                    String conflictContents = "<<<<<<< HEAD\n" + currentContents
+                    + "=======\n" + givenContents + ">>>>>>>\n";
+
                     noOfConflicts++;
 
                     File userFile = Utils.join(CWD, key);
@@ -434,11 +439,13 @@ public class HelperMethods {
 
                 String filename = splitPoint.references[i].filename;
 
-                if (currentBranchFiles.containsKey(filename) && (!givenBranchFiles.containsKey(filename))) {
+                if (currentBranchFiles.containsKey(filename)
+                && (!givenBranchFiles.containsKey(filename))) {
                     Repository.remove(filename);
                 }
 
-                if (givenBranchFiles.containsKey(filename) && (!currentBranchFiles.containsKey(filename))) {
+                if (givenBranchFiles.containsKey(filename)
+                && (!currentBranchFiles.containsKey(filename))) {
                     Repository.remove(filename);
                 }
             }
@@ -487,7 +494,7 @@ public class HelperMethods {
         // first case
         ArrayList<String> headCommits = new ArrayList<>();
 
-        while(headCommitFile.exists()) {
+        while (headCommitFile.exists()) {
             headCommits.add(headCommitFile.getName());
 
             Commit headCommit = readObject(headCommitFile, Commit.class);
@@ -499,7 +506,7 @@ public class HelperMethods {
             headCommitFile = Utils.join(GITLET_DIR, "Commits", headCommit.myParent);
         }
 
-        while(branchCommitFile.exists()) {
+        while (branchCommitFile.exists()) {
             Commit branchCommit = readObject(branchCommitFile, Commit.class);
 
             if (headCommits.contains(branchCommitFile.getName())) {
@@ -516,7 +523,7 @@ public class HelperMethods {
         // second case
         headCommitFile = Utils.join(GITLET_DIR, "Commits", headHash);
 
-        while(headCommitFile.exists()) {
+        while (headCommitFile.exists()) {
             headHash = headCommitFile.getName();
 
             if (headHash.equals(branchHash)) {
@@ -588,7 +595,8 @@ public class HelperMethods {
 
     /** Returns a TreeMap of all the files & their latest References from
      * the head to the split point of the current branch. */
-    protected static TreeMap<String, String> getGivenBranchFiles(Commit splitPoint, String branchName) {
+    protected static TreeMap<String, String> getGivenBranchFiles(Commit splitPoint,
+    String branchName) {
         File branch = Utils.join(GITLET_DIR, "Commits", branchName);
         File commitFile = Utils.join(GITLET_DIR, "Commits", readContentsAsString(branch));
         TreeMap<String, String> givenBranchFiles = new TreeMap<>();
@@ -711,7 +719,8 @@ public class HelperMethods {
         for (File x: commitsDirList) {
             String filename = x.getName();
 
-            if ((!isSHA1(filename)) && (!(filename).equals(currentBranch)) && (!(filename).equals("HEAD"))) {
+            if ((!isSHA1(filename)) && (!(filename).equals(currentBranch))
+            && (!(filename).equals("HEAD"))) {
                 System.out.println(filename);
             }
         }
@@ -786,7 +795,8 @@ public class HelperMethods {
                 userFile.delete();
             }
         } catch (IOException e) {
-            throw new GitletException("An IOException error occured when staging the file for removal.");
+            throw new GitletException("An IOException error occured when " +
+            "staging the file for removal.");
         }
     }
 
@@ -802,7 +812,8 @@ public class HelperMethods {
             writer.write(contents);
             writer.close();
         } catch (IOException e) {
-            throw new GitletException("An IOException error occured when writing content to files.");
+            throw new GitletException("An IOException error occured when " +
+                    "writing content to files.");
         }
     }
 }
