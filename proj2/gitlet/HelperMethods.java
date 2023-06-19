@@ -185,7 +185,7 @@ public class HelperMethods {
 
         if (commitID.equals(hash)) {
             message("There is an untracked file in the way; delete it, "
-                +"or add and commit it first.");
+                + "or add and commit it first.");
 
             System.exit(0);
         }
