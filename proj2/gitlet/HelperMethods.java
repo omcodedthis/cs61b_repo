@@ -82,9 +82,24 @@ public class HelperMethods {
         if (headBranch.equals(branchName)) {
             message("Cannot remove the current branch.");
         } else {
-            writeToFile(head, "master");
-
             File branch = Utils.join(GITLET_DIR, "Commits", branchName);
+
+            String branchHeadHash = readContentsAsString(branch);
+
+            File branchHeadCommit = Utils.join(GITLET_DIR, "Commits", branchHeadHash);
+            Commit branchCommit = readObject(branchHeadCommit, Commit.class);
+
+            for (Reference x: branchCommit.references) {
+                if (x == null) {
+                    break;
+                }
+
+                File userFile = Utils.join(GITLET_DIR, x.filename);
+                if (userFile.exists()) {
+                    userFile.delete();
+                }
+            }
+
             branch.delete();
         }
     }
@@ -699,8 +714,8 @@ public class HelperMethods {
 
 
     /** Prints the Staged Files. */
-    protected static void printUntracked() {
-        System.out.println("=== Untracked Files ===");
+    protected static void printStaged() {
+        System.out.println("=== Staged Files ===");
 
         File stageAddFolder = Utils.join(GITLET_DIR, "Stage", "Add");
         File[] addDirectory = stageAddFolder.listFiles();
