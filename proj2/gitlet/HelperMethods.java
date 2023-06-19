@@ -178,11 +178,15 @@ public class HelperMethods {
     }
 
 
-    /***/
-    protected static boolean checkForResetFailures(String commitID) {
-        String head = getHead();
+    /** Checks for failure cases before proceeding with the reset. */
+    protected static void checkForResetFailures(String commitID) {
+        File master = Utils.join(GITLET_DIR, "Commits", "master");
+        String hash = readContentsAsString(master);
 
-        return commitID.equals(head);
+        if (commitID.equals(hash)){
+            message("There is an untracked file in the way; delete it, or add and commit it first.");
+            System.exit(0);
+        }
     }
 
 

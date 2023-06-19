@@ -298,12 +298,7 @@ public class Repository {
      * tracked files that are not present in that commit. Also moves the
      * current branch’s head to that commit node. */
     public static void reset(String commitID) {
-        boolean unableToReset = checkForResetFailures(commitID);
-
-        if (unableToReset) {
-            message("There is an untracked file in the way; delete it, or add and commit it first.");
-            return;
-        }
+        checkForResetFailures(commitID);
 
         Commit currentCommit = findCommit(commitID);
 
