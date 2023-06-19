@@ -40,31 +40,7 @@ public class Repository {
 
             if (userFile.exists()) {
                 // checkIfTracked(userFile);
-
-                File stageRm = Utils.join(GITLET_DIR, "Stage", "Remove", filename);
-                if (stageRm.exists()) {
-                    stageRm.delete();
-                    removedFromDeleted(filename);
-                    return;
-                }
-
-                File stageVer = Utils.join(GITLET_DIR, "Stage", "Add", filename);
-                File blobDirectory = Utils.join(GITLET_DIR, "Blobs");
-
-                if (stageVer.exists()) {
-                    overwriteStaged(stageVer, userFile);
-                } else {
-                    stageVer.createNewFile();
-                    String contents = readContentsAsString(userFile);
-                    String hash = sha1(contents);
-                    writeToFile(stageVer, hash);
-
-                    File blob = Utils.join(blobDirectory, hash);
-                    blob.createNewFile();
-
-                    writeToFile(blob, contents);
-
-                }
+                addFile(userFile, filename);
             } else {
                 message("File does not exist.");
             }
@@ -73,6 +49,33 @@ public class Repository {
         }
     }
 
+    /** testing */
+    protected static void addFile(File userFile, String filename) throws IOException {
+        File stageRm = Utils.join(GITLET_DIR, "Stage", "Remove", filename);
+        if (stageRm.exists()) {
+            stageRm.delete();
+            removedFromDeleted(filename);
+            return;
+        }
+
+        File stageVer = Utils.join(GITLET_DIR, "Stage", "Add", filename);
+        File blobDirectory = Utils.join(GITLET_DIR, "Blobs");
+
+        if (stageVer.exists()) {
+            overwriteStaged(stageVer, userFile);
+        } else {
+            stageVer.createNewFile();
+            String contents = readContentsAsString(userFile);
+            String hash = sha1(contents);
+            writeToFile(stageVer, hash);
+
+            File blob = Utils.join(blobDirectory, hash);
+            blob.createNewFile();
+
+            writeToFile(blob, contents);
+
+        }
+    }
 
     /** Saves a snapshot of tracked files in the current commit and staging
      * area so that they can be restored at a later time, creating a new
