@@ -117,6 +117,7 @@ public class HelperMethods {
 
         File commitFilePointer = Utils.join(GITLET_DIR, "Commits", head);
         while (commitFilePointer.exists()) {
+
             Commit currentCommit = readObject(commitFilePointer, Commit.class);
 
             for (Reference x: currentCommit.references) {
@@ -127,6 +128,10 @@ public class HelperMethods {
                 if (((x.filename).equals(userFile.getName())) && ((x.blob).equals(userFileBlob))) {
                     System.exit(0);
                 }
+            }
+
+            if (currentCommit.myParent == null) {
+                break;
             }
 
             commitFilePointer = Utils.join(GITLET_DIR, "Commits", currentCommit.myParent);
