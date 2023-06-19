@@ -127,6 +127,7 @@ public class Repository {
 
         if (toBeRemovedStaged.exists()) {
             toBeRemovedStaged.delete();
+            return;
         }
 
         String commitHash = getHead();
