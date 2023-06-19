@@ -183,8 +183,10 @@ public class HelperMethods {
         File master = Utils.join(GITLET_DIR, "Commits", "master");
         String hash = readContentsAsString(master);
 
-        if (commitID.equals(hash)){
-            message("There is an untracked file in the way; delete it, or add and commit it first.");
+        if (commitID.equals(hash)) {
+            message("There is an untracked file in the way; delete it, "
+                +"or add and commit it first.");
+
             System.exit(0);
         }
     }
