@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -106,7 +107,7 @@ public class HelperMethods {
     /** Prints the Commit ID if commitMessage is the same as the currentCommit's
      * message. */
     protected static boolean checkCommitMessage(String currentFileName, Commit currentCommit,
-    String commitMessage) {
+        String commitMessage) {
         String cMsg = currentCommit.getMessage();
 
         if (cMsg.equals(commitMessage)) {
@@ -342,8 +343,8 @@ public class HelperMethods {
             deletedFiles.createNewFile();
             writeObject(deletedFiles, deleted);
         } catch (IOException e) {
-            throw new GitletException("An IOException error occured when " +
-            "setting up the repository.");
+            throw new GitletException("An IOException error occured when "
+            + "setting up the repository.");
         }
     }
 
@@ -351,7 +352,7 @@ public class HelperMethods {
     /** Compares the current branch files & given branch files, following
      * the seven steps given in the spec. */
     protected static void compareAndMerge(String branchName, Commit splitPoint,
-    TreeMap currentBranchFiles, TreeMap givenBranchFiles) throws IOException {
+        TreeMap currentBranchFiles, TreeMap givenBranchFiles) throws IOException {
         ArrayList<String> filesCompared = new ArrayList<>();
 
         // prevents an "[unchecked] unchecked conversion" warning from occurring during compilation.
@@ -362,7 +363,7 @@ public class HelperMethods {
 
         int noOfConflicts = 0;
 
-        // handles case 1, 2, 3, 4 & 8
+        // handles case 1, 2, 3, 4 & 8 (A Cases)
         for (String key: currentBranchKeys) {
             filesCompared.add(key);
 
@@ -408,49 +409,8 @@ public class HelperMethods {
             }
         }
 
-        // handles case 5
-        for (String key: givenBranchKeys) {
-            if (!filesCompared.contains(key)) {
-
-                if ((!currentBranchFiles.containsKey(key)) && (!splitPoint.hasFile(key))) {
-                    checkout1(key);
-                    continue;
-                }
-
-                String givenBlob = (String) givenBranchFiles.get(key);
-                File givenBlobFile = Utils.join(GITLET_DIR, "Blobs", givenBlob);
-                String currentContents = readContentsAsString(givenBlobFile);
-
-                File userFile = Utils.join(CWD, key);
-                if (userFile.exists()) {
-                    addFile(userFile, key);
-                    writeToFile(userFile, currentContents);
-                    continue;
-                } else {
-                    continue;
-                }
-            }
-
-            // handles case 6 & 7
-            for (int i = 0; i < splitPoint.references.length; i++) {
-                if (splitPoint.references[i] == null) {
-                    break;
-                }
-
-                String filename = splitPoint.references[i].filename;
-
-                if (currentBranchFiles.containsKey(filename)
-                && (!givenBranchFiles.containsKey(filename))) {
-                    Repository.remove(filename);
-                }
-
-                if (givenBranchFiles.containsKey(filename)
-                && (!currentBranchFiles.containsKey(filename))) {
-                    Repository.remove(filename);
-                }
-            }
-
-        }
+        // handles the remaining non-conflict cases (B Cases)
+        mergeBCases(splitPoint, filesCompared, currentBranchFiles, givenBranchFiles, givenBranchKeys);
 
         File head = Utils.join(GITLET_DIR, "Commits", "HEAD");
 
@@ -643,6 +603,54 @@ public class HelperMethods {
     }
 
 
+    /** Handles cases 5, 6 & 7 according to the spec. */
+    protected static void mergeBCases(Commit splitPoint, List<String> filesCompared,
+        TreeMap currentBranchFiles, TreeMap givenBranchFiles, Set<String> givenBranchKeys) throws IOException {
+        // handles case 5
+        for (String key: givenBranchKeys) {
+            if (!filesCompared.contains(key)) {
+
+                if ((!currentBranchFiles.containsKey(key)) && (!splitPoint.hasFile(key))) {
+                    checkout1(key);
+                    continue;
+                }
+
+                String givenBlob = (String) givenBranchFiles.get(key);
+                File givenBlobFile = Utils.join(GITLET_DIR, "Blobs", givenBlob);
+                String currentContents = readContentsAsString(givenBlobFile);
+
+                File userFile = Utils.join(CWD, key);
+                if (userFile.exists()) {
+                    addFile(userFile, key);
+                    writeToFile(userFile, currentContents);
+                    continue;
+                } else {
+                    continue;
+                }
+            }
+
+            // handles case 6 & 7
+            for (int i = 0; i < splitPoint.references.length; i++) {
+                if (splitPoint.references[i] == null) {
+                    break;
+                }
+
+                String filename = splitPoint.references[i].filename;
+
+                if (currentBranchFiles.containsKey(filename)
+                        && (!givenBranchFiles.containsKey(filename))) {
+                    Repository.remove(filename);
+                }
+
+                if (givenBranchFiles.containsKey(filename)
+                        && (!currentBranchFiles.containsKey(filename))) {
+                    Repository.remove(filename);
+                }
+            }
+        }
+    }
+
+
     /** Merges the files between the current and given branches, following
      * the rules of merging from the spec. */
     protected static void mergeFiles(Commit splitPoint, String branchName) {
@@ -795,8 +803,8 @@ public class HelperMethods {
                 userFile.delete();
             }
         } catch (IOException e) {
-            throw new GitletException("An IOException error occured when " +
-            "staging the file for removal.");
+            throw new GitletException("An IOException error occured when "
+            + "staging the file for removal.");
         }
     }
 
@@ -812,8 +820,8 @@ public class HelperMethods {
             writer.write(contents);
             writer.close();
         } catch (IOException e) {
-            throw new GitletException("An IOException error occured when " +
-                    "writing content to files.");
+            throw new GitletException("An IOException error occured when "
+            + "writing content to files.");
         }
     }
 }
