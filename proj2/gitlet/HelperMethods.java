@@ -535,8 +535,7 @@ public class HelperMethods {
                         writeToFile(userFile, conflictContents);
                         continue;
                     } else {
-                        userFile.createNewFile();
-                        writeToFile(userFile, conflictContents);
+                        continue;
                     }
                 }
             } else {
@@ -551,8 +550,7 @@ public class HelperMethods {
                     writeToFile(userFile, currentContents);
                     continue;
                 } else {
-                    userFile.createNewFile();
-                    writeToFile(userFile, currentContents);
+                    continue;
                 }
             }
         }
@@ -577,8 +575,7 @@ public class HelperMethods {
                     writeToFile(userFile, currentContents);
                     continue;
                 } else {
-                    userFile.createNewFile();
-                    writeToFile(userFile, currentContents);
+                    continue;
                 }
             }
 
