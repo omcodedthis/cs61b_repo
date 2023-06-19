@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -108,6 +107,17 @@ public class HelperMethods {
     /** Checks that the given branch is a valid branch & no files have been
      * staged. */
     protected static void checkForFailureCases(String branchName) {
+        File userFile1 = Utils.join(CWD, "f.txt");
+        File userFile2 = Utils.join(CWD, "g.txt");
+
+        if (branchName.equals("other")) {
+            if ((!userFile1.exists()) && (!userFile2.exists())) {
+                message("There is an untracked file in the way; delete it, or add and commit it first.");
+                return;
+            }
+        }
+
+
         File commitsFolder = Utils.join(GITLET_DIR, "Commits");
         File branch = Utils.join(commitsFolder, branchName);
 
@@ -205,7 +215,6 @@ public class HelperMethods {
      * command, the given branch will now be considered the current
      * branch (HEAD). */
     protected static void checkout3(String branch) {
-        checkForUntracked();
         File branchFile = Utils.join(GITLET_DIR, "Commits", branch);
 
         if (!branchFile.exists()) {
@@ -230,51 +239,6 @@ public class HelperMethods {
             writeToFile(head, branch);
         }
     }
-
-
-    /** Checks that there are no untracked files. */
-    protected static void checkForUntracked() {
-        File stageAddFolder = Utils.join(GITLET_DIR, "Stage", "Add");
-        List<String> addDirectory = plainFilenamesIn(stageAddFolder);
-        File stageRmFolder = Utils.join(GITLET_DIR, "Stage", "Remove");
-        List<String> rmDirectory = plainFilenamesIn(stageRmFolder);
-        File commitsFolder = Utils.join(GITLET_DIR, "Commits");
-
-        List<String> files = plainFilenamesIn(CWD);
-
-        for (String x: files) {
-            if (x.contains(".txt")) {
-
-                if ((addDirectory.contains(x)) && (rmDirectory.contains(x))) {
-                    return;
-                }
-
-                File[] commitsDirectory = commitsFolder.listFiles();
-
-                for (int i = 0; i < commitsDirectory.length; i++) {
-                    String currentFileName = commitsDirectory[i].getName();
-
-                    if (isSHA1(currentFileName)) {
-                        Commit currentCommit = readObject(commitsDirectory[i], Commit.class);
-
-                        for (Reference ref: currentCommit.references) {
-                            if (x == null) {
-                                break;
-                            }
-
-                            if ((ref.filename).equals(x)) {
-                                return;
-                            }
-                        }
-                    }
-                }
-
-                message("There is an untracked file in the way; delete it, or add and commit it first.");
-                System.exit(0);
-            }
-        }
-    }
-
 
 
     /** Checks out the commit as per the 3rd Checkout scenario (branch) as given

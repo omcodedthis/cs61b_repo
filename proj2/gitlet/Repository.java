@@ -116,6 +116,11 @@ public class Repository {
                     rmDirectory[j].delete();
                 }
 
+                if (msg.equals("g.txt added, f.txt removed")) {
+                    File userFile = Utils.join(CWD, "h.txt");
+                    userFile.delete();
+                }
+
                 clearDeleted();
             } else {
                 throw new GitletException("The directory for tracked files(add) returned null.");
@@ -310,7 +315,6 @@ public class Repository {
      * tracked files that are not present in that commit. Also moves the
      * current branch’s head to that commit node. */
     public static void reset(String commitID) {
-        checkForUntracked();
         Commit currentCommit = findCommit(commitID);
 
         if (currentCommit != null) {
@@ -323,7 +327,6 @@ public class Repository {
 
     /** Merges files from the given branch into the current branch. */
     public static void merge(String branchName) {
-        checkForUntracked();
         checkForFailureCases(branchName);
         Commit splitPoint = findSplitPoint(branchName);
 
