@@ -116,7 +116,7 @@ public class HelperMethods {
         String head = getHead();
 
         File commitFilePointer = Utils.join(GITLET_DIR, "Commits", head);
-        while (commitFilePointer.exists()) {
+        if (commitFilePointer.exists()) {
 
             Commit currentCommit = readObject(commitFilePointer, Commit.class);
 
@@ -129,12 +129,6 @@ public class HelperMethods {
                     System.exit(0);
                 }
             }
-
-            if (currentCommit.myParent == null) {
-                break;
-            }
-
-            commitFilePointer = Utils.join(GITLET_DIR, "Commits", currentCommit.myParent);
         }
     }
 
