@@ -111,9 +111,7 @@ public class HelperMethods {
     /** Checks whether the file is tracked & unchanged. */
     protected static void checkIfTracked(File userFile) {
         String contents = readContentsAsString(userFile);
-        String hash = sha1(contents);
-
-        Reference fileRef = new Reference(userFile.getName(), hash);
+        String userFileBlob = sha1(contents);
 
         String head = getHead();
 
@@ -126,7 +124,7 @@ public class HelperMethods {
                     break;
                 }
 
-                if (x.equals(fileRef)) {
+                if (((x.filename).equals(userFile.getName())) && ((x.blob).equals(userFileBlob))) {
                     System.exit(0);
                 }
             }
