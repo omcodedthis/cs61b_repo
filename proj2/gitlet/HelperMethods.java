@@ -530,10 +530,9 @@ public class HelperMethods {
                     File givenBlobFile = Utils.join(GITLET_DIR, "Blobs", givenBlob);
                     String givenContents = readContentsAsString(givenBlobFile);
 
-                    String conflictContents = "<<<<<<< HEAD\n" + currentContents + "\n=======\n" + givenContents + "\n>>>>>>>\n";
+                    String conflictContents = "<<<<<<< HEAD\n" + currentContents + "=======\n" + givenContents + ">>>>>>>";
                     noOfConflicts++;
-
-
+                    
                     File userFile = Utils.join(CWD, key);
                     if (userFile.exists()) {
                         Repository.add(key);
