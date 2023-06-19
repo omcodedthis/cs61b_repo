@@ -39,7 +39,7 @@ public class Repository {
             File userFile = Utils.join(CWD, filename);
 
             if (userFile.exists()) {
-                // checkIfTracked(userFile);
+                checkIfTracked(userFile);
                 addFile(userFile, filename);
             } else {
                 message("File does not exist.");
