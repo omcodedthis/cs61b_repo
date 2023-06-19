@@ -699,8 +699,8 @@ public class HelperMethods {
 
 
     /** Prints the Staged Files. */
-    protected static void printStaged() {
-        System.out.println("=== Staged Files ===");
+    protected static void printUntracked() {
+        System.out.println("=== Untracked Files ===");
 
         File stageAddFolder = Utils.join(GITLET_DIR, "Stage", "Add");
         File[] addDirectory = stageAddFolder.listFiles();

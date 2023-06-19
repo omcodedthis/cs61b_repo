@@ -235,14 +235,15 @@ public class Repository {
     public static void status() {
         printBranches();
 
-        printStaged();
+        System.out.println("=== Staged Files ===");
+        System.out.println();
 
         printRemoved();
 
         System.out.println("=== Modifications Not Staged For Commit ===");
         System.out.println();
-        System.out.println("=== Untracked Files ===");
-        System.out.println();
+
+        printUntracked();
     }
 
 
