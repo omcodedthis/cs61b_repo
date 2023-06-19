@@ -108,6 +108,33 @@ public class HelperMethods {
     }
 
 
+    /** Checks whether the file is tracked & unchanged. */
+    protected static void checkIfTracked(File userFile) {
+        String contents = readContentsAsString(userFile);
+        String hash = sha1(contents);
+
+        Reference fileRef = new Reference(userFile.getName(), hash);
+
+        String head = getHead();
+
+        File commitFilePointer = Utils.join(GITLET_DIR, "Commits", head);
+        while (commitFilePointer.exists()) {
+            Commit currentCommit = readObject(commitFilePointer, Commit.class);
+
+            for (Reference x: currentCommit.references) {
+                if (x == null) {
+                    break;
+                }
+
+                if (x.equals(fileRef)) {
+                    System.exit(0);
+                }
+            }
+
+            commitFilePointer = Utils.join(GITLET_DIR, "Commits", currentCommit.myParent);
+        }
+    }
+
     /** Checks that the given branch is a valid branch & no files have been
      * staged. */
     protected static void checkForFailureCases(String branchName) {
