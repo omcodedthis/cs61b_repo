@@ -47,6 +47,28 @@ public class HelperMethods {
     }
 
 
+    /** Adds the file to the staging area if applicable. */
+    protected static void addFile(File userFile, String filename) throws IOException {
+        File stageVer = Utils.join(GITLET_DIR, "Stage", "Add", filename);
+        File blobDirectory = Utils.join(GITLET_DIR, "Blobs");
+
+        if (stageVer.exists()) {
+            overwriteStaged(stageVer, userFile);
+        } else {
+            stageVer.createNewFile();
+            String contents = readContentsAsString(userFile);
+            String hash = sha1(contents);
+            writeToFile(stageVer, hash);
+
+            File blob = Utils.join(blobDirectory, hash);
+            blob.createNewFile();
+
+            writeToFile(blob, contents);
+
+        }
+    }
+
+
     /** Reads & adds the name of the deleted file to deleted_files. */
     protected static void addToDeleted(String filename) {
         File deletedFiles = Utils.join(GITLET_DIR, "Stage", "deleted_files");
@@ -56,19 +78,6 @@ public class HelperMethods {
         ArrayList<String> deleted = readObject(deletedFiles, ArrayList.class);
 
         deleted.add(filename);
-        writeObject(deletedFiles, deleted);
-    }
-
-
-    /***/
-    protected static void removedFromDeleted(String filename) {
-        File deletedFiles = Utils.join(GITLET_DIR, "Stage", "deleted_files");
-
-        // prevents an "[unchecked] unchecked conversion" warning from occurring during compilation.
-        @SuppressWarnings("unchecked")
-        ArrayList<String> deleted = readObject(deletedFiles, ArrayList.class);
-
-        deleted.remove(filename);
         writeObject(deletedFiles, deleted);
     }
 
@@ -132,6 +141,7 @@ public class HelperMethods {
         }
     }
 
+
     /** Checks that the given branch is a valid branch & no files have been
      * staged. */
     protected static void checkForFailureCases(String branchName) {
@@ -164,6 +174,7 @@ public class HelperMethods {
 
 
     }
+
 
     /** Takes the version of the file as it exists in the head commit and
      * puts it in the working directory, overwriting the version of the file
@@ -335,6 +346,114 @@ public class HelperMethods {
     }
 
 
+    /** Compares the current branch files & given branch files, following
+     * the seven steps given in the spec. */
+    protected static void compareAndMerge(String branchName, Commit splitPoint, TreeMap currentBranchFiles, TreeMap givenBranchFiles) throws IOException {
+        ArrayList<String> filesCompared = new ArrayList<>();
+
+        // prevents an "[unchecked] unchecked conversion" warning from occurring during compilation.
+        @SuppressWarnings("unchecked")
+        Set<String> currentBranchKeys = currentBranchFiles.keySet();
+        @SuppressWarnings("unchecked")
+        Set<String> givenBranchKeys = givenBranchFiles.keySet();
+
+        int noOfConflicts= 0;
+
+        // handles case 1, 2, 3, 4 & 8
+        for (String key: currentBranchKeys) {
+            filesCompared.add(key);
+
+            if (givenBranchFiles.containsKey(key)) {
+                String currentBlob = (String) currentBranchFiles.get(key);
+                String givenBlob = (String) givenBranchFiles.get(key);
+
+                if (currentBlob.equals(givenBlob)) {
+                    continue;
+                } else {
+                    File currentBlobFile = Utils.join(GITLET_DIR, "Blobs", currentBlob);
+                    String currentContents = readContentsAsString(currentBlobFile);
+                    File givenBlobFile = Utils.join(GITLET_DIR, "Blobs", givenBlob);
+                    String givenContents = readContentsAsString(givenBlobFile);
+
+                    String conflictContents = "<<<<<<< HEAD\n" + currentContents + "=======\n" + givenContents + ">>>>>>>\n";
+                    noOfConflicts++;
+
+                    File userFile = Utils.join(CWD, key);
+                    if (userFile.exists()) {
+                        addFile(userFile, key);
+                        writeToFile(userFile, conflictContents);
+                        continue;
+                    } else {
+                        continue;
+                    }
+                }
+            } else {
+                String currentBlob = (String) currentBranchFiles.get(key);
+                File currentBlobFile = Utils.join(GITLET_DIR, "Blobs", currentBlob);
+                String currentContents = readContentsAsString(currentBlobFile);
+
+                File userFile = Utils.join(CWD, key);
+                if (userFile.exists()) {
+                    addFile(userFile, key);
+                    writeToFile(userFile, currentContents);
+                    continue;
+                } else {
+                    continue;
+                }
+            }
+        }
+
+        // handles case 5
+        for (String key: givenBranchKeys) {
+            if (!filesCompared.contains(key)) {
+
+                if ((!currentBranchFiles.containsKey(key)) && (!splitPoint.hasFile(key))) {
+                    checkout1(key);
+                    continue;
+                }
+
+                String givenBlob = (String) givenBranchFiles.get(key);
+                File givenBlobFile = Utils.join(GITLET_DIR, "Blobs", givenBlob);
+                String currentContents = readContentsAsString(givenBlobFile);
+
+                File userFile = Utils.join(CWD, key);
+                if (userFile.exists()) {
+                    addFile(userFile, key);
+                    writeToFile(userFile, currentContents);
+                    continue;
+                } else {
+                    continue;
+                }
+            }
+
+            // handles case 6 & 7
+            for (int i = 0; i < splitPoint.references.length; i++) {
+                if (splitPoint.references[i] == null) {
+                    break;
+                }
+
+                String filename = splitPoint.references[i].filename;
+
+                if (currentBranchFiles.containsKey(filename) && (!givenBranchFiles.containsKey(filename))) {
+                    Repository.remove(filename);
+                }
+
+                if (givenBranchFiles.containsKey(filename) && (!currentBranchFiles.containsKey(filename))) {
+                    Repository.remove(filename);
+                }
+            }
+
+        }
+
+        File head = Utils.join(GITLET_DIR, "Commits", "HEAD");
+
+        Repository.commit("Merged " + branchName + " into " + readContentsAsString(head) + '.');
+        if (noOfConflicts > 0) {
+            message("Encountered a merge conflict.");
+        }
+    }
+
+
     /** Finds & returns the Commit that matches all the characters in the
      * given Commit ID. Returns null if the given Commit ID cannot be
      * found. */
@@ -416,6 +535,7 @@ public class HelperMethods {
         return null;
     }
 
+
     /** Returns the SHA-1 hash of the HEAD commit. */
     protected static String getHead() {
         File head = Utils.join(GITLET_DIR, "Commits", "HEAD");
@@ -428,35 +548,6 @@ public class HelperMethods {
             return headHash;
         } else {
             throw new GitletException("The HEAD file is missing.");
-        }
-    }
-
-
-    /** Returns true if the branch is the current branch. */
-    protected static boolean isCurrentBranch(String branch) {
-        File head = Utils.join(GITLET_DIR, "Commits", "HEAD");
-        String headBranch = readContentsAsString(head);
-
-        return headBranch.equals(branch);
-    }
-
-
-    /** Returns true if the given string is a valid SHA-1 hash. */
-    protected static boolean isSHA1(String hash) {
-        return hash.matches("^[a-fA-F0-9]{40}$");
-    }
-
-
-    /** Merges the files between the current and given branches, following
-     * the rules of merging from the spec. */
-    protected static void mergeFiles(Commit splitPoint, String branchName) {
-        try {
-            TreeMap<String, String> currentBranchFiles = getCurrentBranchFiles(splitPoint);
-            TreeMap<String, String> givenBranchFiles = getGivenBranchFiles(splitPoint, branchName);
-
-            compareAndMerge(branchName, splitPoint, currentBranchFiles, givenBranchFiles);
-        } catch (IOException e) {
-            throw new GitletException("An IOException occured when merging " + branchName + '.');
         }
     }
 
@@ -529,110 +620,31 @@ public class HelperMethods {
     }
 
 
-    /** Compares the current branch files & given branch files, following
-     * the seven steps given in the spec. */
-    protected static void compareAndMerge(String branchName, Commit splitPoint, TreeMap currentBranchFiles, TreeMap givenBranchFiles) throws IOException {
-        ArrayList<String> filesCompared = new ArrayList<>();
-
-        // prevents an "[unchecked] unchecked conversion" warning from occurring during compilation.
-        @SuppressWarnings("unchecked")
-        Set<String> currentBranchKeys = currentBranchFiles.keySet();
-        @SuppressWarnings("unchecked")
-        Set<String> givenBranchKeys = givenBranchFiles.keySet();
-
-        int noOfConflicts= 0;
-
-        // handles case 1, 2, 3, 4 & 8
-        for (String key: currentBranchKeys) {
-            filesCompared.add(key);
-
-            if (givenBranchFiles.containsKey(key)) {
-                String currentBlob = (String) currentBranchFiles.get(key);
-                String givenBlob = (String) givenBranchFiles.get(key);
-
-                if (currentBlob.equals(givenBlob)) {
-                    continue;
-                } else {
-                    File currentBlobFile = Utils.join(GITLET_DIR, "Blobs", currentBlob);
-                    String currentContents = readContentsAsString(currentBlobFile);
-                    File givenBlobFile = Utils.join(GITLET_DIR, "Blobs", givenBlob);
-                    String givenContents = readContentsAsString(givenBlobFile);
-
-                    String conflictContents = "<<<<<<< HEAD\n" + currentContents + "=======\n" + givenContents + ">>>>>>>\n";
-                    noOfConflicts++;
-
-                    File userFile = Utils.join(CWD, key);
-                    if (userFile.exists()) {
-                        Repository.addFile(userFile, key);
-                        writeToFile(userFile, conflictContents);
-                        continue;
-                    } else {
-                        continue;
-                    }
-                }
-            } else {
-                String currentBlob = (String) currentBranchFiles.get(key);
-                File currentBlobFile = Utils.join(GITLET_DIR, "Blobs", currentBlob);
-                String currentContents = readContentsAsString(currentBlobFile);
-
-                File userFile = Utils.join(CWD, key);
-                if (userFile.exists()) {
-                    Repository.addFile(userFile, key);
-                    writeToFile(userFile, currentContents);
-                    continue;
-                } else {
-                    continue;
-                }
-            }
-        }
-
-        // handles case 5
-        for (String key: givenBranchKeys) {
-            if (!filesCompared.contains(key)) {
-
-                if ((!currentBranchFiles.containsKey(key)) && (!splitPoint.hasFile(key))) {
-                    checkout1(key);
-                    continue;
-                }
-
-                String givenBlob = (String) givenBranchFiles.get(key);
-                File givenBlobFile = Utils.join(GITLET_DIR, "Blobs", givenBlob);
-                String currentContents = readContentsAsString(givenBlobFile);
-
-                File userFile = Utils.join(CWD, key);
-                if (userFile.exists()) {
-                    Repository.addFile(userFile, key);
-                    writeToFile(userFile, currentContents);
-                    continue;
-                } else {
-                    continue;
-                }
-            }
-
-            // handles case 6 & 7
-            for (int i = 0; i < splitPoint.references.length; i++) {
-                if (splitPoint.references[i] == null) {
-                    break;
-                }
-
-                String filename = splitPoint.references[i].filename;
-
-                if (currentBranchFiles.containsKey(filename) && (!givenBranchFiles.containsKey(filename))) {
-                    Repository.remove(filename);
-                }
-
-                if (givenBranchFiles.containsKey(filename) && (!currentBranchFiles.containsKey(filename))) {
-                    Repository.remove(filename);
-                }
-            }
-
-        }
-
+    /** Returns true if the branch is the current branch. */
+    protected static boolean isCurrentBranch(String branch) {
         File head = Utils.join(GITLET_DIR, "Commits", "HEAD");
+        String headBranch = readContentsAsString(head);
 
-        Repository.commit("Merged " + branchName + " into " + readContentsAsString(head) + '.');
-        if (noOfConflicts > 0) {
-            message("Encountered a merge conflict.");
+        return headBranch.equals(branch);
+    }
+
+
+    /** Returns true if the given string is a valid SHA-1 hash. */
+    protected static boolean isSHA1(String hash) {
+        return hash.matches("^[a-fA-F0-9]{40}$");
+    }
+
+
+    /** Merges the files between the current and given branches, following
+     * the rules of merging from the spec. */
+    protected static void mergeFiles(Commit splitPoint, String branchName) {
+        try {
+            TreeMap<String, String> currentBranchFiles = getCurrentBranchFiles(splitPoint);
+            TreeMap<String, String> givenBranchFiles = getGivenBranchFiles(splitPoint, branchName);
+
+            compareAndMerge(branchName, splitPoint, currentBranchFiles, givenBranchFiles);
+        } catch (IOException e) {
+            throw new GitletException("An IOException occured when merging " + branchName + '.');
         }
     }
 
@@ -742,6 +754,19 @@ public class HelperMethods {
         }
 
         System.out.println();
+    }
+
+
+    /** Removes the file from deleted_files. */
+    protected static void removedFromDeleted(String filename) {
+        File deletedFiles = Utils.join(GITLET_DIR, "Stage", "deleted_files");
+
+        // prevents an "[unchecked] unchecked conversion" warning from occurring during compilation.
+        @SuppressWarnings("unchecked")
+        ArrayList<String> deleted = readObject(deletedFiles, ArrayList.class);
+
+        deleted.remove(filename);
+        writeObject(deletedFiles, deleted);
     }
 
 
