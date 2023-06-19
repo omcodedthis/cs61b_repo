@@ -1,1 +1,7 @@
+<<<<<<< HEAD
 This is not a wug.
+
+=======
+This is not a wug.1
+
+>>>>>>>
