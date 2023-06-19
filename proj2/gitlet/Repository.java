@@ -59,6 +59,13 @@ public class Repository {
 
     /** testing */
     protected static void addFile(File userFile, String filename) throws IOException {
+        File stageRm = Utils.join(GITLET_DIR, "Stage", "Remove", filename);
+        if (stageRm.exists()) {
+            stageRm.delete();
+            removedFromDeleted(filename);
+            return;
+        }
+
         File stageVer = Utils.join(GITLET_DIR, "Stage", "Add", filename);
         File blobDirectory = Utils.join(GITLET_DIR, "Blobs");
 
