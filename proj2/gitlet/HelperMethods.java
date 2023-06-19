@@ -530,7 +530,7 @@ public class HelperMethods {
                     File givenBlobFile = Utils.join(GITLET_DIR, "Blobs", givenBlob);
                     String givenContents = readContentsAsString(givenBlobFile);
 
-                    String conflictContents = "<<<<<<< HEAD\n" + currentContents + "=======\n" + givenContents + ">>>>>>>";
+                    String conflictContents = "<<<<<<< HEAD\n" + currentContents + "\n=======\n" + givenContents + "\n>>>>>>>";
                     noOfConflicts++;
 
 
@@ -603,7 +603,7 @@ public class HelperMethods {
 
         File head = Utils.join(GITLET_DIR, "Commits", "HEAD");
 
-        Repository.commit("Merged " + branchName + " into" + readContentsAsString(head) + '.');
+        Repository.commit("Merged " + branchName + " into " + readContentsAsString(head) + '.');
         if (noOfConflicts > 0) {
             message("Encountered a merge conflict.");
         }
