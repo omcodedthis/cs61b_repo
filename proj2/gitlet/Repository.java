@@ -116,11 +116,6 @@ public class Repository {
                     rmDirectory[j].delete();
                 }
 
-                if (msg.equals("g.txt added, f.txt removed")) {
-                    File userFile = Utils.join(CWD, "h.txt");
-                    userFile.delete();
-                }
-
                 clearDeleted();
             } else {
                 throw new GitletException("The directory for tracked files(add) returned null.");

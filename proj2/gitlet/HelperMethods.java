@@ -107,17 +107,6 @@ public class HelperMethods {
     /** Checks that the given branch is a valid branch & no files have been
      * staged. */
     protected static void checkForFailureCases(String branchName) {
-        File userFile1 = Utils.join(CWD, "f.txt");
-        File userFile2 = Utils.join(CWD, "g.txt");
-
-        if (branchName.equals("other")) {
-            if ((!userFile1.exists()) && (!userFile2.exists())) {
-                message("There is an untracked file in the way; delete it, or add and commit it first.");
-                return;
-            }
-        }
-
-
         File commitsFolder = Utils.join(GITLET_DIR, "Commits");
         File branch = Utils.join(commitsFolder, branchName);
 
