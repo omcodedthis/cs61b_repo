@@ -31,17 +31,19 @@ public class HelperMethods {
 
     /** Writes the Commit object to a file and updates HEAD & master. */
     protected static void addThisCommit(Commit newCommit) throws IOException {
-        File commits = Utils.join(GITLET_DIR, "Commits");
+        File commitsFolder = Utils.join(GITLET_DIR, "Commits");
+        newCommit.myParent = getHead();
 
         byte[] serialized = serialize(newCommit);
         String hash = sha1(serialized);
 
-        File addCommit = Utils.join(commits, hash);
+        File addCommit = Utils.join(commitsFolder, hash);
         addCommit.createNewFile();
         writeContents(addCommit, serialized);
 
-        File master = Utils.join(GITLET_DIR, "Commits", "master");
-        writeContents(master, hash);
+        File head = Utils.join(commitsFolder, "HEAD");
+        File currentBranch = Utils.join(commitsFolder, readContentsAsString(head));
+        writeContents(currentBranch, hash);
     }
 
 
@@ -518,8 +520,11 @@ public class HelperMethods {
                     File userFile = Utils.join(CWD, key);
                     if (userFile.exists()) {
                         writeToFile(userFile, conflictContents);
+                        continue;
+                    } else {
+                        userFile.createNewFile();
+                        writeToFile(userFile, conflictContents);
                     }
-                    continue;
                 }
             } else {
                 String currentBlob = (String) currentBranchFiles.get(key);
@@ -531,8 +536,11 @@ public class HelperMethods {
                 File userFile = Utils.join(CWD, key);
                 if (userFile.exists()) {
                     writeToFile(userFile, currentContents);
+                    continue;
+                } else {
+                    userFile.createNewFile();
+                    writeToFile(userFile, currentContents);
                 }
-                continue;
             }
         }
 
@@ -554,8 +562,11 @@ public class HelperMethods {
                 File userFile = Utils.join(CWD, key);
                 if (userFile.exists()) {
                     writeToFile(userFile, currentContents);
+                    continue;
+                } else {
+                    userFile.createNewFile();
+                    writeToFile(userFile, currentContents);
                 }
-                continue;
             }
 
             // handles case 6 & 7
