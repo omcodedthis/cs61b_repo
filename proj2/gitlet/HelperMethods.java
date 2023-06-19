@@ -179,13 +179,10 @@ public class HelperMethods {
 
 
     /***/
-    protected static void checkForResetFailures(String commitID) {
+    protected static boolean checkForResetFailures(String commitID) {
         String head = getHead();
 
-        if (commitID.equals(head)) {
-            message("There is an untracked file in the way; delete it, or add and commit it first.");
-            System.exit(0);
-        }
+        return commitID.equals(head);
     }
 
 
