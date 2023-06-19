@@ -596,32 +596,6 @@ public class HelperMethods {
                 if (givenBranchFiles.containsKey(filename) && (!currentBranchFiles.containsKey(filename))) {
                     Repository.remove(filename);
                 }
-
-                else {
-                    String currentBlob = (String) currentBranchFiles.get(filename);
-                    String givenBlob = (String) givenBranchFiles.get(filename);
-
-                    if (currentBlob.equals(givenBlob)) {
-                        continue;
-                    } else {
-                        File currentBlobFile = Utils.join(GITLET_DIR, "Blobs", currentBlob);
-                        String currentContents = readContentsAsString(currentBlobFile);
-                        File givenBlobFile = Utils.join(GITLET_DIR, "Blobs", givenBlob);
-                        String givenContents = readContentsAsString(givenBlobFile);
-
-                        String conflictContents = "<<<<<<< HEAD\n" + currentContents + "=======\n" + givenContents + ">>>>>>>\n";
-                        noOfConflicts++;
-
-                        File userFile = Utils.join(CWD, filename);
-                        if (userFile.exists()) {
-                            Repository.add(filename);
-                            writeToFile(userFile, conflictContents);
-                            continue;
-                        } else {
-                            continue;
-                        }
-                    }
-                }
             }
 
         }
