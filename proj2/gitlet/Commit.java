@@ -19,7 +19,7 @@ public class Commit implements Serializable {
     /** The message of this Commit. */
     private String message;
 
-    /** The references to the file contents for each commit, stored in an ArrayList. */
+    /** The references to the file contents for each commit, stored in an array. */
     protected Reference[] references = new Reference[100];
 
     /** The reference to this Commit's immediate parent. */
