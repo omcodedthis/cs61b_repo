@@ -54,4 +54,26 @@ public class Engine {
         TETile[][] finalWorldFrame = null;
         return finalWorldFrame;
     }
+
+
+    /** Parses the seed from the command line input. */
+    public static long parseSeed(String input) {
+        input = input.toLowerCase();
+        String stringSeed = "";
+
+        for (int i = 0; i < input.length(); i++) {
+            char ch = input.charAt(i);
+
+            if (ch == 's') {
+                break;
+            }
+
+            boolean isDigit = Character.isDigit(ch);
+            if (isDigit) {
+                stringSeed += ch;
+            }
+        }
+        long seed = Long.parseLong(stringSeed);
+        return seed;
+    }
 }
