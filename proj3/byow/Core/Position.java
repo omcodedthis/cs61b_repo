@@ -5,22 +5,25 @@ package byow.Core;
  * the top-left position of the room / hallway. Note that asset refers to both rooms & hallways. */
 
 public class Position {
-    private int TOPLx;
-    private int TOPLy;
+    private int MIDx;
+    private int MIDy;
+    private int HALFWIDTH;
+    private int HALFLENGTH;
+
     private int xPos;
     private int yPos;
-    private int width;
-    private int length;
+
 
 
     /** Constructor for the Position class, sets the xPos & yPos. */
     public Position(int x, int y, int w, int l) {
-        TOPLx = x;
-        TOPLy = y;
+        HALFWIDTH = w / 2;
+        HALFLENGTH = l / 2;
+
+        MIDx = x + HALFWIDTH;
+        MIDy = y - HALFLENGTH;
         xPos = x;
         yPos = y;
-        width = w;
-        length = l;
     }
 
 
@@ -50,14 +53,24 @@ public class Position {
 
     /** Returns the midpoint x-coordinate of the asset. */
     public int getMidx() {
-        int halfWidth = width / 2;
-        return TOPLx + halfWidth;
+        return MIDx;
     }
 
 
     /** Returns the midpoint y-coordinate of the asset. */
     public int getMidy() {
-        int halfLength = length / 2;
-        return TOPLy + halfLength;
+        return MIDy;
+    }
+
+
+    /** Returns HALFWIDTH (WIDTH / 2). */
+    public int getHalfWidth() {
+        return HALFWIDTH;
+    }
+
+
+    /** Returns HALFHEIGHT (HEIGHT / 2). */
+    public int getHalfLength() {
+        return HALFLENGTH;
     }
 }
