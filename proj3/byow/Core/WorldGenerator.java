@@ -1,6 +1,5 @@
 package byow.Core;
 
-import afu.org.checkerframework.checker.oigj.qual.O;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
