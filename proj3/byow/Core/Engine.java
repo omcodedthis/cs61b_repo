@@ -46,13 +46,20 @@ public class Engine {
         // to interactWithKeyboard().
         //
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
-        // that works for many different input types.
+        // that works for many different input types. NOTE: For the autograder, the StdDraw class
+        // cannot be used (for its testing purposes). Hence, "ter.initialize(WIDTH, HEIGHT);" &
+        // "ter.renderFrame(finalWorldFrame);" for this method had to be removed when
+        // submitting to the autograder.
+
+        ter.initialize(WIDTH, HEIGHT);
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
 
         long seed = parseSeed(input);
 
         WorldGenerator generator = new WorldGenerator(finalWorldFrame, WIDTH, HEIGHT, seed);
         finalWorldFrame = generator.getWorld();
+
+        ter.renderFrame(finalWorldFrame);
 
         return finalWorldFrame;
     }
