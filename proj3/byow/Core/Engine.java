@@ -47,15 +47,12 @@ public class Engine {
         //
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
-        ter.initialize(WIDTH, HEIGHT);
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
 
         long seed = parseSeed(input);
 
         WorldGenerator generator = new WorldGenerator(finalWorldFrame, WIDTH, HEIGHT, seed);
         finalWorldFrame = generator.getWorld();
-
-        ter.renderFrame(finalWorldFrame);
 
         return finalWorldFrame;
     }
