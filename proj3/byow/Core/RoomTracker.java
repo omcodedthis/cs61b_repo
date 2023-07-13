@@ -15,23 +15,10 @@ public class RoomTracker {
     }
 
 
-    /** Constructor for instantiation with a room Position. */
-    public RoomTracker(Position roomLoc) {
-        roomList.add(roomLoc);
-        size = 1;
-    }
-
-
     /** Adds a room to roomList. */
     public void addRoom(Position roomLoc) {
         roomList.add(roomLoc);
         size += 1;
-    }
-
-
-    /** Returns the size of roomList. */
-    public int getTotalRooms() {
-        return size;
     }
 
 

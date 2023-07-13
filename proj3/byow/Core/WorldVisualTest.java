@@ -16,7 +16,7 @@ public class WorldVisualTest {
         TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
-        long seed = Engine.parseSeed("N1888111S");
+        long seed = Engine.parseSeed("N9888889S");
 
         WorldGenerator generator = new WorldGenerator(finalWorldFrame, WIDTH, HEIGHT, seed);
         finalWorldFrame = generator.getWorld();

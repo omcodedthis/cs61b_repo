@@ -8,9 +8,6 @@ public class Engine {
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
-    public static final int ORIGIN = 0;  // bottom left
-    public static final int MIDPOINTx = WIDTH / 2;
-    public static final int MIDPOINTy = HEIGHT / 2;
 
     /**
      * Method used for exploring a fresh world. This method should handle all inputs,
@@ -50,8 +47,16 @@ public class Engine {
         //
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
+        ter.initialize(WIDTH, HEIGHT);
+        TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
 
-        TETile[][] finalWorldFrame = null;
+        long seed = parseSeed(input);
+
+        WorldGenerator generator = new WorldGenerator(finalWorldFrame, WIDTH, HEIGHT, seed);
+        finalWorldFrame = generator.getWorld();
+
+        ter.renderFrame(finalWorldFrame);
+
         return finalWorldFrame;
     }
 

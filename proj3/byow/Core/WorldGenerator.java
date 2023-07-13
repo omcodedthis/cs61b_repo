@@ -1,5 +1,6 @@
 package byow.Core;
 
+import afu.org.checkerframework.checker.oigj.qual.O;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
@@ -25,6 +26,7 @@ public class WorldGenerator {
     /** World Assets constants. */
     public static final int ROOMMIN = 5;
     public static final int ROOMMAX = 10;
+    public static final int LINKBOUND = 1;
     public static final int HALLWAYWIDTHBOUND = 3;
 
 
@@ -53,30 +55,64 @@ public class WorldGenerator {
     }
 
 
+    /** Draws a world filled with rooms & hallways. */
+    public void drawWorld() {
+        drawSectors();
+        connectRooms();
+    }
+
+
     /** Returns worldFrame. */
     public TETile[][] getWorld() {
         return worldFrame;
     }
 
 
-    /** Draws a world. WORK IN PROGRESS. */
-    public void drawWorld() {
-        int value = rand.nextInt(10- 1) + 1;
-        System.out.println(value);
+    /** Splits the world into five sectors. Each sector has a maximum of two rooms. */
+    public void drawSectors() {
+        int sectorWidth = WIDTH / 5;
+        int x = ORIGIN;
+        int y = uniform(rand, ORIGIN + ROOMMAX, HEIGHT);
 
-        for (int i = 0; i < 1; i++) {
-            drawRoom(MIDPOINTx - 20, MIDPOINTy + 10);
+        for (int s = 1; s < 6; s++) {
+            for (int i = 0; i < 1; i++) {
+                drawRoom(x, y);
+            }
+            y = randomY(y);
+
+            if (drawSecondRoom()) {
+                drawRoom(x+ROOMMIN, y);
+            }
+
+            x = sectorWidth * s;
+            y = randomY(y);
         }
+    }
 
-        for (int i = 0; i < 1; i++) {
-            drawRoom(MIDPOINTx, MIDPOINTy);
+
+    /** Using pseudorandomness to determine whether a second room in the sector should be drawn. */
+    public boolean drawSecondRoom() {
+        int outcome = uniform(rand, 0, 5);
+
+        if (outcome == 0) {
+            return false;
+        } else {
+            return true;
         }
+    }
 
-        for (int i = 0; i < 1; i++) {
-            drawRoom(MIDPOINTx + 20, MIDPOINTy - 10);
+
+    /** Returns a random y-value that is between the bounds of ORIGIN & HEIGHT. The new y-value is also has an absolute
+     * difference greater than ROOMMIN so that rooms are spaced apart sufficiently. */
+    public int randomY(int prevY) {
+        int newY = uniform(rand, ORIGIN + ROOMMAX, HEIGHT);
+        int absoluteDifference = Math.abs(newY - prevY);
+
+        while (absoluteDifference <= ROOMMIN) {
+            newY = uniform(rand, ORIGIN + ROOMMAX, HEIGHT);
+            absoluteDifference = Math.abs(newY - prevY);
         }
-
-        connectRooms();
+        return newY;
     }
 
 
@@ -108,46 +144,6 @@ public class WorldGenerator {
     }
 
 
-    /** Draws a horizontal hallway with a pseudorandom width (1 or 2, according to the spec) & length. */
-    public void drawHorizontalHallway(int x, int y) {
-        int width = uniform(rand, 1, HALLWAYWIDTHBOUND) + 1; // +1 to for the wall
-        int length = uniform(rand, 1, 10);
-        Position hallLoc = new Position(x, y, width, length);
-
-        for (int dx = 0; dx < length; dx++) {
-            worldFrame[hallLoc.getxPos()][hallLoc.getyPos()] = Tileset.WALL;
-
-            for (int dy = width; dy >= 1; dy--) {
-                worldFrame[hallLoc.getxPos()][hallLoc.getyPos() - dy] = Tileset.FLOOR;
-            }
-
-            worldFrame[hallLoc.getxPos()][hallLoc.getyPos() - width] = Tileset.WALL;
-
-            hallLoc.changexPos(-1);
-        }
-    }
-
-
-    /** Draws a vertical hallway with a pseudorandom width (1 or 2, according to the spec) & length. */
-    public void drawVerticalHallway() {
-        int width = uniform(rand, 1, HALLWAYWIDTHBOUND) + 1; // +1 to account for the wall
-        int length = uniform(rand, 1, 10);
-        Position hallLoc = new Position(MIDPOINTx + 10, MIDPOINTy + 10, width, length);
-
-        for (int dy = 0; dy < length; dy++) {
-            worldFrame[hallLoc.getxPos()][hallLoc.getyPos()] = Tileset.WALL;
-
-            for (int dx = 1; dx < width; dx++) {
-                worldFrame[hallLoc.getxPos() + dx][hallLoc.getyPos()] = Tileset.FLOOR;
-            }
-
-            worldFrame[hallLoc.getxPos() + width][hallLoc.getyPos()] = Tileset.WALL;
-
-            hallLoc.changeyPos(-1);
-        }
-    }
-
-
     /** Connects all the rooms. */
     public void connectRooms() {
         ArrayList<Position> roomList = rooms.getRoomList();
@@ -165,21 +161,34 @@ public class WorldGenerator {
     public void drawLink(Position roomA, Position roomB) {
         int aY = roomA.getMidy();
         int bY = roomB.getMidy();
+        int difference = aY - bY;
 
-        if (aY < bY) {
+        if (difference < -LINKBOUND) {
             drawUpLink(roomA, roomB);
-        } else if (aY > bY) {
+        } else if (difference > LINKBOUND) {
             drawDownLink(roomA, roomB);
         } else {
-            drawStraightLink(roomA, roomB);
+            drawStraightLink(roomA, roomB, difference);
         }
     }
 
 
     /** Draws a 'L' shaped hallway between 2 rooms where roomA is higher than roomB (in terms of y-coordinates). */
     public void drawUpLink(Position roomA, Position roomB) {
-        return;
+        int aX = roomA.getMidx() + roomA.getHalfWidth() - 1;
+        int aY = roomA.getMidy() + 1;
+        int bX = roomB.getMidx() - 1;
+        int bY = roomB.getMidy() - roomB.getHalfLength() + 2; // +2 so that the link ends at least inside the room.
+        int width = uniform(rand, 1, HALLWAYWIDTHBOUND);
+        int i;
+
+        drawL(aX, aY, bX, bY, Tileset.WALL);
+        for (i = 1; i < width + 1; i++) {
+            drawL(aX, aY - i, bX + i, bY, Tileset.FLOOR);
+        }
+        drawL(aX, aY - i, bX + i, bY, Tileset.WALL);
     }
+
 
 
     /** Draws a 'L' shaped hallway between 2 rooms where roomA is lower than roomB (in terms of y-coordinates). */
@@ -199,13 +208,25 @@ public class WorldGenerator {
     }
 
 
-    /** Draws a 'L' shaped hallway between 2 rooms where roomA is equal to roomB (in terms of y-coordinates). */
-    public void drawStraightLink(Position roomA, Position roomB) {
-        return;
+    /** Draws a horizontal 'I' shaped hallway between 2 rooms where roomA is equal to roomB
+     * (in terms of y-coordinates). */
+    public void drawStraightLink(Position roomA, Position roomB, int difference) {
+        int aX = roomA.getMidx() + roomA.getHalfWidth();
+        int bX = roomB.getMidx() + 1;
+        int bY = roomB.getMidy() + 1 + difference; // + difference to position the hallway properly between both rooms.
+        int width = uniform(rand, 1, HALLWAYWIDTHBOUND);
+        int i;
+
+        drawI(aX, bX, bY, Tileset.WALL);
+        for (i = 1; i < width + 1; i++) {
+            drawI(aX - i, bX - i, bY - i, Tileset.FLOOR);
+        }
+        drawI(aX, bX - i, bY - i, Tileset.WALL);
+
     }
 
 
-    /** Draws a 'L' shape of tile tileType. */
+    /** Draws a down 'L' shape of tile tileType. */
     public void drawL(int aX, int aY, int bX, int bY, TETile tileType) {
         for (int x = aX; x < bX; x++) {
             worldFrame[x][aY] = tileType;
@@ -216,9 +237,17 @@ public class WorldGenerator {
                 worldFrame[bX][y] = tileType;
             }
         } else {
-            for (int y = aY; y < bY + 1; y++) {
-                worldFrame[bX][y - 1] = tileType;
+            for (int y = aY; y < bY; y++) {
+                worldFrame[bX][y] = tileType;
             }
+        }
+    }
+
+
+    /** Draws a horizontal 'I' shape of tile tileType. */
+    public void drawI(int aX, int bX, int bY, TETile tileType) {
+        for (int x = aX; x < bX; x++) {
+            worldFrame[x][bY] = tileType;
         }
     }
 }
