@@ -306,19 +306,19 @@ public class WorldGenerator {
 
         switch(userInput) {
             case "w":
-                move(userX, userY + 1);
+                moveTo(userX, userY + 1);
                 break;
 
             case "a":
-                move(userX - 1, userY);
+                moveTo(userX - 1, userY);
                 break;
 
             case "s":
-                move(userX , userY  - 1);
+                moveTo(userX , userY  - 1);
                 break;
 
             case "d":
-                move(userX + 1, userY);
+                moveTo(userX + 1, userY);
                 break;
 
             default:
@@ -326,7 +326,7 @@ public class WorldGenerator {
         }
     }
 
-    public void move(int newX, int newY) {
+    public void moveTo(int newX, int newY) {
         TETile tileToMoveTo = worldFrame[newX][newY];
 
         if (tileToMoveTo.equals(Tileset.FLOOR)) {

@@ -5,7 +5,6 @@ import byow.TileEngine.TETile;
 import edu.princeton.cs.introcs.StdDraw;
 import java.awt.*;
 
-
 public class Engine {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
@@ -77,11 +76,18 @@ public class Engine {
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
 
         long seed = parseSeed(input);
+        String userInput = parseValidInput(input);
 
         WorldGenerator generator = new WorldGenerator(finalWorldFrame, WIDTH, HEIGHT, seed);
+
         finalWorldFrame = generator.getWorld();
 
         updateHUD(generator, "Fox");
+        for (int i = 0; i < userInput.length(); i++) {
+            String ch = Character.toString(userInput.charAt(i));
+            generator.move(ch);
+        }
+
         ter.renderFrame(finalWorldFrame);
 
         return finalWorldFrame;
@@ -116,6 +122,24 @@ public class Engine {
         }
         long seed = Long.parseLong(stringSeed);
         return seed;
+    }
+
+
+    /** Parses valid input (N/W/A/S/D) from the command line input. */
+    public static String parseValidInput(String input) {
+        input = input.toLowerCase();
+        String stringInput = "";
+
+        int startingIndex = input.indexOf("s") + 1;
+
+        for (int i = startingIndex; i < input.length(); i++) {
+            char ch = input.charAt(i);
+
+            if (Character.isAlphabetic(ch)) {
+                stringInput += ch;
+            }
+        }
+        return stringInput;
     }
 
 
@@ -184,15 +208,15 @@ public class Engine {
 
         StdDraw.show();
 
-        boolean endMenu = false;
-        while (!endMenu) {
-           endMenu = getUserInput();
+        String keyPressed = null;
+        while (keyPressed == null) {
+           keyPressed = getUserInput();
         }
     }
 
 
     /** Gets the user's input for menu based actions. */
-    public static boolean getUserInput() {
+    public static String getUserInput() {
         if (StdDraw.hasNextKeyTyped()) {
             String userInput = Character.toString(StdDraw.nextKeyTyped());
 
@@ -200,20 +224,19 @@ public class Engine {
 
             switch(userInput) {
                 case "n":
-                    System.out.println("N typed.");
-                    return true;
+                    return "n";
 
                 case "l":
-                    return true;
+                    return "l";
 
                 case "q":
-                    return true;
+                    return "q";
 
                 default:
-                    return false;
+                    return null;
             }
         } else {
-            return false;
+            return null;
         }
     }
 
