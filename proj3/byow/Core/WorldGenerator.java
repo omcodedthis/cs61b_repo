@@ -2,7 +2,10 @@ package byow.Core;
 
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
+import edu.princeton.cs.introcs.StdDraw;
+import org.antlr.v4.runtime.atn.SemanticContext;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
 import static byow.Core.RandomUtils.*;
@@ -21,6 +24,8 @@ public class WorldGenerator {
     public TETile[][] worldFrame;
     private RoomTracker rooms;
     private Random rand;
+    private Position userLoc;
+
 
     /** World Assets constants. */
     public static final int ROOMMIN = 5;
@@ -39,6 +44,7 @@ public class WorldGenerator {
         rooms = new RoomTracker();
         rand = new Random(seed);
 
+        StdDraw.clear(new Color(0, 0, 0));
         fillWithNothingTiles();
         drawWorld();
     }
@@ -61,9 +67,49 @@ public class WorldGenerator {
     }
 
 
-    /** Returns worldFrame. */
+    /** Places the user on a random FLOOR tile & returns worldFrame, updating userLoc. */
     public TETile[][] getWorld() {
+        boolean spawn = true;
+
+        while (spawn) {
+            int x = uniform(rand, ORIGIN, WIDTH);
+            int y = uniform(rand, ORIGIN, HEIGHT);
+
+            TETile tile = worldFrame[x][y];
+
+            if (tile.equals(Tileset.FLOOR)) {
+                worldFrame[x][y] = Tileset.AVATAR;
+
+                userLoc = new Position(x, y, 0,0);
+
+                spawn = false;
+            }
+        }
         return worldFrame;
+    }
+
+
+    /** Returns the description of a given tile with coordinates x & y. */
+    public String getTileDescription(double xValue, double yValue) {
+        int x = formatValue(xValue, WIDTH);
+        int y = formatValue(yValue, HEIGHT);
+
+        TETile tile = worldFrame[x][y];
+        return tile.description();
+    }
+
+
+    /** Formats the given value so that it is always in the range of 0 <= value < limit. */
+    public int formatValue(double value, int limit) {
+        if (value >= limit) {
+            value = limit - 1;
+        } else if (value < ORIGIN) {
+            value = ORIGIN;
+        }
+
+        int finalValue = (int) value;
+
+        return finalValue;
     }
 
 
@@ -247,6 +293,46 @@ public class WorldGenerator {
     public void drawI(int aX, int bX, int bY, TETile tileType) {
         for (int x = aX; x < bX; x++) {
             worldFrame[x][bY] = tileType;
+        }
+    }
+
+
+    /** Moves the avatar based on the user's input. */
+    public void move(String userInput) {
+        int userX = userLoc.getxPos();
+        int userY = userLoc.getyPos();
+
+        userInput = userInput.toLowerCase();
+
+        switch(userInput) {
+            case "w":
+                move(userX, userY + 1);
+                break;
+
+            case "a":
+                move(userX - 1, userY);
+                break;
+
+            case "s":
+                move(userX , userY  - 1);
+                break;
+
+            case "d":
+                move(userX + 1, userY);
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    public void move(int newX, int newY) {
+        TETile tileToMoveTo = worldFrame[newX][newY];
+
+        if (tileToMoveTo.equals(Tileset.FLOOR)) {
+            worldFrame[userLoc.getxPos()][userLoc.getyPos()] = Tileset.FLOOR;
+            worldFrame[newX][newY] = Tileset.AVATAR;
+            userLoc.replacePos(newX, newY);
         }
     }
 }

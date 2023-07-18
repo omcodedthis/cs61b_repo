@@ -33,9 +33,16 @@ public class Position {
     }
 
 
-    /** Changes xPos by the given value. */
+    /** Changes yPos by the given value. */
     public void changeyPos(int value) {
         yPos += value;
+    }
+
+
+    /** Replace xPos & yPos by the given values. */
+    public void replacePos(int xValue, int yValue) {
+        xPos = xValue;
+        yPos = yValue;
     }
 
 
