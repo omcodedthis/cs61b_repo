@@ -28,6 +28,7 @@ import java.util.List;
  *  @author P. N. Hilfinger
  */
 class Utils {
+
     /** Reads a String from a file. */
     protected static String readContentsAsString(File filePointer) throws IOException {
         Path pathOfFile = Path.of(filePointer.getPath());

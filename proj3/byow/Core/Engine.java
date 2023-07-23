@@ -101,6 +101,7 @@ public class Engine {
     public TETile[][] interactWithInputString(String input) {
         //ter.initialize(WINDOWWIDTH, WINDOWHEIGHT);
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
+
         try {
             // TODO: Fill out this method so that it run the engine using the input
             // passed in as an argument, and return a 2D tile representation of the
@@ -135,6 +136,7 @@ public class Engine {
                     String ch = Character.toString(userInput.charAt(i));
                     generator.command(ch);
                 }
+                System.out.println("reached here");
 
                 if (input.contains(":q")) {
                     generator.saveState();
