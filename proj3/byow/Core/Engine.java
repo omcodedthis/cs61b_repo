@@ -102,6 +102,7 @@ public class Engine {
         //ter.initialize(WINDOWWIDTH, WINDOWHEIGHT);
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
 
+        String saveData = "";
         try {
             // TODO: Fill out this method so that it run the engine using the input
             // passed in as an argument, and return a 2D tile representation of the
@@ -113,12 +114,12 @@ public class Engine {
             // cannot be used (for its testing purposes). Hence, "ter.initialize(WIDTH, HEIGHT);" &
             // "ter.renderFrame(finalWorldFrame);" for this method had to be removed when
             // submitting to the autograder.
+            
 
             if (input.contains("l")) {
                 File savedWorld = Utils.join("saves", "world_save.txt");
-                String saveData = Utils.readData(savedWorld);
+                saveData = Utils.readData(savedWorld);
                 long seed = parseSeed(saveData);
-                System.out.println(saveData);
                 String userInput = parseValidInput(input);
 
                 WorldGenerator generator = new WorldGenerator(finalWorldFrame, WIDTH, HEIGHT, seed);
@@ -167,7 +168,7 @@ public class Engine {
                 return finalWorldFrame;
             }
         } catch (IOException e) {
-            System.out.println("An IOException has occurred.");
+            System.out.println(saveData);
             return finalWorldFrame;
         }
     }
@@ -201,8 +202,8 @@ public class Engine {
             }
         }
 
-        //long seed = Long.parseLong(stringSeed);
-        return 54235423;
+        long seed = Long.parseLong(stringSeed);
+        return seed;
     }
 
 
