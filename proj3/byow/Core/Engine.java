@@ -47,7 +47,7 @@ public class Engine {
                     generator.command(ch);
                 }
             }
-            
+
             boolean gameOver = false;
             while (!gameOver) {
                 updateHUD(generator, "fox");
@@ -95,8 +95,10 @@ public class Engine {
      *
      * @param input the input string to feed to your program
      * @return the 2D TETile[][] representing the state of the world
+     *
+     * The default username is "CS61B".
      */
-    public TETile[][] interactWithInputString(String input) {
+    public TETile[][] interactWithInputString(String input) throws IOException {
         // TODO: Fill out this method so that it run the engine using the input
         // passed in as an argument, and return a 2D tile representation of the
         // world that would have been drawn if the same inputs had been given
@@ -108,25 +110,59 @@ public class Engine {
         // "ter.renderFrame(finalWorldFrame);" for this method had to be removed when
         // submitting to the autograder.
 
-        ter.initialize(WINDOWWIDTH, WINDOWHEIGHT);
+        //ter.initialize(WINDOWWIDTH, WINDOWHEIGHT);
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
 
-        long seed = parseSeed(input);
-        String userInput = parseValidInput(input);
+        if (input.contains("L")) {
+            File SAVEDWORLD = Utils.join(CWD, ".saves", "world_save.txt");
+            String saveData = Utils.readContentsAsString(SAVEDWORLD);
+            long seed = parseSeed(saveData);
+            String userInput = parseValidInput(input);
 
-        WorldGenerator generator = new WorldGenerator(finalWorldFrame, WIDTH, HEIGHT, seed);
+            WorldGenerator generator = new WorldGenerator(finalWorldFrame, WIDTH, HEIGHT, seed);
+            finalWorldFrame = generator.getWorld();
+            for (int i = 0; i < saveData.length(); i++) {
+                String ch = Character.toString(saveData.charAt(i));
 
-        finalWorldFrame = generator.getWorld();
+                if (validMoveInputs.contains(ch)) {
+                    generator.command(ch);
+                }
+            }
 
-        updateHUD(generator, "Fox");
-        for (int i = 0; i < userInput.length(); i++) {
-            String ch = Character.toString(userInput.charAt(i));
-            generator.command(ch);
+            updateHUD(generator, "CS61B");
+            for (int i = 0; i < userInput.length(); i++) {
+                String ch = Character.toString(userInput.charAt(i));
+                generator.command(ch);
+            }
+
+            if (input.contains(":Q")) {
+                generator.saveState();
+            }
+
+            //ter.renderFrame(finalWorldFrame);
+            return finalWorldFrame;
+        } else {
+            long seed = parseSeed(input);
+            String userInput = parseValidInput(input);
+
+            WorldGenerator generator = new WorldGenerator(finalWorldFrame, WIDTH, HEIGHT, seed);
+
+            finalWorldFrame = generator.getWorld();
+
+            updateHUD(generator, "CS61B");
+            for (int i = 0; i < userInput.length(); i++) {
+                String ch = Character.toString(userInput.charAt(i));
+                generator.command(ch);
+            }
+
+            if (input.contains(":Q")) {
+                generator.saveState();
+            }
+
+            ter.renderFrame(finalWorldFrame);
+
+            return finalWorldFrame;
         }
-
-        ter.renderFrame(finalWorldFrame);
-
-        return finalWorldFrame;
     }
 
 
