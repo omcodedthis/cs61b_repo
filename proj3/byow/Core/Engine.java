@@ -117,6 +117,8 @@ public class Engine {
             if (input.contains("l")) {
 
                 if (!checkForSavedWorld()) {
+                    WorldGenerator generator = new WorldGenerator(finalWorldFrame, WIDTH, HEIGHT, 10);
+                    finalWorldFrame = generator.getWorld();
                     return finalWorldFrame;
                 }
 
