@@ -62,7 +62,7 @@ public class WorldGenerator implements Serializable {
             keyPress.addLast(".");
             SAVES.mkdirs();
 
-            StdDraw.clear(new Color(0, 0, 0));
+            //StdDraw.clear(new Color(0, 0, 0));
             fillWithNothingTiles();
             drawWorld();
         } catch (AccessControlException e) {
