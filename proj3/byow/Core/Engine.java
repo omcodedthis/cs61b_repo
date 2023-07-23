@@ -113,7 +113,7 @@ public class Engine {
             //ter.initialize(WINDOWWIDTH, WINDOWHEIGHT);
             TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
 
-            if (input.contains("L")) {
+            if (input.contains("l")) {
                 File SAVEDWORLD = Utils.join("saves", "world_save.txt");
                 String saveData = Utils.readContentsAsString(SAVEDWORLD);
                 long seed = parseSeed(saveData);
