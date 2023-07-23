@@ -20,7 +20,6 @@ public class Engine {
     public static final int WINDOWHEIGHT = HEIGHT + HUDHEIGHT;
 
     /** File saving constants. */
-    public static final File CWD = new File(System.getProperty("user.dir"));
     public static final String validMoveInputs = "wasd";
 
 
@@ -34,7 +33,7 @@ public class Engine {
 
         String userChoice = showHomescreen();
         if (userChoice.equals("l")) {
-            File SAVEDWORLD = Utils.join(CWD, "saves", "world_save.txt");
+            File SAVEDWORLD = Utils.join("saves", "world_save.txt");
             String saveData = Utils.readContentsAsString(SAVEDWORLD);
             long seed = parseSeed(saveData);
 
@@ -115,7 +114,7 @@ public class Engine {
             TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
 
             if (input.contains("L")) {
-                File SAVEDWORLD = Utils.join(CWD, "saves", "world_save.txt");
+                File SAVEDWORLD = Utils.join("saves", "world_save.txt");
                 String saveData = Utils.readContentsAsString(SAVEDWORLD);
                 long seed = parseSeed(saveData);
                 String userInput = parseValidInput(input);

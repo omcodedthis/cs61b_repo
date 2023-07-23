@@ -43,8 +43,7 @@ public class WorldGenerator implements Serializable {
 
 
     /** File saving constants. */
-    public static final File CWD = new File(System.getProperty("user.dir"));
-    File SAVES = Utils.join(CWD, "saves");
+    File SAVES = new File("saves");
 
 
     /** Constructor for this class, which sets multiple global constants & fills worldFrame with NOTHING tiles. */
@@ -380,6 +379,7 @@ public class WorldGenerator implements Serializable {
         String saveData = seed + keyPress;
 
         writeToFile(worldSave, saveData);
+        worldSave.setReadable(true);
     }
 
     protected static void writeToFile(File filePointer, String contents) throws IOException {
