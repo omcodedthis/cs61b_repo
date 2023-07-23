@@ -121,6 +121,7 @@ public class Engine {
 
                 WorldGenerator generator = new WorldGenerator(finalWorldFrame, WIDTH, HEIGHT, seed);
                 finalWorldFrame = generator.getWorld();
+
                 for (int i = 0; i < saveData.length(); i++) {
                     String ch = Character.toString(saveData.charAt(i));
 
@@ -164,7 +165,7 @@ public class Engine {
                 return finalWorldFrame;
             }
         } catch (IOException e) {
-            System.out.println("An error occurred when writing contents to a file.");
+            System.out.println("An IOException has occurred.");
             return finalWorldFrame;
         }
     }
