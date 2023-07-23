@@ -34,8 +34,8 @@ public class Engine {
 
         String userChoice = showHomescreen();
         if (userChoice.equals("l")) {
-            File SAVEDWORLD = Utils.join("saves", "world_save.txt");
-            String saveData = Utils.readContentsAsString(SAVEDWORLD);
+            File savedWorld = Utils.join("saves", "world_save.txt");
+            String saveData = Utils.readContentsAsString(savedWorld);
             long seed = parseSeed(saveData);
 
             WorldGenerator generator = new WorldGenerator(finalWorldFrame, WIDTH, HEIGHT, seed);
@@ -115,13 +115,6 @@ public class Engine {
             TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
 
             if (input.contains("l")) {
-
-                if (!checkForSavedWorld()) {
-                    WorldGenerator generator = new WorldGenerator(finalWorldFrame, WIDTH, HEIGHT, 10);
-                    finalWorldFrame = generator.getWorld();
-                    return finalWorldFrame;
-                }
-
                 File SAVEDWORLD = Utils.join("saves", "world_save.txt");
                 String saveData = Utils.readContentsAsString(SAVEDWORLD);
                 long seed = parseSeed(saveData);
@@ -163,7 +156,7 @@ public class Engine {
                     generator.command(ch);
                 }
 
-                if (input.contains(":Q")) {
+                if (input.contains(":q")) {
                     generator.saveState();
                 }
 
@@ -207,13 +200,6 @@ public class Engine {
         }
         long seed = Long.parseLong(stringSeed);
         return seed;
-    }
-
-
-    /** Parses the seed from the command line input. */
-    public static boolean checkForSavedWorld() {
-        File worldSave = Utils.join(SAVES, "world_save.txt");
-        return worldSave.exists();
     }
 
 
