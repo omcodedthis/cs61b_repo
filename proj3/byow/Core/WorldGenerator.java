@@ -3,20 +3,24 @@ package byow.Core;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
-import org.antlr.v4.runtime.atn.SemanticContext;
 
 import java.awt.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Random;
 import static byow.Core.RandomUtils.*;
 
+
 /** WorldGenerator generates a random world consisting of rooms & hallways according to the spec. It has six global
  * constants & two global variables. The functionality of each method is explained in greater depth below. Note that
  * asset refers to both rooms & hallways. */
 
-public class WorldGenerator {
+public class WorldGenerator implements Serializable {
     /** Global constants & variables. */
     public static final int ORIGIN = 0;  // bottom left
     public int WIDTH;
@@ -26,6 +30,7 @@ public class WorldGenerator {
     public TETile[][] worldFrame;
     private RoomTracker rooms;
     private Random rand;
+    private String seed;
     private Position userLoc;
     private Deque<String> keyPress;
 
@@ -37,17 +42,24 @@ public class WorldGenerator {
     public static final int HALLWAYWIDTHBOUND = 3;
 
 
+    /** File saving constants. */
+    private static final File CWD = new File(System.getProperty("user.dir"));
+    File SAVES = Utils.join(CWD, ".saves");
+
+
     /** Constructor for this class, which sets multiple global constants & fills worldFrame with NOTHING tiles. */
-    public WorldGenerator(TETile[][] frame, int width, int height, long seed) {
+    public WorldGenerator(TETile[][] frame, int width, int height, long s) {
         worldFrame = frame;
         WIDTH = width;
         HEIGHT = height;
         MIDPOINTx = WIDTH / 2;
         MIDPOINTy = HEIGHT / 2;
         rooms = new RoomTracker();
-        rand = new Random(seed);
+        seed = Long.toString(s);
+        rand = new Random(s);
         keyPress = new ArrayDeque<String>();
         keyPress.addLast(".");
+        SAVES.mkdir();
 
         StdDraw.clear(new Color(0, 0, 0));
         fillWithNothingTiles();
@@ -358,4 +370,26 @@ public class WorldGenerator {
 
         return character.equals(":");
     }
+
+
+    /** Saves the world state to .saves in the CWD.*/
+    public void saveState() throws IOException {
+        File worldSave = Utils.join(SAVES, "world_save.txt");
+        worldSave.createNewFile();
+
+        String saveData = seed + keyPress;
+
+        writeToFile(worldSave, saveData);
+    }
+
+    protected static void writeToFile(File filePointer, String contents) throws IOException {
+        try {
+            FileWriter writer = new FileWriter(filePointer);
+            writer.write(contents);
+            writer.close();
+        } catch (IOException e) {
+            throw new IOException();
+        }
+    }
+
 }

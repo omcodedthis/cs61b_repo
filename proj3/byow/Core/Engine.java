@@ -5,6 +5,7 @@ import byow.TileEngine.TETile;
 import edu.princeton.cs.introcs.StdDraw;
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayDeque;
 
 public class Engine {
@@ -17,32 +18,61 @@ public class Engine {
     public static final int HUDSPACING = 3;
     public static final int WINDOWWIDTH = WIDTH - 1;
     public static final int WINDOWHEIGHT = HEIGHT + HUDHEIGHT;
-    /** The current working directory. */
+
+    /** File saving constants. */
     private static final File CWD = new File(System.getProperty("user.dir"));
+    public static final String validMoveInputs = "wasd";
 
 
     /**
      * Method used for exploring a fresh world. This method should handle all inputs,
      * including inputs from the main menu.
      */
-    public void interactWithKeyboard() {
+    public void interactWithKeyboard() throws IOException {
         ter.initialize(WINDOWWIDTH, WINDOWHEIGHT);
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
 
-        showHomescreen();
-        long seed = getSeedFromUserInput();
-        String username = getUsername();
+        String userChoice = showHomescreen();
+        if (userChoice.equals("l")) {
+            File SAVEDWORLD = Utils.join(CWD, ".saves", "world_save.txt");
+            String saveData = Utils.readContentsAsString(SAVEDWORLD);
+            long seed = parseSeed(saveData);
 
-        WorldGenerator generator = new WorldGenerator(finalWorldFrame, WIDTH, HEIGHT, seed);
-        finalWorldFrame = generator.getWorld();
+            WorldGenerator generator = new WorldGenerator(finalWorldFrame, WIDTH, HEIGHT, seed);
+            finalWorldFrame = generator.getWorld();
+            for (int i = 0; i < saveData.length(); i++) {
+                String ch = Character.toString(saveData.charAt(i));
 
-        boolean gameOver = false;
-        while (!gameOver) {
-            updateHUD(generator, username);
-            ter.renderFrame(finalWorldFrame);
-            gameOver = commandAvatar(generator);
+                if (validMoveInputs.contains(ch)) {
+                    generator.command(ch);
+                }
+            }
+            
+            boolean gameOver = false;
+            while (!gameOver) {
+                updateHUD(generator, "fox");
+                ter.renderFrame(finalWorldFrame);
+                gameOver = commandAvatar(generator);
+            }
+            showEndScreen(seed);
+            generator.saveState();
+
+        } else {
+            long seed = getSeedFromUserInput();
+            String username = getUsername();
+
+            WorldGenerator generator = new WorldGenerator(finalWorldFrame, WIDTH, HEIGHT, seed);
+            finalWorldFrame = generator.getWorld();
+
+            boolean gameOver = false;
+            while (!gameOver) {
+                updateHUD(generator, username);
+                ter.renderFrame(finalWorldFrame);
+                gameOver = commandAvatar(generator);
+            }
+            showEndScreen(seed);
+            generator.saveState();
         }
-        showEndScreen(seed);
     }
 
     /**
@@ -118,7 +148,7 @@ public class Engine {
         for (int i = 0; i < input.length(); i++) {
             char ch = input.charAt(i);
 
-            if (ch == 's') {
+            if ((ch == 's') || (ch == '[')) {
                 break;
             }
 
@@ -164,7 +194,7 @@ public class Engine {
             if (StdDraw.hasNextKeyTyped()) {
                 char userInput = StdDraw.nextKeyTyped();
 
-                if ((userInput == 's') || (userInput == 'S')) {
+                if (stopScanning(userSeed, userInput)) {
                     break;
                 } else if (Character.isDigit(userInput)) {
                     userSeed += userInput;
@@ -174,6 +204,18 @@ public class Engine {
         long seed = Long.parseLong(userSeed);
 
         return seed;
+    }
+
+
+    /** Returns true if the criteria to stop taking input for a seed has been met (final char is 's' & length of seed
+     * typed is greater than zero. */
+    public static boolean stopScanning(String userSeed, char userInput) {
+        int length = userSeed.length();
+        if (((userInput == 's') || (userInput == 'S')) && (length > 0)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 
@@ -203,7 +245,7 @@ public class Engine {
 
 
     /** Shows the homescreen. */
-    public static void showHomescreen() {
+    public String showHomescreen() {
         double centerX = WINDOWWIDTH / 2;
         double centerY = WINDOWHEIGHT / 2;
         ArrayDeque<String> menuKeyPress = new ArrayDeque<String>();
@@ -220,6 +262,8 @@ public class Engine {
         while (keyPressed == null) {
            keyPressed = getUserInput();
         }
+
+        return "l";
     }
 
 
