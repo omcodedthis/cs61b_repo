@@ -4,6 +4,8 @@ import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import edu.princeton.cs.introcs.StdDraw;
 import java.awt.*;
+import java.io.File;
+import java.util.ArrayDeque;
 
 public class Engine {
     TERenderer ter = new TERenderer();
@@ -15,6 +17,8 @@ public class Engine {
     public static final int HUDSPACING = 3;
     public static final int WINDOWWIDTH = WIDTH - 1;
     public static final int WINDOWHEIGHT = HEIGHT + HUDHEIGHT;
+    /** The current working directory. */
+    private static final File CWD = new File(System.getProperty("user.dir"));
 
 
     /**
@@ -32,11 +36,13 @@ public class Engine {
         WorldGenerator generator = new WorldGenerator(finalWorldFrame, WIDTH, HEIGHT, seed);
         finalWorldFrame = generator.getWorld();
 
-        while (true) {
+        boolean gameOver = false;
+        while (!gameOver) {
             updateHUD(generator, username);
             ter.renderFrame(finalWorldFrame);
-            moveAvatar(generator);
+            gameOver = commandAvatar(generator);
         }
+        showEndScreen(seed);
     }
 
     /**
@@ -85,7 +91,7 @@ public class Engine {
         updateHUD(generator, "Fox");
         for (int i = 0; i < userInput.length(); i++) {
             String ch = Character.toString(userInput.charAt(i));
-            generator.move(ch);
+            generator.command(ch);
         }
 
         ter.renderFrame(finalWorldFrame);
@@ -95,11 +101,12 @@ public class Engine {
 
 
     /** Gets the user's input & updates the world accordingly. */
-    public static void moveAvatar(WorldGenerator generator) {
+    public static boolean commandAvatar(WorldGenerator generator) {
         if (StdDraw.hasNextKeyTyped()) {
             String userInput = Character.toString(StdDraw.nextKeyTyped());
-
-            generator.move(userInput);
+            return generator.command(userInput);
+        } else {
+            return false;
         }
     }
 
@@ -199,6 +206,7 @@ public class Engine {
     public static void showHomescreen() {
         double centerX = WINDOWWIDTH / 2;
         double centerY = WINDOWHEIGHT / 2;
+        ArrayDeque<String> menuKeyPress = new ArrayDeque<String>();
 
         StdDraw.setPenColor(Color.WHITE);
         StdDraw.text(centerX, centerY + HUDSPACING, "CS61B: The Game");
@@ -215,11 +223,24 @@ public class Engine {
     }
 
 
+    /** Shows the end screen. */
+    public static void showEndScreen(long seed) {
+        StdDraw.clear(new Color(0, 0, 0));
+        double centerX = WINDOWWIDTH / 2;
+        double centerY = WINDOWHEIGHT / 2;
+
+        StdDraw.setPenColor(Color.WHITE);
+        StdDraw.text(centerX, centerY + HUDSPACING, "You have successfully saved your progress.");
+        StdDraw.text(centerX, centerY, "Seed: " + seed);
+
+        StdDraw.show();
+    }
+
+
     /** Gets the user's input for menu based actions. */
     public static String getUserInput() {
         if (StdDraw.hasNextKeyTyped()) {
             String userInput = Character.toString(StdDraw.nextKeyTyped());
-
             userInput = userInput.toLowerCase();
 
             switch(userInput) {

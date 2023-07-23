@@ -6,7 +6,9 @@ import edu.princeton.cs.introcs.StdDraw;
 import org.antlr.v4.runtime.atn.SemanticContext;
 
 import java.awt.*;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.Random;
 import static byow.Core.RandomUtils.*;
 
@@ -25,6 +27,7 @@ public class WorldGenerator {
     private RoomTracker rooms;
     private Random rand;
     private Position userLoc;
+    private Deque<String> keyPress;
 
 
     /** World Assets constants. */
@@ -43,6 +46,8 @@ public class WorldGenerator {
         MIDPOINTy = HEIGHT / 2;
         rooms = new RoomTracker();
         rand = new Random(seed);
+        keyPress = new ArrayDeque<String>();
+        keyPress.addLast(".");
 
         StdDraw.clear(new Color(0, 0, 0));
         fillWithNothingTiles();
@@ -297,34 +302,44 @@ public class WorldGenerator {
     }
 
 
-    /** Moves the avatar based on the user's input. */
-    public void move(String userInput) {
+    /** Commands the avatar based on the user's input. */
+    public boolean command(String userInput) {
         int userX = userLoc.getxPos();
         int userY = userLoc.getyPos();
 
+        boolean colonTyped = previousWasColon();
         userInput = userInput.toLowerCase();
+        keyPress.addLast(userInput);
 
         switch(userInput) {
             case "w":
                 moveTo(userX, userY + 1);
-                break;
+                return false;
 
             case "a":
                 moveTo(userX - 1, userY);
-                break;
+                return false;
 
             case "s":
                 moveTo(userX , userY  - 1);
-                break;
+                return false;
 
             case "d":
                 moveTo(userX + 1, userY);
-                break;
+                return false;
+
+            case "q":
+                if (colonTyped) {
+                    return true;
+                } else {
+                    return false;
+                }
 
             default:
-                break;
+                return false;
         }
     }
+
 
     public void moveTo(int newX, int newY) {
         TETile tileToMoveTo = worldFrame[newX][newY];
@@ -334,5 +349,13 @@ public class WorldGenerator {
             worldFrame[newX][newY] = Tileset.AVATAR;
             userLoc.replacePos(newX, newY);
         }
+    }
+
+
+    /** Returns true if the previous character typed was a colon ':'. */
+    public boolean previousWasColon() {
+        String character = keyPress.getLast();
+
+        return character.equals(":");
     }
 }
