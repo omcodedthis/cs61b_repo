@@ -44,7 +44,7 @@ public class WorldGenerator implements Serializable {
 
 
     /** File saving constants. */
-    File SAVES = new File("saves");
+    public static final File SAVES = new File("saves");
 
 
     /** Constructor for this class, which sets multiple global constants & fills worldFrame with NOTHING tiles. */

@@ -18,9 +18,10 @@ public class Engine {
     public static final int HUDSPACING = 3;
     public static final int WINDOWWIDTH = WIDTH - 1;
     public static final int WINDOWHEIGHT = HEIGHT + HUDHEIGHT;
+    public static final String validMoveInputs = "wasd";
 
     /** File saving constants. */
-    public static final String validMoveInputs = "wasd";
+    public static final File SAVES = new File("saves");
 
 
     /**
@@ -114,6 +115,11 @@ public class Engine {
             TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
 
             if (input.contains("l")) {
+
+                if (!checkForSavedWorld()) {
+                    return null;
+                }
+
                 File SAVEDWORLD = Utils.join("saves", "world_save.txt");
                 String saveData = Utils.readContentsAsString(SAVEDWORLD);
                 long seed = parseSeed(saveData);
@@ -135,9 +141,9 @@ public class Engine {
                     generator.command(ch);
                 }
 
-
-                generator.saveState();
-
+                if (input.contains(":Q")) {
+                    generator.saveState();
+                }
 
                 //ter.renderFrame(finalWorldFrame);
                 return finalWorldFrame;
@@ -155,9 +161,9 @@ public class Engine {
                     generator.command(ch);
                 }
 
-
-                generator.saveState();
-                
+                if (input.contains(":Q")) {
+                    generator.saveState();
+                }
 
                 //ter.renderFrame(finalWorldFrame);
 
@@ -199,6 +205,13 @@ public class Engine {
         }
         long seed = Long.parseLong(stringSeed);
         return seed;
+    }
+
+
+    /** Parses the seed from the command line input. */
+    public static boolean checkForSavedWorld() {
+        File worldSave = Utils.join(SAVES, "world_save.txt");
+        return worldSave.exists();
     }
 
 
