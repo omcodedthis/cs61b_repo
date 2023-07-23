@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Files;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -49,31 +50,26 @@ public class WorldGenerator implements Serializable {
 
     /** Constructor for this class, which sets multiple global constants & fills worldFrame with NOTHING tiles. */
     public WorldGenerator(TETile[][] frame, int width, int height, long s) {
-        worldFrame = frame;
-        WIDTH = width;
-        HEIGHT = height;
-        MIDPOINTx = WIDTH / 2;
-        MIDPOINTy = HEIGHT / 2;
-        rooms = new RoomTracker();
-        seed = Long.toString(s);
-        rand = new Random(s);
-        keyPress = new ArrayDeque<String>();
-        keyPress.addLast(".");
+        try {
+            worldFrame = frame;
+            WIDTH = width;
+            HEIGHT = height;
+            MIDPOINTx = WIDTH / 2;
+            MIDPOINTy = HEIGHT / 2;
+            rooms = new RoomTracker();
+            seed = Long.toString(s);
+            rand = new Random(s);
+            keyPress = new ArrayDeque<String>();
+            keyPress.addLast(".");
+            Files.createDirectory(SAVES.toPath());
 
-        // for testing
-        CWD.setExecutable(true);
-        CWD.setReadable(true);
-        CWD.setWritable(true);
 
-        SAVES.mkdir();
-
-        SAVES.setExecutable(true);
-        SAVES.setReadable(true);
-        SAVES.setWritable(true);
-
-        StdDraw.clear(new Color(0, 0, 0));
-        fillWithNothingTiles();
-        drawWorld();
+            StdDraw.clear(new Color(0, 0, 0));
+            fillWithNothingTiles();
+            drawWorld();
+        } catch (IOException e) {
+            System.out.println("An IOException has occurred.");
+        }
     }
 
 
