@@ -173,6 +173,9 @@ public class Engine {
         } catch (NumberFormatException e) {
             System.out.println(saveData);
             return finalWorldFrame;
+        } catch (IllegalArgumentException e) {
+            System.out.println(saveData);
+            return finalWorldFrame;
         }
     }
 
