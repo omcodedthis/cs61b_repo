@@ -43,11 +43,13 @@ public class WorldGenerator implements Serializable {
 
 
     /** File saving constants. */
-    File SAVES = new File("saves");
+    private static final File CWD = new File(System.getProperty("user.dir"));
+    /** The .gitlet directory. */
+    private static final File SAVES = Utils.join(CWD, "saves");
 
 
     /** Constructor for this class, which sets multiple global constants & fills worldFrame with NOTHING tiles. */
-    public WorldGenerator(TETile[][] frame, int width, int height, long s) {
+    public WorldGenerator(TETile[][] frame, int width, int height, long s) throws IOException {
         worldFrame = frame;
         WIDTH = width;
         HEIGHT = height;
@@ -58,7 +60,12 @@ public class WorldGenerator implements Serializable {
         rand = new Random(s);
         keyPress = new ArrayDeque<String>();
         keyPress.addLast(".");
-        SAVES.mkdirs();
+        SAVES.mkdir();
+
+        File readme =  Utils.join(SAVES, "README");
+        readme.createNewFile();
+        writeToFile(readme, "This is where world saves go.");
+
 
         StdDraw.clear(new Color(0, 0, 0));
         fillWithNothingTiles();

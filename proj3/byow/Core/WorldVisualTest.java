@@ -3,6 +3,8 @@ package byow.Core;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 
+import java.io.IOException;
+
 /** WorldVisualTest tests the WorldGenerator class for testing purposes (for Phase 1). It has two instance variables. */
 
 public class WorldVisualTest {
@@ -12,7 +14,7 @@ public class WorldVisualTest {
 
     /** Generates a world of WIDTH and HEIGHT with a pre-determined seed. The world is also converted to a String &
      * printed to the terminal. */
-    public static void main(String args[]) {
+    public static void main(String args[]) throws IOException {
         TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
