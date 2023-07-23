@@ -115,8 +115,8 @@ public class Engine {
             TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
 
             if (input.contains("l")) {
-                File SAVEDWORLD = Utils.join("saves", "world_save.txt");
-                String saveData = Utils.readContentsAsString(SAVEDWORLD);
+                File savedWorld = Utils.join("saves", "world_save.txt");
+                String saveData = Utils.readContentsAsString(savedWorld);
                 long seed = parseSeed(saveData);
                 String userInput = parseValidInput(input);
 
@@ -130,13 +130,13 @@ public class Engine {
                     }
                 }
 
-                updateHUD(generator, "CS61B");
+                //updateHUD(generator, "CS61B");
                 for (int i = 0; i < userInput.length(); i++) {
                     String ch = Character.toString(userInput.charAt(i));
                     generator.command(ch);
                 }
 
-                if (input.contains(":Q")) {
+                if (input.contains(":q")) {
                     generator.saveState();
                 }
 
@@ -208,7 +208,7 @@ public class Engine {
         input = input.toLowerCase();
         String stringInput = "";
 
-        int startingIndex = input.indexOf("s") + 1;
+        int startingIndex = 1;
 
         for (int i = startingIndex; i < input.length(); i++) {
             char ch = input.charAt(i);
