@@ -383,13 +383,9 @@ public class WorldGenerator implements Serializable {
     }
 
     protected static void writeToFile(File filePointer, String contents) throws IOException {
-        try {
-            FileWriter writer = new FileWriter(filePointer);
-            writer.write(contents);
-            writer.close();
-        } catch (IOException e) {
-            throw new IOException();
-        }
+        FileWriter writer = new FileWriter(filePointer);
+        writer.write(contents);
+        writer.close();
     }
 
 }
