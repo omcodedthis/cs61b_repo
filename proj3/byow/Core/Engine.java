@@ -98,83 +98,73 @@ public class Engine {
      *
      * The default username is "CS61B".
      */
-    public TETile[][] interactWithInputString(String input) {
+    public TETile[][] interactWithInputString(String input) throws IOException {
         //ter.initialize(WINDOWWIDTH, WINDOWHEIGHT);
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
 
         String saveData = "";
-        try {
-            // TODO: Fill out this method so that it run the engine using the input
-            // passed in as an argument, and return a 2D tile representation of the
-            // world that would have been drawn if the same inputs had been given
-            // to interactWithKeyboard().
-            //
-            // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
-            // that works for many different input types. NOTE: For the autograder, the StdDraw class
-            // cannot be used (for its testing purposes). Hence, "ter.initialize(WIDTH, HEIGHT);" &
-            // "ter.renderFrame(finalWorldFrame);" for this method had to be removed when
-            // submitting to the autograder.
+
+        // TODO: Fill out this method so that it run the engine using the input
+        // passed in as an argument, and return a 2D tile representation of the
+        // world that would have been drawn if the same inputs had been given
+        // to interactWithKeyboard().
+        //
+        // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
+        // that works for many different input types. NOTE: For the autograder, the StdDraw class
+        // cannot be used (for its testing purposes). Hence, "ter.initialize(WIDTH, HEIGHT);" &
+        // "ter.renderFrame(finalWorldFrame);" for this method had to be removed when
+        // submitting to the autograder.
 
 
-            if (input.contains("l")) {
-                File savedWorld = Utils.join("saves", "world_save.txt");
-                saveData = Utils.readData(savedWorld);
-                long seed = parseSeed(saveData);
-                String userInput = parseValidInput(input);
+        if (input.contains("l")) {
+            File savedWorld = Utils.join("saves", "world_save.txt");
+            saveData = Utils.readData(savedWorld);
+            long seed = parseSeed(saveData);
+            String userInput = parseValidInput(input);
 
-                WorldGenerator generator = new WorldGenerator(finalWorldFrame, WIDTH, HEIGHT, seed);
-                finalWorldFrame = generator.getWorld();
+            WorldGenerator generator = new WorldGenerator(finalWorldFrame, WIDTH, HEIGHT, seed);
+            finalWorldFrame = generator.getWorld();
 
-                for (int i = 0; i < saveData.length(); i++) {
-                    String ch = Character.toString(saveData.charAt(i));
+            for (int i = 0; i < saveData.length(); i++) {
+                String ch = Character.toString(saveData.charAt(i));
 
-                    if (validMoveInputs.contains(ch)) {
-                        generator.command(ch);
-                    }
-                }
-
-                //updateHUD(generator, "CS61B");
-                for (int i = 0; i < userInput.length(); i++) {
-                    String ch = Character.toString(userInput.charAt(i));
+                if (validMoveInputs.contains(ch)) {
                     generator.command(ch);
                 }
-
-                if (input.contains(":q")) {
-                    generator.saveState();
-                }
-
-                //ter.renderFrame(finalWorldFrame);
-                return finalWorldFrame;
-            } else {
-                long seed = parseSeed(input);
-                String userInput = parseValidInput(input);
-
-                WorldGenerator generator = new WorldGenerator(finalWorldFrame, WIDTH, HEIGHT, seed);
-
-                finalWorldFrame = generator.getWorld();
-
-                //updateHUD(generator, "CS61B");
-                for (int i = 0; i < userInput.length(); i++) {
-                    String ch = Character.toString(userInput.charAt(i));
-                    generator.command(ch);
-                }
-
-                if (input.contains(":q")) {
-                    generator.saveState();
-                }
-
-                //ter.renderFrame(finalWorldFrame);
-
-                return finalWorldFrame;
             }
-        } catch (IOException e) {
-            System.out.println(saveData);
+
+            //updateHUD(generator, "CS61B");
+            for (int i = 0; i < userInput.length(); i++) {
+                String ch = Character.toString(userInput.charAt(i));
+                generator.command(ch);
+            }
+
+            if (input.contains(":q")) {
+                generator.saveState();
+            }
+
+            //ter.renderFrame(finalWorldFrame);
             return finalWorldFrame;
-        } catch (NumberFormatException e) {
-            System.out.println(saveData);
-            return finalWorldFrame;
-        } catch (IllegalArgumentException e) {
-            System.out.println(saveData);
+        } else {
+            long seed = parseSeed(input);
+            String userInput = parseValidInput(input);
+
+            WorldGenerator generator = new WorldGenerator(finalWorldFrame, WIDTH, HEIGHT, seed);
+
+            finalWorldFrame = generator.getWorld();
+
+            //updateHUD(generator, "CS61B");
+            for (int i = 0; i < userInput.length(); i++) {
+                String ch = Character.toString(userInput.charAt(i));
+                generator.command(ch);
+            }
+
+            if (input.contains(":q")) {
+                generator.saveState();
+            }
+
+            //ter.renderFrame(finalWorldFrame);
+
             return finalWorldFrame;
         }
     }
