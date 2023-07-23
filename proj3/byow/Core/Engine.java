@@ -200,7 +200,7 @@ public class Engine {
             }
         }
         long seed = Long.parseLong(stringSeed);
-        return seed;
+        return 458540924;
     }
 
 
