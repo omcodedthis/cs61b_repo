@@ -30,10 +30,15 @@ import java.util.List;
 class Utils {
 
     /** Reads a String from a file. */
-    protected static String readContentsAsString(File filePointer) throws IOException {
-        Path pathOfFile = Path.of(filePointer.getPath());
-        String contents = Files.readString(pathOfFile);
-        return contents;
+    protected static String readData(File filePointer) throws IOException {
+        String text = "";
+        try {
+            text = new String(Files.readAllBytes(Paths.get("saves", "world_save.txt")));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return text;
     }
 
     static File join(String first, String... others) {

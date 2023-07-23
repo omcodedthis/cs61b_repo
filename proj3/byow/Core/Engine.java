@@ -35,7 +35,7 @@ public class Engine {
         String userChoice = showHomescreen();
         if (userChoice.equals("l")) {
             File savedWorld = Utils.join("saves", "world_save.txt");
-            String saveData = Utils.readContentsAsString(savedWorld);
+            String saveData = Utils.readData(savedWorld);
             long seed = parseSeed(saveData);
 
             WorldGenerator generator = new WorldGenerator(finalWorldFrame, WIDTH, HEIGHT, seed);
@@ -116,7 +116,7 @@ public class Engine {
 
             if (input.contains("l")) {
                 File savedWorld = Utils.join("saves", "world_save.txt");
-                String saveData = Utils.readContentsAsString(savedWorld);
+                String saveData = Utils.readData(savedWorld);
                 long seed = parseSeed(saveData);
                 String userInput = parseValidInput(input);
 
@@ -136,7 +136,6 @@ public class Engine {
                     String ch = Character.toString(userInput.charAt(i));
                     generator.command(ch);
                 }
-                System.out.println("reached here");
 
                 if (input.contains(":q")) {
                     generator.saveState();
