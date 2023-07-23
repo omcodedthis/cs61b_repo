@@ -117,7 +117,7 @@ public class Engine {
             if (input.contains("l")) {
 
                 if (!checkForSavedWorld()) {
-                    return null;
+                    return finalWorldFrame;
                 }
 
                 File SAVEDWORLD = Utils.join("saves", "world_save.txt");
