@@ -5,10 +5,9 @@ import byow.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.AccessControlException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -388,10 +387,11 @@ public class WorldGenerator implements Serializable {
         worldSave.setReadable(true);
     }
 
+
+    /** Writes a String to a file. */
     protected static void writeToFile(File filePointer, String contents) throws IOException {
         FileWriter writer = new FileWriter(filePointer);
         writer.write(contents);
         writer.close();
     }
-
 }
