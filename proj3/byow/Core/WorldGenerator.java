@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
+import java.security.AccessControlException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -43,33 +44,32 @@ public class WorldGenerator implements Serializable {
 
 
     /** File saving constants. */
-    private static final File CWD = new File(System.getProperty("user.dir"));
-    /** The .gitlet directory. */
-    private static final File SAVES = Utils.join(CWD, "saves");
+    File SAVES = new File("saves");
 
 
     /** Constructor for this class, which sets multiple global constants & fills worldFrame with NOTHING tiles. */
-    public WorldGenerator(TETile[][] frame, int width, int height, long s) throws IOException {
-        worldFrame = frame;
-        WIDTH = width;
-        HEIGHT = height;
-        MIDPOINTx = WIDTH / 2;
-        MIDPOINTy = HEIGHT / 2;
-        rooms = new RoomTracker();
-        seed = Long.toString(s);
-        rand = new Random(s);
-        keyPress = new ArrayDeque<String>();
-        keyPress.addLast(".");
-        SAVES.mkdir();
+    public WorldGenerator(TETile[][] frame, int width, int height, long s) {
+        try {
+            worldFrame = frame;
+            WIDTH = width;
+            HEIGHT = height;
+            MIDPOINTx = WIDTH / 2;
+            MIDPOINTy = HEIGHT / 2;
+            rooms = new RoomTracker();
+            seed = Long.toString(s);
+            rand = new Random(s);
+            keyPress = new ArrayDeque<String>();
+            keyPress.addLast(".");
+            SAVES.mkdirs();
 
-        File readme =  Utils.join(SAVES, "README");
-        readme.createNewFile();
-        writeToFile(readme, "This is where world saves go.");
-
-
-        StdDraw.clear(new Color(0, 0, 0));
-        fillWithNothingTiles();
-        drawWorld();
+            StdDraw.clear(new Color(0, 0, 0));
+            fillWithNothingTiles();
+            drawWorld();
+        } catch (AccessControlException e) {
+            StdDraw.clear(new Color(0, 0, 0));
+            fillWithNothingTiles();
+            drawWorld();
+        }
     }
 
 
