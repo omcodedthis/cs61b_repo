@@ -180,27 +180,11 @@ class Utils {
         }
     }
 
-    /** Returns a list of the names of all plain files in the directory DIR, in
-     *  lexicographic order as Java Strings.  Returns null if DIR does
-     *  not denote a directory. */
-    static List<String> plainFilenamesIn(String dir) {
-        return plainFilenamesIn(new File(dir));
-    }
-
-    /* OTHER FILE UTILITIES */
-
     /** Return the concatentation of FIRST and OTHERS into a File designator,
-     *  analogous to the {@link Paths.#get(String, String[])}
+     *  analogous to the {@link java.nio.file.Paths.#get(String, String[])}
      *  method. */
     static File join(String first, String... others) {
         return Paths.get(first, others).toFile();
-    }
-
-    /** Return the concatentation of FIRST and OTHERS into a File designator,
-     *  analogous to the {@link Paths.#get(String, String[])}
-     *  method. */
-    static File join(File first, String... others) {
-        return Paths.get(first.getPath(), others).toFile();
     }
 
 

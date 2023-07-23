@@ -379,7 +379,7 @@ public class WorldGenerator implements Serializable {
 
     /** Saves the world state to .saves in the CWD.*/
     public void saveState() throws IOException {
-        File worldSave = Utils.join(SAVES, "world_save.txt");
+        File worldSave = Utils.join("saves", "world_save.txt");
         worldSave.createNewFile();
 
         String saveData = seed + keyPress;
