@@ -149,7 +149,7 @@ public class Engine {
 
                 finalWorldFrame = generator.getWorld();
 
-                updateHUD(generator, "CS61B");
+                //updateHUD(generator, "CS61B");
                 for (int i = 0; i < userInput.length(); i++) {
                     String ch = Character.toString(userInput.charAt(i));
                     generator.command(ch);
