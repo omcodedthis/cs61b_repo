@@ -201,8 +201,8 @@ public class Engine {
             }
         }
 
-        long seed = Long.parseLong(stringSeed);
-        return seed;
+        //long seed = Long.parseLong(stringSeed);
+        return 54235423;
     }
 
 
