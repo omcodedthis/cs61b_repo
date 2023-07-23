@@ -172,6 +172,7 @@ public class Engine {
             return finalWorldFrame;
         } catch (NumberFormatException e) {
             System.out.println(saveData);
+            return finalWorldFrame;
         }
     }
 
