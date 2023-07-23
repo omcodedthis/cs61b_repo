@@ -59,7 +59,17 @@ public class WorldGenerator implements Serializable {
         rand = new Random(s);
         keyPress = new ArrayDeque<String>();
         keyPress.addLast(".");
+
+        // for testing
+        CWD.setExecutable(true);
+        CWD.setReadable(true);
+        CWD.setWritable(true);
+
         SAVES.mkdir();
+
+        SAVES.setExecutable(true);
+        SAVES.setReadable(true);
+        SAVES.setWritable(true);
 
         StdDraw.clear(new Color(0, 0, 0));
         fillWithNothingTiles();
@@ -380,10 +390,6 @@ public class WorldGenerator implements Serializable {
         String saveData = seed + keyPress;
 
         writeToFile(worldSave, saveData);
-
-        worldSave.setExecutable(true);
-        worldSave.setReadable(true);
-        worldSave.setWritable(true);
     }
 
     protected static void writeToFile(File filePointer, String contents) throws IOException {
