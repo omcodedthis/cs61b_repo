@@ -155,9 +155,9 @@ public class Engine {
                     generator.command(ch);
                 }
 
-                if (input.contains(":Q")) {
-                    generator.saveState();
-                }
+
+                generator.saveState();
+                
 
                 //ter.renderFrame(finalWorldFrame);
 
