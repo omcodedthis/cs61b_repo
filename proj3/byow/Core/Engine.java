@@ -114,7 +114,7 @@ public class Engine {
             // cannot be used (for its testing purposes). Hence, "ter.initialize(WIDTH, HEIGHT);" &
             // "ter.renderFrame(finalWorldFrame);" for this method had to be removed when
             // submitting to the autograder.
-            
+
 
             if (input.contains("l")) {
                 File savedWorld = Utils.join("saves", "world_save.txt");
@@ -170,6 +170,8 @@ public class Engine {
         } catch (IOException e) {
             System.out.println(saveData);
             return finalWorldFrame;
+        } catch (NumberFormatException e) {
+            System.out.println(saveData);
         }
     }
 
