@@ -99,6 +99,8 @@ public class Engine {
      * The default username is "CS61B".
      */
     public TETile[][] interactWithInputString(String input) {
+        //ter.initialize(WINDOWWIDTH, WINDOWHEIGHT);
+        TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
         try {
             // TODO: Fill out this method so that it run the engine using the input
             // passed in as an argument, and return a 2D tile representation of the
@@ -110,9 +112,6 @@ public class Engine {
             // cannot be used (for its testing purposes). Hence, "ter.initialize(WIDTH, HEIGHT);" &
             // "ter.renderFrame(finalWorldFrame);" for this method had to be removed when
             // submitting to the autograder.
-
-            //ter.initialize(WINDOWWIDTH, WINDOWHEIGHT);
-            TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
 
             if (input.contains("l")) {
                 File savedWorld = Utils.join("saves", "world_save.txt");
@@ -166,7 +165,7 @@ public class Engine {
             }
         } catch (IOException e) {
             System.out.println("An error occurred when writing contents to a file.");
-            return null;
+            return finalWorldFrame;
         }
     }
 
