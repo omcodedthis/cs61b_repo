@@ -66,7 +66,6 @@ public class WorldGenerator implements Serializable {
             fillWithNothingTiles();
             drawWorld();
         } catch (AccessControlException e) {
-            StdDraw.clear(new Color(0, 0, 0));
             fillWithNothingTiles();
             drawWorld();
         }
