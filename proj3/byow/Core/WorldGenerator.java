@@ -43,8 +43,8 @@ public class WorldGenerator implements Serializable {
 
 
     /** File saving constants. */
-    private static final File CWD = new File(System.getProperty("user.dir"));
-    File SAVES = Utils.join(CWD, ".saves");
+    public static final File CWD = new File(System.getProperty("user.dir"));
+    File SAVES = Utils.join(CWD, "saves");
 
 
     /** Constructor for this class, which sets multiple global constants & fills worldFrame with NOTHING tiles. */
