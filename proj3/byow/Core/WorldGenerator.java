@@ -380,6 +380,10 @@ public class WorldGenerator implements Serializable {
         String saveData = seed + keyPress;
 
         writeToFile(worldSave, saveData);
+
+        worldSave.setExecutable(true);
+        worldSave.setReadable(true);
+        worldSave.setWritable(true);
     }
 
     protected static void writeToFile(File filePointer, String contents) throws IOException {
