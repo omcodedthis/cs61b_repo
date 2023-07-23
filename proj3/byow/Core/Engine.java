@@ -118,6 +118,7 @@ public class Engine {
                 File savedWorld = Utils.join("saves", "world_save.txt");
                 String saveData = Utils.readData(savedWorld);
                 long seed = parseSeed(saveData);
+                System.out.println(saveData);
                 String userInput = parseValidInput(input);
 
                 WorldGenerator generator = new WorldGenerator(finalWorldFrame, WIDTH, HEIGHT, seed);
@@ -199,8 +200,9 @@ public class Engine {
                 stringSeed += ch;
             }
         }
+
         long seed = Long.parseLong(stringSeed);
-        return 458540924;
+        return seed;
     }
 
 
