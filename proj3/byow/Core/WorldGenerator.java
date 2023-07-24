@@ -40,9 +40,6 @@ public class WorldGenerator implements Serializable {
     public static final int HALLWAYWIDTHBOUND = 3;
 
 
-    /** File saving constants. */
-    public static final File SAVES = new File("saves");
-
 
     /** Constructor for this class, which sets multiple global constants & fills worldFrame with NOTHING tiles. */
     public WorldGenerator(TETile[][] frame, int width, int height, long s) {
@@ -57,7 +54,6 @@ public class WorldGenerator implements Serializable {
             rand = new Random(s);
             keyPress = new ArrayDeque<String>();
             keyPress.addLast(".");
-            SAVES.mkdirs();
 
             //StdDraw.clear(new Color(0, 0, 0));
             fillWithNothingTiles();
@@ -376,7 +372,7 @@ public class WorldGenerator implements Serializable {
 
     /** Saves the world state to .saves in the CWD.*/
     public void saveState() throws IOException {
-        File worldSave = Utils.join("saves", "world_save.txt");
+        File worldSave = new File("world_save.txt");
         String saveData = seed + keyPress;
 
         if (worldSave.exists()) {

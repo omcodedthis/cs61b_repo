@@ -20,8 +20,6 @@ public class Engine {
     public static final int WINDOWHEIGHT = HEIGHT + HUDHEIGHT;
     public static final String validMoveInputs = "wasd";
 
-    /** File saving constants. */
-    public static final File SAVES = new File("saves");
 
 
     /**
@@ -34,7 +32,7 @@ public class Engine {
 
         String userChoice = showHomescreen();
         if (userChoice.equals("l")) {
-            File savedWorld = Utils.join("saves", "world_save.txt");
+            File savedWorld = new File("world_save.txt");
             String saveData = Utils.readData(savedWorld);
             long seed = parseSeed(saveData);
 
@@ -101,7 +99,6 @@ public class Engine {
     public TETile[][] interactWithInputString(String input) {
         //ter.initialize(WINDOWWIDTH, WINDOWHEIGHT);
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
-        String saveData = "Hello";
         // TODO: Fill out this method so that it run the engine using the input
         // passed in as an argument, and return a 2D tile representation of the
         // world that would have been drawn if the same inputs had been given
@@ -114,8 +111,8 @@ public class Engine {
         // submitting to the autograder.
         try {
             if (input.contains("l")) {
-                File savedWorld = Utils.join(SAVES, "world_save.txt");
-                saveData = Utils.readData(savedWorld);
+                File savedWorld = new File("world_save.txt");
+                String saveData = Utils.readData(savedWorld);
                 long seed = parseSeed(saveData);
                 String userInput = parseValidInput(input);
 
@@ -147,7 +144,6 @@ public class Engine {
                 String userInput = parseValidInput(input);
 
                 WorldGenerator generator = new WorldGenerator(finalWorldFrame, WIDTH, HEIGHT, seed);
-
                 finalWorldFrame = generator.getWorld();
 
                 //updateHUD(generator, "CS61B");

@@ -33,7 +33,7 @@ class Utils {
     protected static String readData(File filePointer) throws IOException {
         String text = "";
         try {
-            text = new String(Files.readAllBytes(Paths.get("saves", "world_save.txt")));
+            text = new String(Files.readAllBytes(Paths.get("world_save.txt")));
         } catch (IOException e) {
             e.printStackTrace();
         }
