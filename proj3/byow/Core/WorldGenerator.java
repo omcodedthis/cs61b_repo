@@ -2,24 +2,25 @@ package byow.Core;
 
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
-import edu.princeton.cs.introcs.StdDraw;
-
-
 import java.io.*;
-import java.security.AccessControlException;
+import java.security.AccessControlException; // deprecated, but required for autograder usage.
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Random;
 import static byow.Core.RandomUtils.*;
+import static byow.Core.FileSaving.*;
 
 
 /** WorldGenerator generates a random world consisting of rooms & hallways according to the spec. It has six global
  * constants & two global variables. The functionality of each method is explained in greater depth below. Note that
- * asset refers to both rooms & hallways. */
+ * asset refers to both rooms & hallways.
+ *
+ * @author om
+ * */
 
 public class WorldGenerator implements Serializable {
-    /** Global constants & variables. */
+    /** Global instance variables. */
     public static final int ORIGIN = 0;  // bottom left
     public int WIDTH;
     public int HEIGHT;
@@ -32,13 +33,11 @@ public class WorldGenerator implements Serializable {
     private Position userLoc;
     private Deque<String> keyPress;
 
-
     /** World Assets constants. */
     public static final int ROOMMIN = 5;
     public static final int ROOMMAX = 10;
     public static final int LINKBOUND = 1;
     public static final int HALLWAYWIDTHBOUND = 3;
-
 
 
     /** Constructor for this class, which sets multiple global constants & fills worldFrame with NOTHING tiles. */
@@ -101,6 +100,11 @@ public class WorldGenerator implements Serializable {
             }
         }
         return worldFrame;
+    }
+
+    /** Returns the seed */
+    public long getWorldSeed() {
+        return Long.parseLong(seed);
     }
 
 
@@ -351,6 +355,7 @@ public class WorldGenerator implements Serializable {
     }
 
 
+    /** Moves the avatar to the given tile coordinates. */
     public void moveTo(int newX, int newY) {
         TETile tileToMoveTo = worldFrame[newX][newY];
 
@@ -370,9 +375,9 @@ public class WorldGenerator implements Serializable {
     }
 
 
-    /** Saves the world state to .saves in the CWD.*/
+    /** Saves the world state to world_save.txt in the CWD.*/
     public void saveState() throws IOException {
-        File worldSave = new File("world_save.txt");
+        File worldSave = new File(SAVES);
         String saveData = seed + keyPress;
 
         if (worldSave.exists()) {
@@ -381,13 +386,5 @@ public class WorldGenerator implements Serializable {
             worldSave.createNewFile();
             writeToFile(worldSave, saveData);
         }
-    }
-
-
-    /** Writes a String to a file. */
-    protected static void writeToFile(File filePointer, String contents) throws IOException {
-        FileWriter writer = new FileWriter(filePointer);
-        writer.write(contents);
-        writer.close();
     }
 }

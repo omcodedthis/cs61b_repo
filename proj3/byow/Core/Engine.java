@@ -4,9 +4,15 @@ import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import edu.princeton.cs.introcs.StdDraw;
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayDeque;
+import static byow.Core.HelperMethods.*;
+
+
+/** Engine calls the relevant methods to create, interact & show the world to the user. The functionality of each method
+ * is explained in greater depth below. Note that asset refers to both rooms & hallways.
+ *
+ * @author om
+ * */
 
 public class Engine {
     TERenderer ter = new TERenderer();
@@ -18,8 +24,6 @@ public class Engine {
     public static final int HUDSPACING = 3;
     public static final int WINDOWWIDTH = WIDTH - 1;
     public static final int WINDOWHEIGHT = HEIGHT + HUDHEIGHT;
-    public static final String validMoveInputs = "wasd";
-
 
 
     /**
@@ -29,67 +33,38 @@ public class Engine {
     public void interactWithKeyboard() throws IOException {
         ter.initialize(WINDOWWIDTH, WINDOWHEIGHT);
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
+        boolean isKeyboard = true;
 
-        String userChoice = showHomescreen();
-        if (userChoice.equals("l")) {
-            File savedWorld = new File("world_save.txt");
-            String saveData = Utils.readData(savedWorld);
-            long seed = parseSeed(saveData);
-
-            WorldGenerator generator = new WorldGenerator(finalWorldFrame, WIDTH, HEIGHT, seed);
-            finalWorldFrame = generator.getWorld();
-            for (int i = 0; i < saveData.length(); i++) {
-                String ch = Character.toString(saveData.charAt(i));
-
-                if (validMoveInputs.contains(ch)) {
-                    generator.command(ch);
-                }
-            }
-
-            boolean gameOver = false;
-            while (!gameOver) {
-                updateHUD(generator, "fox");
-                ter.renderFrame(finalWorldFrame);
-                gameOver = commandAvatar(generator);
-            }
-            showEndScreen(seed);
-            generator.saveState();
-
+        String input = showHomescreen();
+        if (loadFromSave(input)) {
+            String saveData = FileSaving.readData();
+            loadGameWithSave(finalWorldFrame, input, saveData, isKeyboard);
         } else {
             long seed = getSeedFromUserInput();
-            String username = getUsername();
-
-            WorldGenerator generator = new WorldGenerator(finalWorldFrame, WIDTH, HEIGHT, seed);
-            finalWorldFrame = generator.getWorld();
-
-            boolean gameOver = false;
-            while (!gameOver) {
-                updateHUD(generator, username);
-                ter.renderFrame(finalWorldFrame);
-                gameOver = commandAvatar(generator);
-            }
-            showEndScreen(seed);
-            generator.saveState();
+            loadGame(finalWorldFrame, seed, input, isKeyboard);
         }
     }
 
+
+    /** Creates the game loop. */
+    public void gameLoop(WorldGenerator generator, TETile[][] finalWorldFrame) throws IOException {
+        boolean gameOver = false;
+        while (!gameOver) {
+            updateHUD(generator, "fox");
+            ter.renderFrame(finalWorldFrame);
+            gameOver = commandAvatar(generator);
+        }
+        long seed = generator.getWorldSeed();
+        showEndScreen(seed);
+        generator.saveState();
+    }
+
+
     /**
      * Method used for autograding and testing your code. The input string will be a series
-     * of characters (for example, "n123sswwdasdassadwas", "n123sss:q", "lwww". The engine should
+     * of characters (for example, "n123sswwdasdassadwas", "n123sss:q", "lwww"). The engine should
      * behave exactly as if the user typed these characters into the engine using
      * interactWithKeyboard.
-     *
-     * Recall that strings ending in ":q" should cause the game to quite save. For example,
-     * if we do interactWithInputString("n123sss:q"), we expect the game to run the first
-     * 7 commands (n123sss) and then quit and save. If we then do
-     * interactWithInputString("l"), we should be back in the exact same state.
-     *
-     * In other words, both of these calls:
-     *   - interactWithInputString("n123sss:q")
-     *   - interactWithInputString("lww")
-     *
-     * should yield the exact same world state as:
-     *   - interactWithInputString("n123sssww")
      *
      * @param input the input string to feed to your program
      * @return the 2D TETile[][] representing the state of the world
@@ -97,67 +72,16 @@ public class Engine {
      * The default username is "CS61B".
      */
     public TETile[][] interactWithInputString(String input) {
-        //ter.initialize(WINDOWWIDTH, WINDOWHEIGHT);
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
-        // TODO: Fill out this method so that it run the engine using the input
-        // passed in as an argument, and return a 2D tile representation of the
-        // world that would have been drawn if the same inputs had been given
-        // to interactWithKeyboard().
-        //
-        // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
-        // that works for many different input types. NOTE: For the autograder, the StdDraw class
-        // cannot be used (for its testing purposes). Hence, "ter.initialize(WIDTH, HEIGHT);" &
-        // "ter.renderFrame(finalWorldFrame);" for this method had to be removed when
-        // submitting to the autograder.
+        boolean isKeyboard = false;
+
         try {
-            if (input.contains("l")) {
-                File savedWorld = new File("world_save.txt");
-                String saveData = Utils.readData(savedWorld);
-                long seed = parseSeed(saveData);
-                String userInput = parseValidInput(input);
-
-                WorldGenerator generator = new WorldGenerator(finalWorldFrame, WIDTH, HEIGHT, seed);
-                finalWorldFrame = generator.getWorld();
-
-                for (int i = 0; i < saveData.length(); i++) {
-                    String ch = Character.toString(saveData.charAt(i));
-
-                    if (validMoveInputs.contains(ch)) {
-                        generator.command(ch);
-                    }
-                }
-
-                //updateHUD(generator, "CS61B");
-                for (int i = 0; i < userInput.length(); i++) {
-                    String ch = Character.toString(userInput.charAt(i));
-                    generator.command(ch);
-                }
-
-                if (input.contains(":q")) {
-                    generator.saveState();
-                }
-
-                //ter.renderFrame(finalWorldFrame);
+            if (loadFromSave(input)) {
+                String saveData = FileSaving.readData();
+                loadGameWithSave(finalWorldFrame, input, saveData, isKeyboard);
                 return finalWorldFrame;
             } else {
-                long seed = parseSeed(input);
-                String userInput = parseValidInput(input);
-
-                WorldGenerator generator = new WorldGenerator(finalWorldFrame, WIDTH, HEIGHT, seed);
-                finalWorldFrame = generator.getWorld();
-
-                //updateHUD(generator, "CS61B");
-                for (int i = 0; i < userInput.length(); i++) {
-                    String ch = Character.toString(userInput.charAt(i));
-                    generator.command(ch);
-                }
-
-                if (input.contains(":q")) {
-                    generator.saveState();
-                }
-
-                //ter.renderFrame(finalWorldFrame);
-
+                loadGame(finalWorldFrame, 0, input, isKeyboard);
                 return finalWorldFrame;
             }
 
@@ -168,54 +92,56 @@ public class Engine {
     }
 
 
-    /** Gets the user's input & updates the world accordingly. */
-    public static boolean commandAvatar(WorldGenerator generator) {
-        if (StdDraw.hasNextKeyTyped()) {
-            String userInput = Character.toString(StdDraw.nextKeyTyped());
-            return generator.command(userInput);
+    /** Loads the game with a save. */
+    public TETile[][] loadGameWithSave(TETile[][] finalWorldFrame, String input, String saveData,
+    boolean isKeyboard) throws IOException {
+        long seed = parseSeed(saveData);
+        finalWorldFrame = generateWorld(finalWorldFrame, seed, input, saveData, isKeyboard);
+        return finalWorldFrame;
+    }
+
+
+    /** Loads the game without a save (new save). */
+    public TETile[][] loadGame(TETile[][] finalWorldFrame, long seed, String input, boolean isKeyboard)
+    throws IOException {
+        if (!isKeyboard) {
+            seed = parseSeed(input);
+        }
+
+        finalWorldFrame = generateWorld(finalWorldFrame, seed, input, null, isKeyboard);
+        return finalWorldFrame;
+    }
+
+
+    /** Generates the world. */
+    public TETile[][] generateWorld(TETile[][] finalWorldFrame, long seed, String input, String saveData,
+    boolean isKeyboard) throws IOException {
+        input =  input.toLowerCase();
+
+        WorldGenerator generator = new WorldGenerator(finalWorldFrame, WIDTH, HEIGHT, seed);
+        finalWorldFrame = generator.getWorld();
+        String validInput = parseValidInput(input);
+
+        if (saveData != null) {
+            loadSavedInputsToWorld(generator, saveData);
+        }
+
+        for (int i = 0; i < validInput.length(); i++) {
+            String ch = Character.toString(validInput.charAt(i));
+            generator.command(ch);
+        }
+
+        if (input.contains(":q")) {
+            generator.saveState();
+        }
+
+        if (isKeyboard) {
+            gameLoop(generator, finalWorldFrame);
+            return null;
         } else {
-            return false;
-        }
-    }
-
-    /** Parses the seed from the command line input. */
-    public static long parseSeed(String input) {
-        input = input.toLowerCase();
-        String stringSeed = "";
-
-        for (int i = 0; i < input.length(); i++) {
-            char ch = input.charAt(i);
-
-            if ((ch == 's') || (ch == '[')) {
-                break;
-            }
-
-            boolean isDigit = Character.isDigit(ch);
-            if (isDigit) {
-                stringSeed += ch;
-            }
+            return finalWorldFrame;
         }
 
-        long seed = Long.parseLong(stringSeed);
-        return seed;
-    }
-
-
-    /** Parses valid input (N/W/A/S/D) from the command line input. */
-    public static String parseValidInput(String input) {
-        input = input.toLowerCase();
-        String stringInput = "";
-
-        int startingIndex = 1;
-
-        for (int i = startingIndex; i < input.length(); i++) {
-            char ch = input.charAt(i);
-
-            if (Character.isAlphabetic(ch)) {
-                stringInput += ch;
-            }
-        }
-        return stringInput;
     }
 
 
@@ -246,19 +172,7 @@ public class Engine {
     }
 
 
-    /** Returns true if the criteria to stop taking input for a seed has been met (final char is 's' & length of seed
-     * typed is greater than zero. */
-    public static boolean stopScanning(String userSeed, char userInput) {
-        int length = userSeed.length();
-        if (((userInput == 's') || (userInput == 'S')) && (length > 0)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-
-    /** Gets the seed from the user's input. WIP. */
+    /** Gets the seed from the user's input. */
     public static String getUsername() {
         double centerX = WINDOWWIDTH / 2;
         double centerY = WINDOWHEIGHT / 2;
@@ -287,7 +201,6 @@ public class Engine {
     public String showHomescreen() {
         double centerX = WINDOWWIDTH / 2;
         double centerY = WINDOWHEIGHT / 2;
-        ArrayDeque<String> menuKeyPress = new ArrayDeque<String>();
 
         StdDraw.setPenColor(Color.WHITE);
         StdDraw.text(centerX, centerY + HUDSPACING, "CS61B: The Game");
@@ -299,49 +212,10 @@ public class Engine {
 
         String keyPressed = null;
         while (keyPressed == null) {
-           keyPressed = getUserInput();
+            keyPressed = getUserInput();
         }
 
-        return "l";
-    }
-
-
-    /** Shows the end screen. */
-    public static void showEndScreen(long seed) {
-        StdDraw.clear(new Color(0, 0, 0));
-        double centerX = WINDOWWIDTH / 2;
-        double centerY = WINDOWHEIGHT / 2;
-
-        StdDraw.setPenColor(Color.WHITE);
-        StdDraw.text(centerX, centerY + HUDSPACING, "You have successfully saved your progress.");
-        StdDraw.text(centerX, centerY, "Seed: " + seed);
-
-        StdDraw.show();
-    }
-
-
-    /** Gets the user's input for menu based actions. */
-    public static String getUserInput() {
-        if (StdDraw.hasNextKeyTyped()) {
-            String userInput = Character.toString(StdDraw.nextKeyTyped());
-            userInput = userInput.toLowerCase();
-
-            switch(userInput) {
-                case "n":
-                    return "n";
-
-                case "l":
-                    return "l";
-
-                case "q":
-                    return "q";
-
-                default:
-                    return null;
-            }
-        } else {
-            return null;
-        }
+        return keyPressed;
     }
 
 
@@ -364,5 +238,19 @@ public class Engine {
         StdDraw.text(WIDTH / 2, textHeight, username + "'s Adventure");
         StdDraw.textRight(WIDTH - 2, textHeight, "CS61B: The Game");
         StdDraw.line(ORIGIN, lineHeight, WIDTH, lineHeight);
+    }
+
+
+    /** Shows the end screen. */
+    public static void showEndScreen(long seed) {
+        StdDraw.clear(new Color(0, 0, 0));
+        double centerX = WINDOWWIDTH / 2;
+        double centerY = WINDOWHEIGHT / 2;
+
+        StdDraw.setPenColor(Color.WHITE);
+        StdDraw.text(centerX, centerY + HUDSPACING, "You have successfully saved your progress.");
+        StdDraw.text(centerX, centerY, "Seed: " + seed);
+
+        StdDraw.show();
     }
 }

@@ -2,7 +2,10 @@ package byow.Core;
 
 /** Position keeps track of the positional data (x & y coordinates) of a room / hallway. It has two instance variables.
  * The functionality of each method is explained in greater depth below. The Position class is always instantiated with
- * the top-left position of the room / hallway. Note that asset refers to both rooms & hallways. */
+ * the top-left position of the room / hallway. Note that asset refers to both rooms & hallways.
+ *
+ * @author om
+ * */
 
 public class Position {
     private int MIDx;
