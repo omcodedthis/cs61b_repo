@@ -98,7 +98,7 @@ public class Engine {
      *
      * The default username is "CS61B".
      */
-    public TETile[][] interactWithInputString(String input) throws IOException {
+    public TETile[][] interactWithInputString(String input) {
         //ter.initialize(WINDOWWIDTH, WINDOWHEIGHT);
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
         // TODO: Fill out this method so that it run the engine using the input
@@ -111,7 +111,6 @@ public class Engine {
         // cannot be used (for its testing purposes). Hence, "ter.initialize(WIDTH, HEIGHT);" &
         // "ter.renderFrame(finalWorldFrame);" for this method had to be removed when
         // submitting to the autograder.
-
         try {
             if (input.contains("l")) {
                 File savedWorld = Utils.join("saves", "world_save.txt");
