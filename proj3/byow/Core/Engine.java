@@ -62,7 +62,7 @@ public class Engine {
      * Note:
      * - No StdDraw calls can be made as per the autograder requirements stated in the spec.
      * - A try / catch block is used to prevent the autograder from throwing a IOExecption error.
-     * - The autograder throws a deprecated AccessControlException, hence, it is caught in the WorldGenerator class.
+     * - The autograder throws a deprecated AccessControlException which WorldGenerator catches.
      * - The default username is "CS61B".
      */
     public TETile[][] interactWithInputString(String input) {
@@ -75,7 +75,8 @@ public class Engine {
                 loadGameWithSave(finalWorldFrame, input, saveData, isKeyboard);
                 return finalWorldFrame;
             } else {
-                loadGame(finalWorldFrame, LONGZERO, input, isKeyboard); // zero as primitive long type cannot be null.
+                // LONGZERO as primitive long type cannot be null.
+                loadGame(finalWorldFrame, LONGZERO, input, isKeyboard);
                 return finalWorldFrame;
             }
 
@@ -181,7 +182,7 @@ public class Engine {
         while (true) {
             StdDraw.clear(new Color(0, 0, 0));
             StdDraw.text(centerX, centerY, "Your Name (type '.' to indicate the end):  "
-            + userString);
+                + userString);
             StdDraw.show();
 
             if (StdDraw.hasNextKeyTyped()) {
@@ -207,7 +208,7 @@ public class Engine {
         StdDraw.text(centerX, centerY + HUDSPACING, "CS61B: The Game");
         StdDraw.text(centerX, centerY, "New Game (N)");
         StdDraw.text(centerX, centerY - HUDSPACING, "Load Game (L)");
-        StdDraw.text(centerX, centerY- (2 * HUDSPACING), "Quit (Q)");
+        StdDraw.text(centerX, centerY - (2 * HUDSPACING), "Quit (Q)");
 
         StdDraw.show();
 
@@ -228,7 +229,7 @@ public class Engine {
         // StdDraw does not have the ability to clear a specified region of the canvas, hence, a
         // black rectangle is drawn over the previous HUD.
         StdDraw.filledRectangle(WIDTH / 2, textHeight, WIDTH / 2,
-        HUDHEIGHT / 2);
+            HUDHEIGHT / 2);
 
         double mouseX = StdDraw.mouseX();
         double mouseY = StdDraw.mouseY();

@@ -28,7 +28,7 @@ public class HelperMethods {
     }
 
 
-    /* HELPER METHODS RELATING TO PARSING / GETTING INPUT. */
+    /* HELPER METHODS RELATING TO PARSING DATA / GETTING INPUT. */
 
 
     /** Gets the user's input for menu based actions. */
@@ -37,7 +37,7 @@ public class HelperMethods {
             String userInput = Character.toString(StdDraw.nextKeyTyped());
             userInput = userInput.toLowerCase();
 
-            switch(userInput) {
+            switch (userInput) {
                 case "n":
                     return "n";
 
@@ -97,8 +97,8 @@ public class HelperMethods {
     }
 
 
-    /** Returns true if the criteria to stop taking input for a seed has been met (final char is 's' & length of seed
-     * typed is greater than zero. */
+    /** Returns true if the criteria to stop taking input for a seed has been met (final char is 's'
+     *  & length of seed typed is greater than zero. */
     public static boolean stopScanning(String userSeed, char userInput) {
         int length = userSeed.length();
         return (((userInput == 's') || (userInput == 'S')) && (length > 0));

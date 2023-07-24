@@ -13,19 +13,16 @@ import static byow.Core.FileSaving.*;
 
 
 /** WorldGenerator generates a random world consisting of rooms & hallways according to the spec. It
- * has ten instance variables & six global constants. The functionality of each method is explained
- * in greater depth below. Note that asset refers to both rooms & hallways.
+ * has eight instance variables & six global constants. The functionality of each method is
+ * explained in greater depth below. Note that asset refers to both rooms & hallways.
  *
  * @author om
  * */
 
 public class WorldGenerator implements Serializable {
     /** Global instance variables. */
-    public static final int ORIGIN = 0;  // bottom left
     private int WIDTH;
     private int HEIGHT;
-    private int MIDPOINTX;
-    private int MIDPOINTY;
     private TETile[][] worldFrame;
     private RoomTracker rooms;
     private Random rand;
@@ -34,6 +31,7 @@ public class WorldGenerator implements Serializable {
     private Deque<String> keyPress;
 
     /** World Assets constants. */
+    public static final int ORIGIN = 0;  // bottom left
     public static final int ROOMMIN = 5;
     public static final int ROOMMAX = 10;
     public static final int LINKBOUND = 1;
@@ -48,8 +46,6 @@ public class WorldGenerator implements Serializable {
             worldFrame = frame;
             WIDTH = width;
             HEIGHT = height;
-            MIDPOINTX = WIDTH / 2;
-            MIDPOINTY = HEIGHT / 2;
             rooms = new RoomTracker();
             seed = Long.toString(s);
             rand = new Random(s);
