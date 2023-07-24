@@ -3,7 +3,7 @@ package byow.Core;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 import java.io.*;
-import java.security.AccessControlException; // deprecated, but required for autograder usage.
+import java.security.AccessControlException;  // deprecated, but required for autograder usage.
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
