@@ -8,8 +8,9 @@ import java.io.IOException;
 import static byow.Core.HelperMethods.*;
 
 
-/** Engine calls the relevant methods to create, interact & show the world to the user. The functionality of each method
- * is explained in greater depth below. Note that asset refers to both rooms & hallways.
+/** Engine calls the relevant methods to create, interact & show the world to the user. The
+ * functionality of each method is explained in greater depth below. Note that asset refers to both
+ * rooms & hallways.
  *
  * @author om
  * */
@@ -91,7 +92,7 @@ public class Engine {
 
     /** Loads the game with a save. */
     public TETile[][] loadGameWithSave(TETile[][] finalWorldFrame, String input, String saveData,
-    boolean isKeyboard) throws IOException {
+            boolean isKeyboard) throws IOException {
         long seed = parseSeed(saveData);
         finalWorldFrame = generateWorld(finalWorldFrame, seed, input, saveData, isKeyboard);
         return finalWorldFrame;
@@ -99,8 +100,8 @@ public class Engine {
 
 
     /** Loads the game without a save (new save). */
-    public TETile[][] loadGame(TETile[][] finalWorldFrame, long seed, String input, boolean isKeyboard)
-    throws IOException {
+    public TETile[][] loadGame(TETile[][] finalWorldFrame, long seed, String input,
+            boolean isKeyboard) throws IOException {
         if (!isKeyboard) {
             seed = parseSeed(input);
         }
@@ -111,8 +112,8 @@ public class Engine {
 
 
     /** Generates the world. */
-    public TETile[][] generateWorld(TETile[][] finalWorldFrame, long seed, String input, String saveData,
-    boolean isKeyboard) throws IOException {
+    public TETile[][] generateWorld(TETile[][] finalWorldFrame, long seed, String input,
+            String saveData, boolean isKeyboard) throws IOException {
         input =  input.toLowerCase();
 
         WorldGenerator generator = new WorldGenerator(finalWorldFrame, WIDTH, HEIGHT, seed);
@@ -123,7 +124,8 @@ public class Engine {
             loadSavedInputsToWorld(generator, saveData);
         }
 
-        // This is for interactWithInputString(), interactWithKeyboard() takes in input from gameLoop().
+        // This is for interactWithInputString(), interactWithKeyboard() takes in input from
+        // gameLoop().
         for (int i = 0; i < validInput.length(); i++) {
             String ch = Character.toString(validInput.charAt(i));
             generator.command(ch);
@@ -178,7 +180,8 @@ public class Engine {
         String userString = "";
         while (true) {
             StdDraw.clear(new Color(0, 0, 0));
-            StdDraw.text(centerX, centerY, "Your Name (type '.' to indicate the end):  " + userString);
+            StdDraw.text(centerX, centerY, "Your Name (type '.' to indicate the end):  "
+            + userString);
             StdDraw.show();
 
             if (StdDraw.hasNextKeyTyped()) {
@@ -222,9 +225,10 @@ public class Engine {
         int textHeight = HEIGHT + 2;
         int lineHeight = HEIGHT + 1;
 
-        // StdDraw does not have the ability to clear a specified region of the canvas, hence, a black rectangle is
-        // drawn over the previous HUD.
-        StdDraw.filledRectangle(WIDTH / 2, textHeight, WIDTH / 2, HUDHEIGHT / 2);
+        // StdDraw does not have the ability to clear a specified region of the canvas, hence, a
+        // black rectangle is drawn over the previous HUD.
+        StdDraw.filledRectangle(WIDTH / 2, textHeight, WIDTH / 2,
+        HUDHEIGHT / 2);
 
         double mouseX = StdDraw.mouseX();
         double mouseY = StdDraw.mouseY();
@@ -262,7 +266,8 @@ public class Engine {
         double centerY = WINDOWHEIGHT / 2;
 
         StdDraw.setPenColor(Color.WHITE);
-        StdDraw.text(centerX, centerY + HUDSPACING, "You have successfully saved your progress.");
+        StdDraw.text(centerX, centerY + HUDSPACING, "You have successfully saved your"
+            + " progress.");
         StdDraw.text(centerX, centerY, "Seed: " + seed);
 
         StdDraw.show();

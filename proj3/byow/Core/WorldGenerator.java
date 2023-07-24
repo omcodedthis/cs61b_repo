@@ -12,9 +12,9 @@ import static byow.Core.RandomUtils.*;
 import static byow.Core.FileSaving.*;
 
 
-/** WorldGenerator generates a random world consisting of rooms & hallways according to the spec. It has six global
- * constants & two global variables. The functionality of each method is explained in greater depth below. Note that
- * asset refers to both rooms & hallways.
+/** WorldGenerator generates a random world consisting of rooms & hallways according to the spec. It
+ * has ten instance variables & six global constants. The functionality of each method is explained
+ * in greater depth below. Note that asset refers to both rooms & hallways.
  *
  * @author om
  * */
@@ -22,11 +22,11 @@ import static byow.Core.FileSaving.*;
 public class WorldGenerator implements Serializable {
     /** Global instance variables. */
     public static final int ORIGIN = 0;  // bottom left
-    public int WIDTH;
-    public int HEIGHT;
-    public int MIDPOINTx;
-    public int MIDPOINTy;
-    public TETile[][] worldFrame;
+    private int WIDTH;
+    private int HEIGHT;
+    private int MIDPOINTX;
+    private int MIDPOINTY;
+    private TETile[][] worldFrame;
     private RoomTracker rooms;
     private Random rand;
     private String seed;
@@ -38,16 +38,18 @@ public class WorldGenerator implements Serializable {
     public static final int ROOMMAX = 10;
     public static final int LINKBOUND = 1;
     public static final int HALLWAYWIDTHBOUND = 3;
+    public static final int OFFSET = 1;
 
 
-    /** Constructor for this class, which sets multiple global constants & fills worldFrame with NOTHING tiles. */
+    /** Constructor for this class, which sets multiple global constants & fills worldFrame with
+     * NOTHING tiles. */
     public WorldGenerator(TETile[][] frame, int width, int height, long s) {
         try {
             worldFrame = frame;
             WIDTH = width;
             HEIGHT = height;
-            MIDPOINTx = WIDTH / 2;
-            MIDPOINTy = HEIGHT / 2;
+            MIDPOINTX = WIDTH / 2;
+            MIDPOINTY = HEIGHT / 2;
             rooms = new RoomTracker();
             seed = Long.toString(s);
             rand = new Random(s);
@@ -57,7 +59,9 @@ public class WorldGenerator implements Serializable {
             //StdDraw.clear(new Color(0, 0, 0));
             fillWithNothingTiles();
             drawWorld();
-        } catch (AccessControlException e) { // Autograder breaks if this deprecated exception is not caught.
+
+        // Autograder breaks unless this deprecated exception is caught.
+        } catch (AccessControlException e) {
             fillWithNothingTiles();
             drawWorld();
         }
@@ -94,7 +98,7 @@ public class WorldGenerator implements Serializable {
             if (tile.equals(Tileset.FLOOR)) {
                 worldFrame[x][y] = Tileset.AVATAR;
 
-                userLoc = new Position(x, y, 0,0);
+                userLoc = new Position(x, y, 0, 0);
 
                 spawn = false;
             }
@@ -145,7 +149,7 @@ public class WorldGenerator implements Serializable {
             y = randomY(y);
 
             if (drawSecondRoom()) {
-                drawRoom(x+ROOMMIN, y);
+                drawRoom(x + ROOMMIN, y);
             }
 
             x = sectorWidth * s;
@@ -158,16 +162,13 @@ public class WorldGenerator implements Serializable {
     public boolean drawSecondRoom() {
         int outcome = uniform(rand, 0, 5);
 
-        if (outcome == 0) {
-            return false;
-        } else {
-            return true;
-        }
+        return (outcome == 0);
     }
 
 
-    /** Returns a random y-value that is between the bounds of ORIGIN & HEIGHT. The new y-value is also has an absolute
-     * difference greater than ROOMMIN so that rooms are spaced apart sufficiently. */
+    /** Returns a random y-value that is between the bounds of ORIGIN & HEIGHT. The new y-value is
+     * also has an absolute difference greater than ROOMMIN so that rooms are spaced apart
+     * sufficiently. */
     public int randomY(int prevY) {
         int newY = uniform(rand, ORIGIN + ROOMMAX, HEIGHT);
         int absoluteDifference = Math.abs(newY - prevY);
@@ -211,8 +212,9 @@ public class WorldGenerator implements Serializable {
     /** Connects all the rooms. */
     public void connectRooms() {
         ArrayList<Position> roomList = rooms.getRoomList();
+        int size = rooms.getRoomSize();
 
-        for (int i = 0; i < (rooms.size - 1); i++) {
+        for (int i = 0; i < (size - 1); i++) {
             Position roomA = roomList.get(i);
             Position roomB = roomList.get(i + 1);
 
@@ -237,12 +239,14 @@ public class WorldGenerator implements Serializable {
     }
 
 
-    /** Draws a 'L' shaped hallway between 2 rooms where roomA is higher than roomB (in terms of y-coordinates). */
+    /** Draws a 'L' shaped hallway between 2 rooms where roomA is higher than roomB (in terms of
+     * y-coordinates). */
     public void drawUpLink(Position roomA, Position roomB) {
-        int aX = roomA.getMidx() + roomA.getHalfWidth() - 1;
-        int aY = roomA.getMidy() + 1;
-        int bX = roomB.getMidx() - 1;
-        int bY = roomB.getMidy() - roomB.getHalfLength() + 2; // +2 so that the link ends at least inside the room.
+        int aX = roomA.getMidx() + roomA.getHalfWidth() - OFFSET;
+        int aY = roomA.getMidy() + OFFSET;
+        int bX = roomB.getMidx() - OFFSET;
+        // +2 so that the link ends at least inside the room.
+        int bY = roomB.getMidy() - roomB.getHalfLength() + OFFSET + 1;
         int width = uniform(rand, 1, HALLWAYWIDTHBOUND);
         int i;
 
@@ -255,11 +259,12 @@ public class WorldGenerator implements Serializable {
 
 
 
-    /** Draws a 'L' shaped hallway between 2 rooms where roomA is lower than roomB (in terms of y-coordinates). */
+    /** Draws a 'L' shaped hallway between 2 rooms where roomA is lower than roomB (in terms of
+     * y-coordinates). */
     public void drawDownLink(Position roomA, Position roomB) {
         int aX = roomA.getMidx() + roomA.getHalfWidth();
-        int aY = roomA.getMidy() + 1;
-        int bX = roomB.getMidx() + 1;
+        int aY = roomA.getMidy() + OFFSET;
+        int bX = roomB.getMidx() + OFFSET;
         int bY = roomB.getMidy() + roomB.getHalfLength();
         int width = uniform(rand, 1, HALLWAYWIDTHBOUND);
         int i;
@@ -276,8 +281,9 @@ public class WorldGenerator implements Serializable {
      * (in terms of y-coordinates). */
     public void drawStraightLink(Position roomA, Position roomB, int difference) {
         int aX = roomA.getMidx() + roomA.getHalfWidth();
-        int bX = roomB.getMidx() + 1;
-        int bY = roomB.getMidy() + 1 + difference; // + difference to position the hallway properly between both rooms.
+        int bX = roomB.getMidx() + OFFSET;
+        // + difference to position the hallway properly// between both rooms.
+        int bY = roomB.getMidy() + OFFSET + difference;
         int width = uniform(rand, 1, HALLWAYWIDTHBOUND);
         int i;
 
@@ -321,11 +327,11 @@ public class WorldGenerator implements Serializable {
         int userX = userLoc.getxPos();
         int userY = userLoc.getyPos();
 
-        boolean colonTyped = previousWasColon();
+        boolean isColonTyped = previousWasColon();
         userInput = userInput.toLowerCase();
         keyPress.addLast(userInput);
 
-        switch(userInput) {
+        switch (userInput) {
             case "w":
                 moveTo(userX, userY + 1);
                 return false;
@@ -335,7 +341,7 @@ public class WorldGenerator implements Serializable {
                 return false;
 
             case "s":
-                moveTo(userX , userY  - 1);
+                moveTo(userX, userY  - 1);
                 return false;
 
             case "d":
@@ -343,11 +349,7 @@ public class WorldGenerator implements Serializable {
                 return false;
 
             case "q":
-                if (colonTyped) {
-                    return true;
-                } else {
-                    return false;
-                }
+                return isColonTyped;
 
             default:
                 return false;

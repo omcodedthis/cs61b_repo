@@ -1,19 +1,17 @@
 package byow.Core;
 
-import byow.TileEngine.TETile;
 import edu.princeton.cs.introcs.StdDraw;
 
-import java.io.IOException;
 
-/** HelperMethods contains all the relevant helper methods for the Engine class. It has one global constant. The
- * functionality of each method is explained in greater depth below.
+/** HelperMethods contains all the relevant helper methods for the Engine class. It has one global
+ * constant. The functionality of each method is explained in greater depth below.
  *
  * @author om
  * */
 
 public class HelperMethods {
     /** Valid inputs for movement in the game. */
-    public static final String validMoveInputs = "wasd";
+    public static final String VALIDMOVEINPUTS = "wasd";
 
 
     /* HELPER METHOD RELATED TO IN-GAME COMMANDS. */
@@ -103,11 +101,7 @@ public class HelperMethods {
      * typed is greater than zero. */
     public static boolean stopScanning(String userSeed, char userInput) {
         int length = userSeed.length();
-        if (((userInput == 's') || (userInput == 'S')) && (length > 0)) {
-            return true;
-        } else {
-            return false;
-        }
+        return (((userInput == 's') || (userInput == 'S')) && (length > 0));
     }
 
 
@@ -119,7 +113,7 @@ public class HelperMethods {
         for (int i = 0; i < saveData.length(); i++) {
             String ch = Character.toString(saveData.charAt(i));
 
-            if (validMoveInputs.contains(ch)) {
+            if (VALIDMOVEINPUTS.contains(ch)) {
                 generator.command(ch);
             }
         }
@@ -131,10 +125,6 @@ public class HelperMethods {
         input =  input.toLowerCase();
         char firstChar = input.charAt(0);
 
-        if (firstChar == 'l') {
-            return true;
-        } else {
-            return false;
-        }
+        return  (firstChar == 'l');
     }
 }

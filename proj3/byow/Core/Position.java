@@ -1,15 +1,16 @@
 package byow.Core;
 
-/** Position keeps track of the positional data (x & y coordinates) of a room / hallway. It has four instance variables.
- * The functionality of each method is explained in greater depth below. The Position class is always instantiated with
- * the top-left position of the room / hallway. Note that asset refers to both rooms & hallways.
+/** Position keeps track of the positional data (x & y coordinates) of a room / hallway. It has four
+ *  instance variables. The functionality of each method is explained in greater depth below. The
+ *  Position class is always instantiated with the top-left position of the room / hallway. Note
+ *  that asset refers to both rooms & hallways.
  *
  * @author om
  * */
 
 public class Position {
-    private int MIDx;
-    private int MIDy;
+    private int MIDX;
+    private int MIDY;
     private int HALFWIDTH;
     private int HALFLENGTH;
 
@@ -23,8 +24,8 @@ public class Position {
         HALFWIDTH = w / 2;
         HALFLENGTH = l / 2;
 
-        MIDx = x + HALFWIDTH;
-        MIDy = y - HALFLENGTH;
+        MIDX = x + HALFWIDTH;
+        MIDY = y - HALFLENGTH;
         xPos = x;
         yPos = y;
     }
@@ -63,13 +64,13 @@ public class Position {
 
     /** Returns the midpoint x-coordinate of the asset. */
     public int getMidx() {
-        return MIDx;
+        return MIDX;
     }
 
 
     /** Returns the midpoint y-coordinate of the asset. */
     public int getMidy() {
-        return MIDy;
+        return MIDY;
     }
 
 
