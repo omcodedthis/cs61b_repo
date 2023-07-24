@@ -57,7 +57,7 @@ public class WorldGenerator implements Serializable {
             //StdDraw.clear(new Color(0, 0, 0));
             fillWithNothingTiles();
             drawWorld();
-        } catch (AccessControlException e) {
+        } catch (AccessControlException e) { // Autograder breaks if this deprecated exception is not caught.
             fillWithNothingTiles();
             drawWorld();
         }

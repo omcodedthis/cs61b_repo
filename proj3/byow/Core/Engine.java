@@ -24,6 +24,8 @@ public class Engine {
     public static final int HUDSPACING = 3;
     public static final int WINDOWWIDTH = WIDTH - 1;
     public static final int WINDOWHEIGHT = HEIGHT + HUDHEIGHT;
+    public static final long LONGZERO = 0;
+
 
 
     /**
@@ -36,6 +38,7 @@ public class Engine {
         boolean isKeyboard = true;
 
         String input = showHomescreen();
+
         if (loadFromSave(input)) {
             String saveData = FileSaving.readData();
             loadGameWithSave(finalWorldFrame, input, saveData, isKeyboard);
@@ -43,20 +46,6 @@ public class Engine {
             long seed = getSeedFromUserInput();
             loadGame(finalWorldFrame, seed, input, isKeyboard);
         }
-    }
-
-
-    /** Creates the game loop. */
-    public void gameLoop(WorldGenerator generator, TETile[][] finalWorldFrame) throws IOException {
-        boolean gameOver = false;
-        while (!gameOver) {
-            updateHUD(generator, "fox");
-            ter.renderFrame(finalWorldFrame);
-            gameOver = commandAvatar(generator);
-        }
-        long seed = generator.getWorldSeed();
-        showEndScreen(seed);
-        generator.saveState();
     }
 
 
@@ -69,7 +58,11 @@ public class Engine {
      * @param input the input string to feed to your program
      * @return the 2D TETile[][] representing the state of the world
      *
-     * The default username is "CS61B".
+     * Note:
+     * - No StdDraw calls can be made as per the autograder requirements stated in the spec.
+     * - A try / catch block is used to prevent the autograder from throwing a IOExecption error.
+     * - The autograder throws a deprecated AccessControlException, hence, it is caught in the WorldGenerator class.
+     * - The default username is "CS61B".
      */
     public TETile[][] interactWithInputString(String input) {
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
@@ -81,7 +74,7 @@ public class Engine {
                 loadGameWithSave(finalWorldFrame, input, saveData, isKeyboard);
                 return finalWorldFrame;
             } else {
-                loadGame(finalWorldFrame, 0, input, isKeyboard);
+                loadGame(finalWorldFrame, LONGZERO, input, isKeyboard); // zero as primitive long type cannot be null.
                 return finalWorldFrame;
             }
 
@@ -90,6 +83,10 @@ public class Engine {
             return null;
         }
     }
+
+
+
+    /* Helper methods for the Engine class. */
 
 
     /** Loads the game with a save. */
@@ -126,6 +123,7 @@ public class Engine {
             loadSavedInputsToWorld(generator, saveData);
         }
 
+        // This is for interactWithInputString(), interactWithKeyboard() takes in input from gameLoop().
         for (int i = 0; i < validInput.length(); i++) {
             String ch = Character.toString(validInput.charAt(i));
             generator.command(ch);
@@ -238,6 +236,22 @@ public class Engine {
         StdDraw.text(WIDTH / 2, textHeight, username + "'s Adventure");
         StdDraw.textRight(WIDTH - 2, textHeight, "CS61B: The Game");
         StdDraw.line(ORIGIN, lineHeight, WIDTH, lineHeight);
+    }
+
+
+    /** Creates the game loop. */
+    public void gameLoop(WorldGenerator generator, TETile[][] finalWorldFrame) throws IOException {
+        boolean gameOver = false;
+        String username = getUsername();
+
+        while (!gameOver) {
+            updateHUD(generator, username);
+            ter.renderFrame(finalWorldFrame);
+            gameOver = commandAvatar(generator);
+        }
+        long seed = generator.getWorldSeed();
+        showEndScreen(seed);
+        generator.saveState();
     }
 
 

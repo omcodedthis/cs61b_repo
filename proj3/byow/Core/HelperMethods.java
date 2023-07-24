@@ -1,6 +1,9 @@
 package byow.Core;
 
+import byow.TileEngine.TETile;
 import edu.princeton.cs.introcs.StdDraw;
+
+import java.io.IOException;
 
 /** HelperMethods contains all the relevant helper methods for the Engine class. It has one global constant. The
  * functionality of each method is explained in greater depth below.
@@ -13,6 +16,9 @@ public class HelperMethods {
     public static final String validMoveInputs = "wasd";
 
 
+    /* HELPER METHOD RELATED TO IN-GAME COMMANDS. */
+
+
     /** Gets the user's input & updates the world accordingly. */
     public static boolean commandAvatar(WorldGenerator generator) {
         if (StdDraw.hasNextKeyTyped()) {
@@ -22,6 +28,35 @@ public class HelperMethods {
             return false;
         }
     }
+
+
+    /* HELPER METHODS RELATING TO PARSING / GETTING INPUT. */
+
+
+    /** Gets the user's input for menu based actions. */
+    public static String getUserInput() {
+        if (StdDraw.hasNextKeyTyped()) {
+            String userInput = Character.toString(StdDraw.nextKeyTyped());
+            userInput = userInput.toLowerCase();
+
+            switch(userInput) {
+                case "n":
+                    return "n";
+
+                case "l":
+                    return "l";
+
+                case "q":
+                    return "q";
+
+                default:
+                    return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
 
     /** Parses the seed from the command line input. */
     public static long parseSeed(String input) {
@@ -76,29 +111,7 @@ public class HelperMethods {
     }
 
 
-    /** Gets the user's input for menu based actions. */
-    public static String getUserInput() {
-        if (StdDraw.hasNextKeyTyped()) {
-            String userInput = Character.toString(StdDraw.nextKeyTyped());
-            userInput = userInput.toLowerCase();
-
-            switch(userInput) {
-                case "n":
-                    return "n";
-
-                case "l":
-                    return "l";
-
-                case "q":
-                    return "q";
-
-                default:
-                    return null;
-            }
-        } else {
-            return null;
-        }
-    }
+    /* HELPER METHODS RELATED TO LOADING WORLDS. */
 
 
     /** Loads the saved inputs from saveData to the world. */
