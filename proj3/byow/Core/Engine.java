@@ -114,7 +114,7 @@ public class Engine {
         // submitting to the autograder.
         try {
             if (input.contains("l")) {
-                File savedWorld = Utils.join("saves", "world_save.txt");
+                File savedWorld = Utils.join(SAVES, "world_save.txt");
                 saveData = Utils.readData(savedWorld);
                 long seed = parseSeed(saveData);
                 String userInput = parseValidInput(input);
@@ -166,7 +166,7 @@ public class Engine {
             }
 
         } catch (IOException e) {
-            System.out.println(saveData);
+            e.printStackTrace();
             return null;
         }
     }

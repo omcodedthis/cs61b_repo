@@ -41,8 +41,14 @@ class Utils {
         return text;
     }
 
+
     static File join(String first, String... others) {
         return Paths.get(first, others).toFile();
+    }
+
+
+    static File join(File first, String... others) {
+        return Paths.get(first.getPath(), others).toFile();
     }
 
 
