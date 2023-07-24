@@ -101,6 +101,7 @@ public class Engine {
     public TETile[][] interactWithInputString(String input) {
         //ter.initialize(WINDOWWIDTH, WINDOWHEIGHT);
         TETile[][] finalWorldFrame = new TETile[WIDTH][HEIGHT];
+        String saveData = "Hello";
         // TODO: Fill out this method so that it run the engine using the input
         // passed in as an argument, and return a 2D tile representation of the
         // world that would have been drawn if the same inputs had been given
@@ -114,7 +115,7 @@ public class Engine {
         try {
             if (input.contains("l")) {
                 File savedWorld = Utils.join("saves", "world_save.txt");
-                String saveData = Utils.readData(savedWorld);
+                saveData = Utils.readData(savedWorld);
                 long seed = parseSeed(saveData);
                 String userInput = parseValidInput(input);
 
@@ -165,7 +166,7 @@ public class Engine {
             }
 
         } catch (IOException e) {
-            System.out.println("An error has occurred.");
+            System.out.println(saveData);
             return null;
         }
     }
